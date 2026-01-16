@@ -1,0 +1,566 @@
+{
+  "info": {
+    "_postman_id": "examsmith-ingestion-complete",
+    "name": "ExamSmith Ingestion API - Complete",
+    "description": "Complete Postman collection for ExamSmith JSON → MongoDB Injection Pipeline. Supports both JSON payload and file upload. Import this single file and start testing immediately.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "0. Health Check",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('✓ API is healthy', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('✓ Response contains status field', function () {",
+              "    pm.expect(pm.response.json()).to.have.property('status');",
+              "    pm.expect(pm.response.json().status).to.equal('ok');",
+              "});",
+              "",
+              "console.log('✓ Health check passed - API is running on http://localhost:8000');"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8000/health",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "health"
+          ]
+        },
+        "description": "Check if ExamSmith Ingestion API is running and healthy"
+      }
+    },
+    {
+      "name": "FILE UPLOAD - Upload JSON File",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('✓ Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "var jsonData = pm.response.json();",
+              "",
+              "pm.test('✓ Response contains job_id', function () {",
+              "    pm.expect(jsonData).to.have.property('job_id');",
+              "    pm.expect(jsonData.job_id).to.be.a('string');",
+              "    pm.expect(jsonData.job_id.length).to.be.above(0);",
+              "});",
+              "",
+              "pm.test('✓ Response contains status=pending', function () {",
+              "    pm.expect(jsonData).to.have.property('status');",
+              "    pm.expect(jsonData.status).to.equal('pending');",
+              "});",
+              "",
+              "pm.collectionVariables.set('job_id_file', jsonData.job_id);",
+              "console.log('✓ File upload job created: ' + jsonData.job_id);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": []
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:8000/ingest/file",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "ingest",
+            "file"
+          ]
+        },
+        "description": "Upload a JSON file with documents to ingest. File should contain an array of document objects."
+      }
+    },
+    {
+      "name": "1. Test - Single Document (JSON)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('✓ Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "var jsonData = pm.response.json();",
+              "",
+              "pm.test('✓ Response contains job_id', function () {",
+              "    pm.expect(jsonData).to.have.property('job_id');",
+              "    pm.expect(jsonData.job_id).to.be.a('string');",
+              "    pm.expect(jsonData.job_id.length).to.be.above(0);",
+              "});",
+              "",
+              "pm.test('✓ Response contains status=pending', function () {",
+              "    pm.expect(jsonData).to.have.property('status');",
+              "    pm.expect(jsonData.status).to.equal('pending');",
+              "});",
+              "",
+              "pm.test('✓ Response contains created_at timestamp', function () {",
+              "    pm.expect(jsonData).to.have.property('created_at');",
+              "});",
+              "",
+              "// Save job_id for status checks",
+              "pm.collectionVariables.set('job_id_single', jsonData.job_id);",
+              "console.log('✓ Single document job created: ' + jsonData.job_id);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "[\n  {\n    \"content\": \"Introduction to Biology: Biology is the study of life and living organisms. It encompasses cells, genetics, evolution, ecology, and all living systems. Understanding biology is fundamental to medicine, agriculture, and environmental science.\",\n    \"embedding\": [],\n    \"is_table\": false,\n    \"table_json\": null,\n    \"table_markdown\": null,\n    \"metadata\": {\n      \"subject\": \"Biology\",\n      \"topic\": \"Introduction\",\n      \"difficulty\": \"beginner\",\n      \"grade\": 10\n    }\n  }\n]"
+        },
+        "url": {
+          "raw": "http://localhost:8000/ingest/json",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "ingest",
+            "json"
+          ]
+        },
+        "description": "Ingest a single document via JSON payload to test basic functionality"
+      }
+    },
+    {
+      "name": "2. Test - Five Documents (JSON)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('✓ Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "var jsonData = pm.response.json();",
+              "",
+              "pm.test('✓ Job created with valid ID', function () {",
+              "    pm.expect(jsonData.job_id).to.be.a('string');",
+              "    pm.expect(jsonData.job_id.length).to.be.above(0);",
+              "});",
+              "",
+              "pm.test('✓ Initial status is pending', function () {",
+              "    pm.expect(jsonData.status).to.equal('pending');",
+              "});",
+              "",
+              "pm.collectionVariables.set('job_id_five', jsonData.job_id);",
+              "console.log('✓ Five documents job created: ' + jsonData.job_id);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "[\n  {\n    \"content\": \"Chapter 1: Introduction to Mathematics - This chapter covers fundamental concepts of algebra including variables, constants, equations, and basic operations. Students will learn to solve linear equations and understand properties of real numbers.\",\n    \"embedding\": [],\n    \"is_table\": false,\n    \"table_json\": null,\n    \"table_markdown\": null,\n    \"metadata\": {\"subject\": \"Mathematics\", \"chapter\": 1, \"difficulty\": \"beginner\", \"grade\": 9}\n  },\n  {\n    \"content\": \"Chapter 2: Advanced Algebra - This chapter explores polynomial functions, quadratic equations, and systems of equations. Students will master graphing functions and solving complex algebraic problems.\",\n    \"embedding\": [],\n    \"is_table\": false,\n    \"table_json\": null,\n    \"table_markdown\": null,\n    \"metadata\": {\"subject\": \"Mathematics\", \"chapter\": 2, \"difficulty\": \"intermediate\", \"grade\": 9}\n  },\n  {\n    \"content\": \"Chapter 3: Geometry Fundamentals - Learn about Euclidean geometry, including points, lines, planes, angles, and geometric shapes. This chapter covers theorems, proofs, and applications.\",\n    \"embedding\": [],\n    \"is_table\": false,\n    \"table_json\": null,\n    \"table_markdown\": null,\n    \"metadata\": {\"subject\": \"Mathematics\", \"chapter\": 3, \"difficulty\": \"intermediate\", \"grade\": 9}\n  },\n  {\n    \"content\": \"Chapter 4: Trigonometry Basics - Introduction to trigonometric functions including sine, cosine, and tangent. This chapter covers identities and applications in solving triangles.\",\n    \"embedding\": [],\n    \"is_table\": false,\n    \"table_json\": null,\n    \"table_markdown\": null,\n    \"metadata\": {\"subject\": \"Mathematics\", \"chapter\": 4, \"difficulty\": \"advanced\", \"grade\": 10}\n  },\n  {\n    \"content\": \"Chapter 5: Statistics and Probability - Understanding data analysis, probability theory, and statistical methods. This chapter covers descriptive statistics, distributions, and applications.\",\n    \"embedding\": [],\n    \"is_table\": false,\n    \"table_json\": null,\n    \"table_markdown\": null,\n    \"metadata\": {\"subject\": \"Mathematics\", \"chapter\": 5, \"difficulty\": \"advanced\", \"grade\": 10}\n  }\n]"
+        },
+        "url": {
+          "raw": "http://localhost:8000/ingest/json",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "ingest",
+            "json"
+          ]
+        },
+        "description": "Ingest multiple documents (5) via JSON payload to test batch processing"
+      }
+    },
+    {
+      "name": "3. Check Status - File Upload",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('✓ Status endpoint returns 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "var jsonData = pm.response.json();",
+              "",
+              "pm.test('✓ Response contains all required fields', function () {",
+              "    pm.expect(jsonData).to.have.property('job_id');",
+              "    pm.expect(jsonData).to.have.property('status');",
+              "    pm.expect(jsonData).to.have.property('total_records');",
+              "    pm.expect(jsonData).to.have.property('processed_records');",
+              "    pm.expect(jsonData).to.have.property('failed_records');",
+              "    pm.expect(jsonData).to.have.property('progress_percent');",
+              "});",
+              "",
+              "pm.test('✓ Progress is between 0-100', function () {",
+              "    pm.expect(jsonData.progress_percent).to.be.within(0, 100);",
+              "});",
+              "",
+              "var bar = '█'.repeat(Math.round(jsonData.progress_percent / 5)) + '░'.repeat(20 - Math.round(jsonData.progress_percent / 5));",
+              "console.log('Progress: [' + bar + '] ' + jsonData.progress_percent.toFixed(1) + '% | Status: ' + jsonData.status);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8000/ingest/status/{{job_id_file}}",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "ingest",
+            "status",
+            "{{job_id_file}}"
+          ]
+        },
+        "description": "Check status of file upload ingestion"
+      }
+    },
+    {
+      "name": "4. Check Status - Single Document",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('✓ Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "var jsonData = pm.response.json();",
+              "",
+              "pm.test('✓ Job ID is valid UUID format', function () {",
+              "    var uuid_regex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;",
+              "    pm.expect(jsonData.job_id).to.match(uuid_regex);",
+              "});",
+              "",
+              "pm.collectionVariables.set('job_id_large', jsonData.job_id);",
+              "console.log('✓ Large batch (100 docs) job created: ' + jsonData.job_id);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "[\n  {\"content\": \"Document 1: Physics - Classical Mechanics. Understanding motion, forces, and energy in physical systems is fundamental to physics.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Physics\", \"doc\": 1}},\n  {\"content\": \"Document 2: Chemistry - Chemical Bonding. Atoms combine to form molecules through chemical bonds.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Chemistry\", \"doc\": 2}},\n  {\"content\": \"Document 3: Biology - Cell Structure. Cells are the basic unit of life.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Biology\", \"doc\": 3}},\n  {\"content\": \"Document 4: History - Ancient Egypt. The Egyptian civilization developed along the Nile River.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"History\", \"doc\": 4}},\n  {\"content\": \"Document 5: Geography - Climate Zones. Earth's climate varies based on latitude and altitude.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Geography\", \"doc\": 5}},\n  {\"content\": \"Document 6: Literature - Shakespeare. William Shakespeare is widely regarded as the greatest writer in English.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Literature\", \"doc\": 6}},\n  {\"content\": \"Document 7: Economics - Supply and Demand. The principle of supply and demand determines prices in markets.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Economics\", \"doc\": 7}},\n  {\"content\": \"Document 8: Philosophy - Ethics. Ethics is the study of right and wrong.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Philosophy\", \"doc\": 8}},\n  {\"content\": \"Document 9: Art - Renaissance. The Renaissance was a period of great cultural and artistic achievement.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Art\", \"doc\": 9}},\n  {\"content\": \"Document 10: Music - Classical Period. The Classical period saw the development of the symphony and concerto.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Music\", \"doc\": 10}},\n  {\"content\": \"Document 11: Physics - Thermodynamics. Heat and temperature are fundamental concepts.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Physics\", \"doc\": 11}},\n  {\"content\": \"Document 12: Chemistry - Reactions. Chemical reactions rearrange atoms to form new substances.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Chemistry\", \"doc\": 12}},\n  {\"content\": \"Document 13: Biology - Genetics. Genes are units of heredity that determine traits.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Biology\", \"doc\": 13}},\n  {\"content\": \"Document 14: History - Medieval Europe. The Middle Ages saw the rise of feudalism.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"History\", \"doc\": 14}},\n  {\"content\": \"Document 15: Geography - Mountains. Mountain ranges are formed by tectonic activity.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Geography\", \"doc\": 15}},\n  {\"content\": \"Document 16: Literature - Jane Austen. Jane Austen's novels are masterpieces of English literature.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Literature\", \"doc\": 16}},\n  {\"content\": \"Document 17: Economics - Inflation. Inflation is the rate at which prices increase.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Economics\", \"doc\": 17}},\n  {\"content\": \"Document 18: Philosophy - Metaphysics. Metaphysics explores the fundamental nature of reality.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Philosophy\", \"doc\": 18}},\n  {\"content\": \"Document 19: Art - Impressionism. Impressionism revolutionized painting by focusing on light and color.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Art\", \"doc\": 19}},\n  {\"content\": \"Document 20: Music - Jazz. Jazz is an American musical art form characterized by improvisation.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Music\", \"doc\": 20}},\n  {\"content\": \"Document 21: Physics - Quantum Mechanics. Quantum mechanics describes behavior at atomic scales.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Physics\", \"doc\": 21}},\n  {\"content\": \"Document 22: Chemistry - Organic Chemistry. Organic chemistry focuses on carbon-containing compounds.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Chemistry\", \"doc\": 22}},\n  {\"content\": \"Document 23: Biology - Evolution. Evolution is the process by which organisms change over time.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Biology\", \"doc\": 23}},\n  {\"content\": \"Document 24: History - Renaissance. The Renaissance marked the beginning of the modern world.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"History\", \"doc\": 24}},\n  {\"content\": \"Document 25: Geography - Deserts. Deserts are arid regions with minimal precipitation.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Geography\", \"doc\": 25}},\n  {\"content\": \"Document 26: Literature - Charles Dickens. Charles Dickens' novels depict Victorian society.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Literature\", \"doc\": 26}},\n  {\"content\": \"Document 27: Economics - Unemployment. High unemployment indicates economic problems.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Economics\", \"doc\": 27}},\n  {\"content\": \"Document 28: Philosophy - Epistemology. Epistemology examines what knowledge is.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Philosophy\", \"doc\": 28}},\n  {\"content\": \"Document 29: Art - Modern Art. Modern art broke away from traditional representations.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Art\", \"doc\": 29}},\n  {\"content\": \"Document 30: Music - Opera. Opera combines music, drama, and visual art.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Music\", \"doc\": 30}},\n  {\"content\": \"Document 31: Physics - Relativity. Einstein's theories revolutionized our understanding of space and time.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Physics\", \"doc\": 31}},\n  {\"content\": \"Document 32: Chemistry - Periodic Table. The periodic table organizes elements by atomic number.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Chemistry\", \"doc\": 32}},\n  {\"content\": \"Document 33: Biology - Ecology. Ecology studies organisms and their interactions.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Biology\", \"doc\": 33}},\n  {\"content\": \"Document 34: History - Industrial Revolution. The Industrial Revolution transformed society.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"History\", \"doc\": 34}},\n  {\"content\": \"Document 35: Geography - Oceans. Oceans cover most of Earth's surface.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Geography\", \"doc\": 35}},\n  {\"content\": \"Document 36: Literature - Mark Twain. Mark Twain captured American society with humor.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Literature\", \"doc\": 36}},\n  {\"content\": \"Document 37: Economics - GDP. GDP measures the total economic output of a country.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Economics\", \"doc\": 37}},\n  {\"content\": \"Document 38: Philosophy - Logic. Logic studies reasoning and valid arguments.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Philosophy\", \"doc\": 38}},\n  {\"content\": \"Document 39: Art - Contemporary Art. Contemporary art reflects current times.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Art\", \"doc\": 39}},\n  {\"content\": \"Document 40: Music - Hip Hop. Hip hop is a cultural movement and art form.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Music\", \"doc\": 40}},\n  {\"content\": \"Document 41: Physics - Waves. Waves transfer energy through a medium.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Physics\", \"doc\": 41}},\n  {\"content\": \"Document 42: Chemistry - Acids and Bases. The pH scale measures acidity.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Chemistry\", \"doc\": 42}},\n  {\"content\": \"Document 43: Biology - Photosynthesis. Photosynthesis converts light energy to chemical energy.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Biology\", \"doc\": 43}},\n  {\"content\": \"Document 44: History - American Revolution. The American Revolution established the United States.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"History\", \"doc\": 44}},\n  {\"content\": \"Document 45: Geography - Forests. Forests provide habitat and produce oxygen.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Geography\", \"doc\": 45}},\n  {\"content\": \"Document 46: Literature - Homer. Homer's Iliad and Odyssey are foundational works.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Literature\", \"doc\": 46}},\n  {\"content\": \"Document 47: Economics - Trade. International trade allows countries to specialize.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Economics\", \"doc\": 47}},\n  {\"content\": \"Document 48: Philosophy - Aesthetics. Aesthetics explores what makes something beautiful.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Philosophy\", \"doc\": 48}},\n  {\"content\": \"Document 49: Art - Photography. Photography is an art form using cameras.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Art\", \"doc\": 49}},\n  {\"content\": \"Document 50: Music - Rock Music. Rock music emerged in the 1950s.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Music\", \"doc\": 50}},\n  {\"content\": \"Document 51: Physics - Energy. Energy is the capacity to do work.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Physics\", \"doc\": 51}},\n  {\"content\": \"Document 52: Chemistry - Biochemistry. Biochemistry studies chemical processes in organisms.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Chemistry\", \"doc\": 52}},\n  {\"content\": \"Document 53: Biology - Reproduction. Reproduction is a key characteristic of life.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Biology\", \"doc\": 53}},\n  {\"content\": \"Document 54: History - World War II. World War II was the deadliest conflict.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"History\", \"doc\": 54}},\n  {\"content\": \"Document 55: Geography - Rivers. Rivers transport water and sediment.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Geography\", \"doc\": 55}},\n  {\"content\": \"Document 56: Literature - Dostoyevsky. Dostoyevsky explored human psychology.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Literature\", \"doc\": 56}},\n  {\"content\": \"Document 57: Economics - Macroeconomics. Macroeconomics studies economy-wide phenomena.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Economics\", \"doc\": 57}},\n  {\"content\": \"Document 58: Philosophy - Political Philosophy. Political philosophy examines governance.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Philosophy\", \"doc\": 58}},\n  {\"content\": \"Document 59: Art - Sculpture. Sculpture is a three-dimensional art form.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Art\", \"doc\": 59}},\n  {\"content\": \"Document 60: Music - Symphony. A symphony is a large orchestral work.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Music\", \"doc\": 60}},\n  {\"content\": \"Document 61: Physics - Electricity. Electricity involves the flow of electrons.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Physics\", \"doc\": 61}},\n  {\"content\": \"Document 62: Chemistry - Electrochemistry. Electrochemistry studies electron transfer.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Chemistry\", \"doc\": 62}},\n  {\"content\": \"Document 63: Biology - Human Anatomy. Anatomy studies the structure of the body.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Biology\", \"doc\": 63}},\n  {\"content\": \"Document 64: History - Ancient Rome. Rome was one of history's greatest civilizations.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"History\", \"doc\": 64}},\n  {\"content\": \"Document 65: Geography - Soil. Soil is essential for agriculture.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Geography\", \"doc\": 65}},\n  {\"content\": \"Document 66: Literature - Tolstoy. War and Peace is often the greatest novel.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Literature\", \"doc\": 66}},\n  {\"content\": \"Document 67: Economics - Microeconomics. Microeconomics examines supply and demand.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Economics\", \"doc\": 67}},\n  {\"content\": \"Document 68: Philosophy - Free Will. Free will asks if humans can make choices.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Philosophy\", \"doc\": 68}},\n  {\"content\": \"Document 69: Art - Painting. Painting is a visual art form using pigments.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Art\", \"doc\": 69}},\n  {\"content\": \"Document 70: Music - Beethoven. Beethoven was a revolutionary composer.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Music\", \"doc\": 70}},\n  {\"content\": \"Document 71: Physics - Magnetism. Magnetism is the force exerted by magnets.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Physics\", \"doc\": 71}},\n  {\"content\": \"Document 72: Chemistry - Polymer Chemistry. Polymers are long-chain molecules.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Chemistry\", \"doc\": 72}},\n  {\"content\": \"Document 73: Biology - Microbiology. Microbiology studies microscopic organisms.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Biology\", \"doc\": 73}},\n  {\"content\": \"Document 74: History - Cold War. The Cold War lasted decades after World War II.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"History\", \"doc\": 74}},\n  {\"content\": \"Document 75: Geography - Weather. Weather is the state of the atmosphere.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Geography\", \"doc\": 75}},\n  {\"content\": \"Document 76: Literature - Cervantes. Don Quixote is the first modern novel.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Literature\", \"doc\": 76}},\n  {\"content\": \"Document 77: Economics - Investment. Investment generates future returns.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Economics\", \"doc\": 77}},\n  {\"content\": \"Document 78: Philosophy - Existence. Existentialism emphasizes individual freedom.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Philosophy\", \"doc\": 78}},\n  {\"content\": \"Document 79: Art - Architecture. Architecture designs buildings and structures.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Art\", \"doc\": 79}},\n  {\"content\": \"Document 80: Music - Piano. The piano is one of the most versatile instruments.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Music\", \"doc\": 80}},\n  {\"content\": \"Document 81: Physics - Nuclear Physics. Nuclear physics studies atomic nuclei.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Physics\", \"doc\": 81}},\n  {\"content\": \"Document 82: Chemistry - Nanotechnology. Nanotechnology works at atomic scale.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Chemistry\", \"doc\": 82}},\n  {\"content\": \"Document 83: Biology - Botany. Botany studies plants.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Biology\", \"doc\": 83}},\n  {\"content\": \"Document 84: History - Medieval History. The Middle Ages developed feudalism.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"History\", \"doc\": 84}},\n  {\"content\": \"Document 85: Geography - Mountains. Mountains influence climate and life.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Geography\", \"doc\": 85}},\n  {\"content\": \"Document 86: Literature - Austen. Austen wrote master works of romance.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Literature\", \"doc\": 86}},\n  {\"content\": \"Document 87: Economics - Finance. Finance deals with money management.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Economics\", \"doc\": 87}},\n  {\"content\": \"Document 88: Philosophy - Mind. Philosophy of mind explores consciousness.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Philosophy\", \"doc\": 88}},\n  {\"content\": \"Document 89: Art - Drawing. Drawing is a fundamental art technique.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Art\", \"doc\": 89}},\n  {\"content\": \"Document 90: Music - Violin. The violin is played with a bow.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Music\", \"doc\": 90}},\n  {\"content\": \"Document 91: Physics - Optics. Optics studies light and its behavior.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Physics\", \"doc\": 91}},\n  {\"content\": \"Document 92: Chemistry - Materials Science. Materials science studies properties.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Chemistry\", \"doc\": 92}},\n  {\"content\": \"Document 93: Biology - Zoology. Zoology studies animals.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Biology\", \"doc\": 93}},\n  {\"content\": \"Document 94: History - Modern History. Modern history covers recent centuries.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"History\", \"doc\": 94}},\n  {\"content\": \"Document 95: Geography - Climate. Climate is the long-term weather pattern.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Geography\", \"doc\": 95}},\n  {\"content\": \"Document 96: Literature - Hemingway. Hemingway revolutionized modern prose.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Literature\", \"doc\": 96}},\n  {\"content\": \"Document 97: Economics - Markets. Markets exchange goods and services.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Economics\", \"doc\": 97}},\n  {\"content\": \"Document 98: Philosophy - Phenomenology. Phenomenology studies consciousness.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Philosophy\", \"doc\": 98}},\n  {\"content\": \"Document 99: Art - Printmaking. Printmaking creates multiple image copies.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Art\", \"doc\": 99}},\n  {\"content\": \"Document 100: Music - Flute. The flute is a wind instrument.\", \"embedding\": [], \"is_table\": false, \"table_json\": null, \"table_markdown\": null, \"metadata\": {\"subject\": \"Music\", \"doc\": 100}}\n]"
+        },
+        "url": {
+          "raw": "http://localhost:8000/ingest/json",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "ingest",
+            "json"
+          ]
+        },
+        "description": "Test with a large batch of 100 documents to test batch processing and embedding"
+      }
+    },
+    {
+      "name": "5. Check Status - Single",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('✓ Status endpoint returns 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "var jsonData = pm.response.json();",
+              "",
+              "pm.test('✓ Response contains all required fields', function () {",
+              "    pm.expect(jsonData).to.have.property('job_id');",
+              "    pm.expect(jsonData).to.have.property('status');",
+              "    pm.expect(jsonData).to.have.property('total_records');",
+              "    pm.expect(jsonData).to.have.property('processed_records');",
+              "    pm.expect(jsonData).to.have.property('failed_records');",
+              "    pm.expect(jsonData).to.have.property('progress_percent');",
+              "});",
+              "",
+              "pm.test('✓ Progress is between 0-100', function () {",
+              "    pm.expect(jsonData.progress_percent).to.be.within(0, 100);",
+              "});",
+              "",
+              "var bar = '█'.repeat(Math.round(jsonData.progress_percent / 5)) + '░'.repeat(20 - Math.round(jsonData.progress_percent / 5));",
+              "console.log('Progress: [' + bar + '] ' + jsonData.progress_percent.toFixed(1) + '% | Status: ' + jsonData.status);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8000/ingest/status/{{job_id_single}}",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "ingest",
+            "status",
+            "{{job_id_single}}"
+          ]
+        },
+        "description": "Check status of single document ingestion"
+      }
+    },
+    {
+      "name": "5. Check Status - Five Documents",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('✓ Status returns 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "var jsonData = pm.response.json();",
+              "pm.test('✓ Total equals 5 documents', function () {",
+              "    pm.expect(jsonData.total_records).to.equal(5);",
+              "});",
+              "",
+              "var bar = '█'.repeat(Math.round(jsonData.progress_percent / 5)) + '░'.repeat(20 - Math.round(jsonData.progress_percent / 5));",
+              "console.log('Progress: [' + bar + '] ' + jsonData.progress_percent.toFixed(1) + '%');"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8000/ingest/status/{{job_id_five}}",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "ingest",
+            "status",
+            "{{job_id_five}}"
+          ]
+        },
+        "description": "Check status of five documents ingestion"
+      }
+    },
+    {
+      "name": "ERROR - Empty Array",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('✓ Empty array returns 400', function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "",
+              "console.log('✓ Correctly rejected empty array');"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "[]"
+        },
+        "url": {
+          "raw": "http://localhost:8000/ingest/json",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "ingest",
+            "json"
+          ]
+        },
+        "description": "Test error handling for empty request"
+      }
+    },
+    {
+      "name": "ERROR - Missing Content",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('✓ Missing content returns 422', function () {",
+              "    pm.response.to.have.status(422);",
+              "});",
+              "",
+              "console.log('✓ Correctly rejected document without content field');"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "[{\"embedding\": [], \"is_table\": false}]"
+        },
+        "url": {
+          "raw": "http://localhost:8000/ingest/json",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "ingest",
+            "json"
+          ]
+        },
+        "description": "Test validation of required fields"
+      }
+    },
+    {
+      "name": "ERROR - Invalid Job ID",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('✓ Invalid job ID returns 404', function () {",
+              "    pm.response.to.have.status(404);",
+              "});",
+              "",
+              "console.log('✓ Correctly returned 404 for invalid job ID');"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8000/ingest/status/invalid-job-id-xyz",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "ingest",
+            "status",
+            "invalid-job-id-xyz"
+          ]
+        },
+        "description": "Test error handling for non-existent job"
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "job_id_file",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "job_id_single",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "job_id_five",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
