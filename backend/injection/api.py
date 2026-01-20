@@ -47,11 +47,25 @@ async def ingest_file(file: UploadFile = File(...)):
         
         # Validate each document
         validated_docs = []
-        for doc in documents:
+        errors = []
+        for idx, doc in enumerate(documents):
             try:
                 validated_docs.append(InputDocument(**doc))
             except Exception as e:
-                raise HTTPException(status_code=422, detail=f"Document validation error: {str(e)}")
+                error_msg = f"Document {idx}: {str(e)}"
+                errors.append(error_msg)
+                logger.warning(f"⚠️  {error_msg}")
+        
+        if errors:
+            error_details = "\n".join(errors[:3])  # Show first 3 errors
+            logger.error(f"❌ {len(errors)} document(s) failed validation")
+            raise HTTPException(
+                status_code=422, 
+                detail=f"{len(errors)} document(s) failed validation.\n{error_details}"
+            )
+        
+        if not validated_docs:
+            raise HTTPException(status_code=400, detail="No valid documents after validation")
         
         job_id = job_manager.create_job()
         logger.info(f"📥 File upload received - {len(validated_docs)} documents - File: {file.filename} - Job ID: {job_id}")

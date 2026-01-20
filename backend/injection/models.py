@@ -19,6 +19,10 @@ class InputDocument(BaseModel):
     table_json: Optional[Dict[str, Any]] = None
     table_markdown: Optional[str] = None
     metadata: Optional[Dict[str, Any]] = Field(default_factory=dict)
+    question: Optional[Dict[str, Any]] = None
+
+    class Config:
+        extra = 'allow'  # Allow additional fields
 
     @validator('content')
     def content_not_empty(cls, v):

@@ -1,0 +1,62 @@
+from fastapi import FastAPI
+from fastapi.responses import JSONResponse
+from contextlib import asynccontextmanager
+import logging
+from observability import logger
+from mongo.client import mongo_client
+from api import router as retrieval_router
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Startup and shutdown events."""
+    logger.info("🚀 ExamSmith Retrieval Backend starting...")
+    yield
+    logger.info("🛑 Shutting down...")
+    mongo_client.close()
+
+# Create FastAPI app
+app = FastAPI(
+    title="ExamSmith Retrieval API",
+    description="AI-powered retrieval and answer evaluation for TN SSLC English",
+    version="1.0.0",
+    lifespan=lifespan,
+)
+
+# Include routes
+app.include_router(retrieval_router, prefix="/api/v1", tags=["retrieval"])
+
+# Health check
+@app.get("/health")
+async def health_check():
+    """Health check endpoint."""
+    return {
+        "status": "healthy",
+        "mongodb": "connected" if mongo_client.client else "disconnected",
+        "service": "ExamSmith Retrieval Backend"
+    }
+
+# Global exception handler
+@app.exception_handler(Exception)
+async def global_exception_handler(request, exc):
+    logger.error(f"Unhandled exception: {str(exc)}")
+    return JSONResponse(
+        status_code=500,
+        content={"error": "Internal server error", "detail": str(exc)}
+    )
+
+if __name__ == "__main__":
+    import uvicorn
+    from config import settings
+    
+    uvicorn.run(
+        app,
+        host=settings.fastapi_host,
+        port=settings.fastapi_port,
+        log_level=settings.log_level.lower(),
+    )

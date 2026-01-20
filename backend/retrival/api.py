@@ -1,0 +1,264 @@
+from fastapi import APIRouter, HTTPException, Depends
+from models import (
+    AskRequest, AskResponse,
+    SimilarQuestionsRequest, SimilarQuestionsResponse,
+    GeneratePaperRequest, GeneratePaperResponse,
+    EvaluateAnswerRequest, EvaluateAnswerResponse
+)
+from retriever.concept_explanation import ConceptExplanationRetriever
+from retriever.question_similarity import QuestionSimilarityRetriever
+from retriever.paper_generation import PaperGenerationRetriever
+from retriever.answer_evaluation import AnswerEvaluationRetriever
+from llm.factory import llm
+from observability import track_retrieval, metrics
+import logging
+import uuid
+
+logger = logging.getLogger(__name__)
+router = APIRouter()
+
+# ===== /ask Endpoint =====
+@router.post("/ask", response_model=AskResponse)
+@track_retrieval("concept_explanation")
+async def ask(request: AskRequest) -> AskResponse:
+    """
+    Student doubts and concept explanations using hybrid search on textbook.
+    """
+    try:
+        # Retrieve relevant context
+        retriever = ConceptExplanationRetriever()
+        context_blocks, citations = await retriever.retrieve(
+            query=request.question,
+            vector_weight=request.hybrid_search.vector_weight,
+            bm25_weight=request.hybrid_search.bm25_weight,
+            top_k=request.hybrid_search.top_k
+        )
+        
+        if not context_blocks:
+            return AskResponse(
+                answer="No relevant content found in the textbook.",
+                sources=[],
+                context_preview="",
+                retrieval_mode="concept_explanation"
+            )
+        
+        # Generate answer using Groq
+        context_text = "\n\n".join(context_blocks)
+        prompt = f"""You are an English teacher for TN SSLC (10th Standard).
+A student has asked the following question:
+
+STUDENT QUESTION:
+{request.question}
+
+RELEVANT TEXTBOOK CONTENT:
+{context_text}
+
+Provide a clear, concise explanation using ONLY the provided textbook content.
+Do not hallucinate or add information outside the textbook.
+Answer in a way that a 10th standard student can understand."""
+        
+        answer = await llm.generate(prompt, max_tokens=512, temperature=0.7)
+        
+        return AskResponse(
+            answer=answer,
+            sources=citations,
+            context_preview=context_text[:200],
+            retrieval_mode="concept_explanation"
+        )
+    
+    except Exception as e:
+        logger.error(f"Ask endpoint failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ===== /similar-questions Endpoint =====
+@router.post("/similar-questions", response_model=SimilarQuestionsResponse)
+@track_retrieval("question_similarity")
+async def similar_questions(request: SimilarQuestionsRequest) -> SimilarQuestionsResponse:
+    """
+    Find similar exam questions from question paper collection.
+    """
+    try:
+        retriever = QuestionSimilarityRetriever()
+        context_blocks, citations = await retriever.retrieve(
+            query=request.question_text,
+            top_k=request.top_k,
+            difficulty=request.difficulty
+        )
+        
+        if not context_blocks:
+            return SimilarQuestionsResponse(questions=[], total_found=0)
+        
+        # Build question results
+        questions = []
+        for i, (block, citation) in enumerate(zip(context_blocks, citations)):
+            from mongo.client import mongo_client
+            qp_collection = mongo_client.questionpapers_collection
+            
+            # Fetch full question details
+            doc = qp_collection.find_one({"_id": citation.chunk_id})
+            if doc:
+                question = doc.get("question", {})
+                questions.append({
+                    "question_number": citation.question_number,
+                    "question_text": block,
+                    "question_type": question.get("type", "unknown"),
+                    "answer_key": question.get("answer", {}).get("text"),
+                    "marks": doc.get("metadata", {}).get("marks"),
+                    "year": citation.year,
+                    "similarity_score": 0.85 - (i * 0.05),  # Mock scores
+                    "choices": question.get("choices")
+                })
+        
+        return SimilarQuestionsResponse(questions=questions, total_found=len(questions))
+    
+    except Exception as e:
+        logger.error(f"Similar questions endpoint failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ===== /generate-paper Endpoint =====
+@router.post("/generate-paper", response_model=GeneratePaperResponse)
+@track_retrieval("paper_generation")
+async def generate_paper(request: GeneratePaperRequest) -> GeneratePaperResponse:
+    """
+    Generate a TN SSLC model question paper with strict structure.
+    """
+    try:
+        paper_id = str(uuid.uuid4())
+        retriever = PaperGenerationRetriever()
+        
+        # Retrieve questions for each section
+        all_questions = []
+        
+        # Part I: 14 MCQs
+        part_i_q = await retriever.retrieve_section_questions("part_i", 14)
+        all_questions.extend(part_i_q)
+        
+        # Part II sections
+        part_ii_sections = {
+            "prose": (4, 3),      # (out_of, select)
+            "poetry": (4, 3),
+            "grammar": (5, 3),
+            "map": (1, 1)
+        }
+        for section, (out_of, select) in part_ii_sections.items():
+            q = await retriever.retrieve_section_questions(section, out_of)
+            all_questions.extend(q)
+        
+        # Part III sections
+        part_iii_sections = {
+            "prose_paragraph": (4, 2),
+            "poetry": (4, 2),
+            "supplementary": (2, 1),
+            "writing": (6, 4),
+            "memory_poem": (1, 1)
+        }
+        for section, (out_of, select) in part_iii_sections.items():
+            q = await retriever.retrieve_section_questions(section, out_of)
+            all_questions.extend(q)
+        
+        # Part IV
+        part_iv_q = await retriever.retrieve_section_questions("part_iv", 2)
+        all_questions.extend(part_iv_q)
+        
+        # Format questions for response
+        questions = []
+        for q in all_questions:
+            questions.append({
+                "question_number": q.get("question", {}).get("number"),
+                "question_text": q.get("content"),
+                "type": q.get("question", {}).get("type"),
+                "marks": q.get("metadata", {}).get("marks"),
+                "section": q.get("metadata", {}).get("section")
+            })
+        
+        return GeneratePaperResponse(
+            paper_id=paper_id,
+            status="generated",
+            questions=questions,
+            total_marks=100,
+            estimated_time_minutes=180,
+            blueprint={
+                "part_i": {"count": 14, "marks_each": 1},
+                "part_ii": {
+                    "prose": {"count": 3, "out_of": 4, "marks_each": 2},
+                    "poetry": {"count": 3, "out_of": 4, "marks_each": 2},
+                    "grammar": {"count": 3, "out_of": 5, "marks_each": 2},
+                    "map": {"count": 1, "marks_each": 2},
+                },
+                "part_iii": {
+                    "prose_paragraph": {"count": 2, "out_of": 4, "marks_each": 5},
+                    "poetry": {"count": 2, "out_of": 4, "marks_each": 5},
+                    "supplementary": {"count": 1, "out_of": 2, "marks_each": 5},
+                    "writing": {"count": 4, "out_of": 6, "marks_each": 5},
+                    "memory_poem": {"count": 1, "marks_each": 5},
+                },
+                "part_iv": {
+                    "question_46": {"marks": 8, "type": "comprehension"},
+                    "question_47": {"marks": 8, "type": "prose/poem"},
+                }
+            }
+        )
+    
+    except Exception as e:
+        logger.error(f"Generate paper endpoint failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ===== /evaluate-answer Endpoint =====
+@router.post("/evaluate-answer", response_model=EvaluateAnswerResponse)
+@track_retrieval("answer_evaluation")
+async def evaluate_answer(request: EvaluateAnswerRequest) -> EvaluateAnswerResponse:
+    """
+    Evaluate a student's answer against official answer key.
+    """
+    try:
+        # Retrieve official answer and evidence
+        retriever = AnswerEvaluationRetriever()
+        context_blocks, citations = await retriever.retrieve(
+            question_id=request.question_id,
+            question_text=request.question_text
+        )
+        
+        if not context_blocks:
+            raise HTTPException(status_code=404, detail="Question not found")
+        
+        official_answer = context_blocks[0] if context_blocks else ""
+        evidence_chunks = context_blocks[1:] if len(context_blocks) > 1 else []
+        
+        # Use Groq to evaluate
+        evaluation = await llm.evaluate_answer(
+            official_answer=official_answer,
+            student_answer=request.student_answer,
+            evidence_chunks=evidence_chunks
+        )
+        
+        from models import EvaluationFeedback
+        feedback = EvaluationFeedback(
+            match_percentage=evaluation.get("match_percentage", 0),
+            missing_points=evaluation.get("missing_points", []),
+            extra_points=evaluation.get("extra_points", []),
+            improvements=evaluation.get("improvements", ""),
+            evidence_chunks=evidence_chunks[:3]  # Top 3 evidence chunks
+        )
+        
+        return EvaluateAnswerResponse(
+            question=request.question_text,
+            student_answer=request.student_answer,
+            official_answer=official_answer,
+            feedback=feedback,
+            confidence=min(0.95, max(0.5, evaluation.get("match_percentage", 0) / 100))
+        )
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Evaluate answer endpoint failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ===== Metrics Endpoint =====
+@router.get("/metrics")
+async def get_metrics():
+    """Get retrieval performance metrics."""
+    return {
+        "retrieval_stats": metrics.get_stats(),
+        "timestamp": str(__import__("datetime").datetime.utcnow())
+    }
