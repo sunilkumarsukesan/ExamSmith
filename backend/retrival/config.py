@@ -21,6 +21,11 @@ class Settings(BaseSettings):
     groq_api_key: str = Field(..., alias="GROQ_API_KEY")
     groq_model: str = Field("meta-llama/llama-4-maverick-17b-128e-instruct", alias="GROQ_MODEL")
     
+    # Mistral Embeddings (for semantic search)
+    mistral_api_key: str = Field("", alias="MISTRAL_API_KEY")
+    mistral_embed_model: str = Field("mistral-embed", alias="MISTRAL_EMBED_MODEL")
+    mistral_embed_dimension: int = Field(1024, alias="MISTRAL_EMBED_DIMENSION")
+    
     # FastAPI
     fastapi_host: str = Field("0.0.0.0", alias="API_HOST")
     fastapi_port: int = Field(8000, alias="API_PORT")

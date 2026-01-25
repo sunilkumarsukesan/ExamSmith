@@ -2,6 +2,7 @@ from .base import RetrieverMode
 from mongo.client import mongo_client
 from mongo.search import HybridSearch, HybridSearchConfig
 from models import Citation
+from embeddings import embed_query
 import logging
 
 logger = logging.getLogger(__name__)
@@ -37,9 +38,16 @@ class QuestionSimilarityRetriever(RetrieverMode):
         if difficulty:
             filters["metadata.difficulty"] = difficulty
         
-        # If no embedding provided, try vector search with placeholder
+        # Generate REAL embedding using Mistral API
         if not query_embedding:
-            query_embedding = [0.0] * 1024  # Placeholder
+            try:
+                query_embedding = await embed_query(query)
+                logger.debug(f"Generated Mistral embedding for similarity search")
+            except Exception as e:
+                logger.error(f"Embedding generation failed: {str(e)}")
+                # Return empty if embeddings fail - semantic search is required
+                logger.warning("Cannot perform similarity search without embeddings")
+                return [], []
         
         try:
             # Use vector search only for question similarity

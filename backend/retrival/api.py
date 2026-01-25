@@ -120,61 +120,38 @@ async def similar_questions(request: SimilarQuestionsRequest) -> SimilarQuestion
 @track_retrieval("paper_generation")
 async def generate_paper(request: GeneratePaperRequest) -> GeneratePaperResponse:
     """
-    Generate a TN SSLC model question paper with strict structure.
+    Generate a TN SSLC model question paper with ORIGINAL questions.
+    
+    Uses LLM-based question generation with paraphrased context.
+    Enforces coverage rules and returns complete paper in JSON format.
     """
     try:
         paper_id = str(uuid.uuid4())
         retriever = PaperGenerationRetriever()
         
-        # Retrieve questions for each section
+        logger.info(f"Paper generation request received (ID: {paper_id})")
+        
+        # Call the new generation method
+        paper = await retriever.generate_complete_paper()
+        
+        # Extract questions for response
         all_questions = []
         
-        # Part I: 14 MCQs
-        part_i_q = await retriever.retrieve_section_questions("part_i", 14)
-        all_questions.extend(part_i_q)
+        # Collect questions from all parts
+        for part_key, part_data in paper.get("parts", {}).items():
+            if "questions" in part_data:
+                all_questions.extend(part_data["questions"])
+            elif "sections" in part_data:
+                for section_key, section_data in part_data["sections"].items():
+                    if "questions" in section_data:
+                        all_questions.extend(section_data["questions"])
         
-        # Part II sections
-        part_ii_sections = {
-            "prose": (4, 3),      # (out_of, select)
-            "poetry": (4, 3),
-            "grammar": (5, 3),
-            "map": (1, 1)
-        }
-        for section, (out_of, select) in part_ii_sections.items():
-            q = await retriever.retrieve_section_questions(section, out_of)
-            all_questions.extend(q)
-        
-        # Part III sections
-        part_iii_sections = {
-            "prose_paragraph": (4, 2),
-            "poetry": (4, 2),
-            "supplementary": (2, 1),
-            "writing": (6, 4),
-            "memory_poem": (1, 1)
-        }
-        for section, (out_of, select) in part_iii_sections.items():
-            q = await retriever.retrieve_section_questions(section, out_of)
-            all_questions.extend(q)
-        
-        # Part IV
-        part_iv_q = await retriever.retrieve_section_questions("part_iv", 2)
-        all_questions.extend(part_iv_q)
-        
-        # Format questions for response
-        questions = []
-        for q in all_questions:
-            questions.append({
-                "question_number": q.get("question", {}).get("number"),
-                "question_text": q.get("content"),
-                "type": q.get("question", {}).get("type"),
-                "marks": q.get("metadata", {}).get("marks"),
-                "section": q.get("metadata", {}).get("section")
-            })
+        logger.info(f"Paper generation complete: {len(all_questions)} questions")
         
         return GeneratePaperResponse(
             paper_id=paper_id,
             status="generated",
-            questions=questions,
+            questions=all_questions,
             total_marks=100,
             estimated_time_minutes=180,
             blueprint={
@@ -193,10 +170,11 @@ async def generate_paper(request: GeneratePaperRequest) -> GeneratePaperResponse
                     "memory_poem": {"count": 1, "marks_each": 5},
                 },
                 "part_iv": {
-                    "question_46": {"marks": 8, "type": "comprehension"},
-                    "question_47": {"marks": 8, "type": "prose/poem"},
+                    "question_46": {"marks": 8, "type": "internal_choice"},
+                    "question_47": {"marks": 8, "type": "internal_choice"},
                 }
-            }
+            },
+            coverage_validation=paper.get("coverage_validation")
         )
     
     except Exception as e:

@@ -2,6 +2,7 @@ from .base import RetrieverMode
 from mongo.client import mongo_client
 from mongo.search import HybridSearch, HybridSearchConfig
 from models import Citation
+from embeddings import embed_query
 import logging
 
 logger = logging.getLogger(__name__)
@@ -74,8 +75,14 @@ class AnswerEvaluationRetriever(RetrieverMode):
             
             # Step 2: Retrieve supporting textbook evidence
             if textbook_collection and (query or question_text):
+                # Generate REAL embedding using Mistral API
                 if not query_embedding:
-                    query_embedding = [0.0] * 1024
+                    try:
+                        query_embedding = await embed_query(query or question_text)
+                        logger.debug("Generated Mistral embedding for evidence retrieval")
+                    except Exception as e:
+                        logger.warning(f"Embedding failed, using BM25-only: {str(e)}")
+                        query_embedding = [0.0] * 1024
                 
                 config = HybridSearchConfig(
                     vector_weight=vector_weight,

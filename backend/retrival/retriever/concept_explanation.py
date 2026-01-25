@@ -2,6 +2,7 @@ from .base import RetrieverMode
 from mongo.client import mongo_client
 from mongo.search import HybridSearch, HybridSearchConfig
 from models import Citation
+from embeddings import embed_query
 import logging
 
 logger = logging.getLogger(__name__)
@@ -47,9 +48,22 @@ class ConceptExplanationRetriever(RetrieverMode):
             top_k=top_k
         )
         
-        # For now, use empty embedding if not provided (MongoDB will handle vector search differently)
+        # Generate REAL embedding using Mistral API
+        # NO placeholder embeddings allowed per instruction file
         if not query_embedding:
-            query_embedding = [0.0] * 1024  # Placeholder
+            try:
+                query_embedding = await embed_query(query)
+                logger.debug(f"Generated Mistral embedding for query: {query[:50]}...")
+            except Exception as e:
+                logger.error(f"Embedding generation failed: {str(e)}")
+                # Fallback to BM25-only search (vector weight = 0)
+                logger.warning("Falling back to BM25-only search (no embeddings)")
+                config = HybridSearchConfig(
+                    vector_weight=0.0,
+                    bm25_weight=1.0,
+                    top_k=top_k
+                )
+                query_embedding = [0.0] * 1024  # Will be ignored with weight=0
         
         # Perform hybrid search
         results = await HybridSearch.search(

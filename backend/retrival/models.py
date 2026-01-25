@@ -43,6 +43,12 @@ class QuestionResult(BaseModel):
     year: Optional[int]
     similarity_score: float
     choices: Optional[List[str]] = None  # For MCQ
+    # Tracking fields for validation
+    poem_name: Optional[str] = None  # For poetry questions
+    story_name: Optional[str] = None  # For supplementary questions
+    grammar_area: Optional[str] = None  # For grammar questions (VOICE, SPEECH, etc.)
+    choice_group: Optional[str] = None  # For internal choice (A, B, C)
+    lesson_number: Optional[int] = None  # For prose lessons (1-6)
 
 class SimilarQuestionsResponse(BaseModel):
     questions: List[QuestionResult]
