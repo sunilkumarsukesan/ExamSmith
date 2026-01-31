@@ -9,11 +9,19 @@ from observability import logger
 from mongo.client import mongo_client
 from api import router as retrieval_router
 
+# Import new role-based routers
+from routes.auth_routes import router as auth_router
+from routes.admin_routes import router as admin_router
+from routes.instructor_routes import router as instructor_router
+from routes.student_routes import router as student_router
+from routes.pdf_routes import router as pdf_router
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
+
 
 # Suppress asyncio connection reset errors on Windows
 if sys.platform == 'win32':
@@ -46,7 +54,15 @@ app.add_middleware(
 )
 
 # Include routes
+# Existing retrieval routes (unchanged)
 app.include_router(retrieval_router, prefix="/api/v1", tags=["retrieval"])
+
+# New role-based routes
+app.include_router(auth_router, prefix="/api/v1", tags=["authentication"])
+app.include_router(admin_router, prefix="/api/v1", tags=["admin"])
+app.include_router(instructor_router, prefix="/api/v1", tags=["instructor"])
+app.include_router(student_router, prefix="/api/v1", tags=["student"])
+app.include_router(pdf_router, prefix="/api/v1", tags=["pdf"])
 
 # Health check
 @app.get("/health")

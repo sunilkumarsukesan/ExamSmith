@@ -40,6 +40,22 @@ class Settings(BaseSettings):
     # Logging
     log_level: str = Field("INFO", alias="LOG_LEVEL")
     
+    # JWT Authentication
+    jwt_secret_key: str = Field("examsmith-secret-key-change-in-production", alias="JWT_SECRET_KEY")
+    jwt_algorithm: str = Field("HS256", alias="JWT_ALGORITHM")
+    jwt_expire_minutes: int = Field(1440, alias="JWT_EXPIRE_MINUTES")
+    
+    # ExamSmith Application Database
+    mongodb_users_db: str = Field("examsmith", alias="MONGODB_USERS_DB")
+    
+    # Pipeline Database (Instructor approved papers for students)
+    mongodb_pipeline_db: str = Field("10_english", alias="MONGODB_PIPELINE_DB")
+    mongodb_pipeline_collection: str = Field("generatedQuestionPapers", alias="MONGODB_PIPELINE_COLLECTION")
+    
+    # Student Attempts & Evaluations
+    mongodb_attempts_collection: str = Field("student_attempts", alias="MONGODB_ATTEMPTS_COLLECTION")
+    mongodb_evaluations_collection: str = Field("evaluations", alias="MONGODB_EVALUATIONS_COLLECTION")
+    
     class Config:
         env_file = str(env_file_path) if env_file_path.exists() else ".env"
         extra = "allow"
