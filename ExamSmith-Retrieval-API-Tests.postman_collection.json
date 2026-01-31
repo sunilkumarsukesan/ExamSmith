@@ -1009,7 +1009,239 @@
       ]
     },
     {
-      "name": "7. Coverage Validation Tests",
+      "name": "7. Quality Review",
+      "item": [
+        {
+          "name": "Review Paper - Full Quality Review",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has reviewed status', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql('reviewed');",
+                  "});",
+                  "",
+                  "pm.test('Response has questions array', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('questions');",
+                  "    pm.expect(jsonData.questions).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test('Response has review_report', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('review_report');",
+                  "    pm.expect(jsonData.review_report).to.have.property('total_fixes');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"questions\": [\n    {\n      \"question_number\": 1,\n      \"part\": \"Part I\",\n      \"section\": \"MCQ\",\n      \"question_text\": \"Who is the author of His First Flight?\",\n      \"marks\": 1,\n      \"lesson_type\": \"prose\",\n      \"unit_name\": \"His First Flight\",\n      \"options\": [\"Liam O'Flaherty\", \"Robert Frost\", \"William Shakespeare\", \"Guy de Maupassant\"],\n      \"correct_answer\": \"A\"\n    },\n    {\n      \"question_number\": 15,\n      \"part\": \"Part II\",\n      \"section\": \"Grammar\",\n      \"question_text\": \"Transform the following sentence: She is singing.\",\n      \"marks\": 2,\n      \"lesson_type\": \"grammar\",\n      \"grammar_area\": \"voice\"\n    },\n    {\n      \"question_number\": 40,\n      \"part\": \"Part III\",\n      \"section\": \"Writing Skills\",\n      \"question_text\": \"Write a formal letter to the Municipal Commissioner about garbage collection in your prestigious gated community in metropolitan area.\",\n      \"marks\": 5,\n      \"lesson_type\": \"writing\",\n      \"internal_choice\": true\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/review-paper",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["review-paper"]
+            },
+            "description": "Apply all quality review rules to a set of questions including MCQ validation, grammar fix, and writing context simplification"
+          }
+        },
+        {
+          "name": "Review Paper - MCQ Quality Check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('MCQ questions reviewed', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.questions.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test('Review report tracks MCQ fixes', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.review_report).to.have.property('mcq_fixes');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"questions\": [\n    {\n      \"question_number\": 1,\n      \"part\": \"Part I\",\n      \"section\": \"MCQ\",\n      \"question_text\": \"The theme of His First Flight is ___\",\n      \"marks\": 1,\n      \"lesson_type\": \"prose\",\n      \"unit_name\": \"His First Flight\",\n      \"options\": [\"courage\", \"courage and bravery\", \"taking the first step\", \"flying\"],\n      \"correct_answer\": \"A\"\n    },\n    {\n      \"question_number\": 2,\n      \"part\": \"Part I\",\n      \"section\": \"MCQ\",\n      \"question_text\": \"Who wrote The Road Not Taken?\",\n      \"marks\": 1,\n      \"lesson_type\": \"poetry\",\n      \"unit_name\": \"The Road Not Taken\",\n      \"options\": [\"Robert Frost\", \"John Keats\", \"Robert Frost (American)\", \"William Wordsworth\"],\n      \"correct_answer\": \"A\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/review-paper",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["review-paper"]
+            },
+            "description": "Review MCQ questions for proper distractors and single correct answer"
+          }
+        },
+        {
+          "name": "Review Paper - Grammar Questions",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Grammar questions processed', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.questions.length).to.eql(2);",
+                  "});",
+                  "",
+                  "pm.test('Grammar ambiguity eliminated', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.review_report).to.have.property('grammar_fixes');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"questions\": [\n    {\n      \"question_number\": 15,\n      \"part\": \"Part II\",\n      \"section\": \"Grammar\",\n      \"question_text\": \"Change the voice: They are playing.\",\n      \"marks\": 2,\n      \"lesson_type\": \"grammar\",\n      \"grammar_area\": \"voice\"\n    },\n    {\n      \"question_number\": 16,\n      \"part\": \"Part II\",\n      \"section\": \"Grammar\",\n      \"question_text\": \"Combine using 'if': He works hard. He will pass.\",\n      \"marks\": 2,\n      \"lesson_type\": \"grammar\",\n      \"grammar_area\": \"conditionals\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/review-paper",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["review-paper"]
+            },
+            "description": "Review grammar questions to ensure single valid answer format"
+          }
+        },
+        {
+          "name": "Review Paper - Writing Skills Context",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Writing questions reviewed', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.questions.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test('Context simplified for rural students', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.review_report).to.have.property('writing_fixes');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"questions\": [\n    {\n      \"question_number\": 40,\n      \"part\": \"Part III\",\n      \"section\": \"Writing Skills\",\n      \"question_text\": \"Write a letter to the CEO of a multinational corporation requesting an internship at their silicon valley headquarters.\",\n      \"marks\": 5,\n      \"lesson_type\": \"writing\",\n      \"internal_choice\": true\n    },\n    {\n      \"question_number\": 41,\n      \"part\": \"Part III\",\n      \"section\": \"Writing Skills\",\n      \"question_text\": \"Write a formal email to your investment banker about portfolio diversification strategies.\",\n      \"marks\": 5,\n      \"lesson_type\": \"writing\",\n      \"internal_choice\": true\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/review-paper",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["review-paper"]
+            },
+            "description": "Review writing questions to simplify context for rural/village students"
+          }
+        },
+        {
+          "name": "Review Paper - Empty Questions Error",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Error message about no questions', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.detail).to.include('No questions');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"questions\": []\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/review-paper",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["review-paper"]
+            },
+            "description": "Test error handling when no questions are provided"
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Coverage Validation Tests",
       "item": [
         {
           "name": "Generate - Verify Prose Coverage",

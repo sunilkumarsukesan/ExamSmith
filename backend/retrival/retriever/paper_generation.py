@@ -144,15 +144,18 @@ class PaperGenerationRetriever(RetrieverMode):
             # PHASE 3: Generate Part II (Prose, Poetry, Grammar, Map)
             logger.info("\n[PHASE 3] Generating Part II (Prose, Poetry, Grammar, Map)...")
             
-            # Part II Prose (4 questions, answer 3)
+            # Part II Prose (4 questions from lessons 1-4, answer 3)
+            # Part III will cover lessons 5-7
             try:
                 for lesson_num in [1, 2, 3, 4]:
                     prose_context = await self._retrieve_prose_context(lesson_num)
+                    random_unit = self.generator._get_random_unit()
                     question = await self.generator.generate_prose_questions(
                         lesson_number=lesson_num,
                         textbook_context=prose_context,
                         marks=2,
-                        previous_paper_context=previous_qp_context.get("part_ii_prose", "")
+                        previous_paper_context=previous_qp_context.get("part_ii_prose", ""),
+                        unit_number=random_unit
                     )
                     if question:
                         question["question_number"] = 14 + lesson_num  # Q15-18
@@ -163,16 +166,24 @@ class PaperGenerationRetriever(RetrieverMode):
                 logger.error(f"✗ Part II Prose generation failed: {str(e)}")
                 retrieval_errors.append(f"Part II Prose: {str(e)}")
             
-            # Part II Poetry (4 questions)
+            # Part II Poetry (4 questions from different poems across units)
+            # Actual poem names from TN SSLC curriculum
             try:
-                poetry_poems = ["Poem1", "Poem2", "Poem3", "Poem4"]  # Get from DB
-                for idx, poem in enumerate(poetry_poems[:4]):
-                    poetry_context = await self._retrieve_poetry_context(poem)
+                poetry_poems = [
+                    ("Life", 1),           # Unit 1
+                    ("The Grumble Family", 2),  # Unit 2
+                    ("I Am Every Woman", 3),    # Unit 3
+                    ("The Ant and the Cricket", 4)  # Unit 4
+                ]
+                for idx, (poem, unit) in enumerate(poetry_poems[:4]):
+                    poetry_context = await self._retrieve_poetry_context_by_unit(unit)
+                    random_unit = self.generator._get_random_unit()
                     question = await self.generator.generate_poetry_questions(
                         poem_name=poem,
                         textbook_context=poetry_context,
                         marks=2,
-                        previous_paper_context=previous_qp_context.get("part_ii_poetry", "")
+                        previous_paper_context=previous_qp_context.get("part_ii_poetry", ""),
+                        unit_number=random_unit
                     )
                     if question:
                         question["question_number"] = 18 + idx + 1  # Q19-22
@@ -187,11 +198,13 @@ class PaperGenerationRetriever(RetrieverMode):
                 grammar_areas = ["voice", "speech", "punctuation", "sentence_types", "rearrangement"]
                 for idx, area in enumerate(grammar_areas):
                     grammar_context = await self._retrieve_grammar_context(area)
+                    random_unit = self.generator._get_random_unit()
                     question = await self.generator.generate_grammar_questions(
                         grammar_area=area,
                         textbook_context=grammar_context,
                         marks=2,
-                        previous_paper_context=previous_qp_context.get("part_ii_grammar", "")
+                        previous_paper_context=previous_qp_context.get("part_ii_grammar", ""),
+                        unit_number=random_unit
                     )
                     if question:
                         question["question_number"] = 22 + idx + 1  # Q23-27
@@ -215,18 +228,21 @@ class PaperGenerationRetriever(RetrieverMode):
             # PHASE 4: Generate Part III (Prose Paragraph, Poetry, Supplementary, Writing, Memory Poem)
             logger.info("\n[PHASE 4] Generating Part III (Prose, Poetry, Supplementary, Writing, Memory Poem)...")
             
-            # Part III Prose Paragraph (4 questions, from first 4 lessons)
+            # Part III Prose Paragraph (4 questions, from lessons 4, 5, 6, 7 for coverage)
             try:
-                for lesson_num in [1, 2, 3, 4]:
+                part_iii_prose_lessons = [4, 5, 6, 7]  # Cover remaining lessons
+                for idx, lesson_num in enumerate(part_iii_prose_lessons):
                     prose_context = await self._retrieve_prose_context(lesson_num)
+                    random_unit = self.generator._get_random_unit()
                     question = await self.generator.generate_prose_questions(
                         lesson_number=lesson_num,
                         textbook_context=prose_context,
                         marks=5,
-                        previous_paper_context=previous_qp_context.get("part_iii_prose", "")
+                        previous_paper_context=previous_qp_context.get("part_iii_prose", ""),
+                        unit_number=random_unit
                     )
                     if question:
-                        question["question_number"] = 28 + lesson_num  # Q29-32
+                        question["question_number"] = 29 + idx  # Q29-32
                         question["part"] = "III"
                         all_questions.append(question)
                 logger.info(f"✓ Generated {len([q for q in all_questions if q.get('part') == 'III' and q.get('section') == 'Prose'])} prose paragraph questions")
@@ -234,15 +250,23 @@ class PaperGenerationRetriever(RetrieverMode):
                 logger.error(f"✗ Part III Prose Paragraph failed: {str(e)}")
                 retrieval_errors.append(f"Part III Prose: {str(e)}")
             
-            # Part III Poetry (4 questions)
+            # Part III Poetry (4 questions from units 5, 6, 7 for diversity)
             try:
-                for idx, poem in enumerate(poetry_poems[:4]):
-                    poetry_context = await self._retrieve_poetry_context(poem)
+                part_iii_poems = [
+                    ("The Secret of the Machines", 5),  # Unit 5
+                    ("No Men Are Foreign", 6),          # Unit 6
+                    ("The House on Elm Street", 7),     # Unit 7
+                    ("Sea Fever", 6)                    # Memory poem candidate from Unit 6
+                ]
+                for idx, (poem, unit) in enumerate(part_iii_poems[:4]):
+                    poetry_context = await self._retrieve_poetry_context_by_unit(unit)
+                    random_unit = self.generator._get_random_unit()
                     question = await self.generator.generate_poetry_questions(
                         poem_name=poem,
                         textbook_context=poetry_context,
                         marks=5,
-                        previous_paper_context=previous_qp_context.get("part_iii_poetry", "")
+                        previous_paper_context=previous_qp_context.get("part_iii_poetry", ""),
+                        unit_number=random_unit
                     )
                     if question:
                         question["question_number"] = 32 + idx + 1  # Q33-36
@@ -253,16 +277,21 @@ class PaperGenerationRetriever(RetrieverMode):
                 logger.error(f"✗ Part III Poetry Paragraph failed: {str(e)}")
                 retrieval_errors.append(f"Part III Poetry: {str(e)}")
             
-            # Part III Supplementary (2 questions)
+            # Part III Supplementary (2 questions from different units)
             try:
-                supplementary_stories = ["Story1", "Story2"]  # Get from DB
-                for idx, story in enumerate(supplementary_stories[:2]):
-                    supp_context = await self._retrieve_supplementary_context(story)
+                supplementary_stories = [
+                    ("The Tempest", 1),        # Unit 1
+                    ("The Story of Mulan", 3), # Unit 3
+                ]
+                for idx, (story, unit) in enumerate(supplementary_stories[:2]):
+                    supp_context = await self._retrieve_supplementary_context_by_unit(unit)
+                    random_unit = self.generator._get_random_unit()
                     question = await self.generator.generate_supplementary_questions(
                         story_name=story,
                         textbook_context=supp_context,
                         marks=5,
-                        previous_paper_context=previous_qp_context.get("part_iii_supplementary", "")
+                        previous_paper_context=previous_qp_context.get("part_iii_supplementary", ""),
+                        unit_number=random_unit
                     )
                     if question:
                         question["question_number"] = 36 + idx + 1  # Q37-38
@@ -280,9 +309,11 @@ class PaperGenerationRetriever(RetrieverMode):
                 
                 for idx, writing_type in enumerate(writing_types + ["letter"]):  # 6 total
                     if idx < len(question_numbers):
+                        random_unit = self.generator._get_random_unit()
                         question = await self.generator.generate_writing_questions(
                             writing_type=writing_type,
-                            previous_paper_context=previous_qp_context.get("part_iii_writing", "")
+                            previous_paper_context=previous_qp_context.get("part_iii_writing", ""),
+                            unit_number=random_unit
                         )
                         if question:
                             question["question_number"] = question_numbers[idx]
@@ -337,6 +368,55 @@ class PaperGenerationRetriever(RetrieverMode):
                 # In production, would regenerate missing sections
                 # For now, just log violations
             
+            # PHASE 6.5: Quality Review (Apply TN Board alignment fixes)
+            logger.info("\n[PHASE 6.5] Applying quality review fixes...")
+            try:
+                from .quality_reviewer import get_quality_reviewer
+                quality_reviewer = get_quality_reviewer()
+                
+                # Convert dict questions to QuestionResult for review
+                question_results = []
+                for q in all_questions:
+                    if isinstance(q, dict):
+                        from ..models import QuestionResult
+                        question_results.append(QuestionResult(
+                            question_number=q.get("question_number", 0),
+                            part=q.get("part", ""),
+                            section=q.get("section", ""),
+                            question_text=q.get("question_text", ""),
+                            marks=q.get("marks", 0),
+                            internal_choice=q.get("internal_choice", False),
+                            unit_name=q.get("unit_name", ""),
+                            lesson_type=q.get("lesson_type", ""),
+                            options=q.get("options"),
+                            correct_answer=q.get("correct_answer"),
+                            poem_name=q.get("poem_name"),
+                            story_name=q.get("story_name"),
+                            grammar_area=q.get("grammar_area"),
+                            choice_group=q.get("choice_group"),
+                            lesson_number=q.get("lesson_number")
+                        ))
+                    else:
+                        question_results.append(q)
+                
+                # Apply quality review
+                reviewed_questions, review_report = await quality_reviewer.review_paper(question_results)
+                
+                # Convert back to dict format
+                all_questions = []
+                for q in reviewed_questions:
+                    if hasattr(q, 'dict'):
+                        all_questions.append(q.dict())
+                    else:
+                        all_questions.append(q)
+                
+                logger.info(f"✓ Quality review: {review_report['total_fixes']} fixes applied")
+                if review_report['details']:
+                    for detail in review_report['details'][:5]:  # Show first 5
+                        logger.info(f"  - Q{detail['question_number']}: {detail['fix_type']} fix")
+            except Exception as e:
+                logger.warning(f"Quality review skipped: {str(e)}")
+            
             # PHASE 7: Assemble final paper
             logger.info("\n[PHASE 7] Assembling final question paper...")
             paper = self._assemble_paper_json(all_questions)
@@ -354,7 +434,7 @@ class PaperGenerationRetriever(RetrieverMode):
             raise
     
     async def _retrieve_textbook_context(self) -> Dict:
-        """Retrieve textbook content organized by section."""
+        """Retrieve textbook content organized by section from ALL 7 units."""
         try:
             context = {
                 "vocabulary": "",
@@ -368,9 +448,22 @@ class PaperGenerationRetriever(RetrieverMode):
             if collection is None:
                 return context
             
-            # Get vocabulary/glossary
-            vocab_docs = list(collection.find({"metadata.content_type": "glossary"}).limit(10))
-            context["vocabulary"] = " ".join([doc.get("content", "") for doc in vocab_docs])
+            # Get vocabulary/content from ALL 7 units for diverse MCQ generation
+            all_vocab_content = []
+            for unit_num in range(1, 8):  # Units 1-7
+                # Get prose content from each unit (which contains vocabulary words)
+                unit_docs = list(collection.find({
+                    "metadata.unit": unit_num
+                }).limit(10))
+                
+                for doc in unit_docs:
+                    content = doc.get("content", "")
+                    if len(content) > 50:  # Only substantial content
+                        all_vocab_content.append(f"[Unit {unit_num}] {content}")
+            
+            context["vocabulary"] = "\n\n".join(all_vocab_content[:50])  # Limit total chunks
+            
+            logger.info(f"Retrieved vocabulary context from {len(all_vocab_content)} chunks across all units")
             
             return context
         except Exception as e:
@@ -405,16 +498,23 @@ class PaperGenerationRetriever(RetrieverMode):
             return {}
     
     async def _retrieve_prose_context(self, lesson_number: int) -> str:
-        """Retrieve prose lesson context."""
+        """Retrieve prose lesson context by unit/lesson number."""
         try:
             collection = mongo_client.textbook_collection
             if collection is None:
                 return ""
             
+            # First try with unit number and Prose topic
             docs = list(collection.find({
-                "metadata.lesson_type": "prose",
-                "metadata.lesson_number": lesson_number
-            }).limit(5))
+                "metadata.unit": lesson_number,
+                "metadata.topic": "Prose"
+            }).limit(10))
+            
+            if not docs:
+                # Fallback: try any content from this unit
+                docs = list(collection.find({
+                    "metadata.unit": lesson_number
+                }).limit(10))
             
             return " ".join([doc.get("content", "") for doc in docs])
         except Exception as e:
@@ -436,6 +536,30 @@ class PaperGenerationRetriever(RetrieverMode):
             return " ".join([doc.get("content", "") for doc in docs])
         except Exception as e:
             logger.error(f"Poetry context retrieval failed: {str(e)}")
+            return ""
+    
+    async def _retrieve_poetry_context_by_unit(self, unit_number: int) -> str:
+        """Retrieve poetry context by unit number."""
+        try:
+            collection = mongo_client.textbook_collection
+            if collection is None:
+                return ""
+            
+            # Get poetry content from specific unit
+            docs = list(collection.find({
+                "metadata.unit": unit_number,
+                "metadata.topic": "Poem"
+            }).limit(10))
+            
+            if not docs:
+                # Fallback: get any content from this unit
+                docs = list(collection.find({
+                    "metadata.unit": unit_number
+                }).limit(10))
+            
+            return " ".join([doc.get("content", "") for doc in docs])
+        except Exception as e:
+            logger.error(f"Poetry context retrieval by unit failed: {str(e)}")
             return ""
     
     async def _retrieve_grammar_context(self, grammar_area: str) -> str:
@@ -473,28 +597,55 @@ class PaperGenerationRetriever(RetrieverMode):
             logger.error(f"Supplementary context retrieval failed: {str(e)}")
             return ""
     
+    async def _retrieve_supplementary_context_by_unit(self, unit_number: int) -> str:
+        """Retrieve supplementary story context by unit number."""
+        try:
+            collection = mongo_client.textbook_collection
+            if collection is None:
+                return ""
+            
+            # Get supplementary content from specific unit
+            docs = list(collection.find({
+                "metadata.unit": unit_number,
+                "metadata.topic": "Supplementary"
+            }).limit(10))
+            
+            if not docs:
+                # Fallback: get any content from this unit
+                docs = list(collection.find({
+                    "metadata.unit": unit_number
+                }).limit(10))
+            
+            return " ".join([doc.get("content", "") for doc in docs])
+        except Exception as e:
+            logger.error(f"Supplementary context retrieval by unit failed: {str(e)}")
+            return ""
+    
     async def _generate_map_question(self) -> Dict:
-        """Generate map/directions question."""
-        prompt = """Generate 1 ORIGINAL map/directions question for TN SSLC English.
+        """Generate map/directions question from random unit context."""
+        random_unit = self.generator._get_random_unit()
+        
+        prompt = f"""Generate 1 ORIGINAL map/directions question for TN SSLC English from Unit {random_unit}.
 
 REQUIREMENTS:
 - Create a simple route map with 4-5 landmarks
 - Ask student to describe directions (e.g., "From A to B via C")
 - Generate afresh (no previous exam reuse)
 - 2 marks
+- Relate to themes/locations from Unit {random_unit}
 
 Response format: Return ONLY valid JSON (no markdown):
-{
+{{
   "question_number": 28,
   "part": "II",
   "section": "Map/Directions",
   "question_text": "<question with map description>",
   "marks": 2,
   "internal_choice": false,
-  "unit_name": "Directions",
+  "unit_name": "Directions Unit {random_unit}",
   "lesson_type": "map",
   "brief_answer_guide": "<expected answer>"
-}"""
+}}"""
         
         try:
             response = await self.generator.llm.generate(prompt, max_tokens=512, temperature=0.7)
@@ -504,34 +655,65 @@ Response format: Return ONLY valid JSON (no markdown):
             return {}
     
     async def _generate_memory_poem_question(self) -> Dict:
-        """Generate memory poem question."""
-        prompt = """Generate 1 memory poem question for TN SSLC English Part III.
+        """Generate memory poem question from prescribed curriculum poems with random unit."""
+        import random
+        
+        # TN SSLC prescribed memory poems
+        prescribed_poems = [
+            ("Life", 1),
+            ("The Road Not Taken", 2),
+            ("No Men Are Foreign", 6),
+            ("Laugh and Be Merry", 3),
+            ("The River", 4),
+            ("Sea Fever", 5)
+        ]
+        
+        # Randomly select a poem
+        selected_poem, unit = random.choice(prescribed_poems)
+        # Also generate a random unit for the question context (different from poem unit)
+        random_unit = self.generator._get_random_unit()
+        
+        prompt = f"""Generate 1 memory poem question for TN SSLC English Part III (Unit {random_unit} context).
+
+SELECTED POEM: {selected_poem} (Unit {unit})
 
 REQUIREMENTS:
-- Select from PRESCRIBED memory poems only (must be curriculum-approved)
-- Task: Full stanza recitation + meaning/critical appreciation
-- 5 marks
-- Validate against approved list
+- This is a MEMORY POEM (prescribed for recitation)
+- Task: Ask student to recite a specific stanza + explain its meaning
+- 5 marks (1 mark recitation, 4 marks explanation)
+- Question should be specific about which stanza to recite
+- Context can relate to Unit {random_unit} themes
 
 Response format: Return ONLY valid JSON (no markdown):
-{
+{{
   "question_number": 45,
   "part": "III",
   "section": "Memory Poem",
-  "question_text": "<recitation + analysis task>",
+  "question_text": "Recite a stanza from '{selected_poem}' and explain its meaning.",
   "marks": 5,
   "internal_choice": false,
-  "unit_name": "Memory Poem: <poem_title>",
+  "unit_name": "Memory Poem: {selected_poem} (Unit {random_unit})",
   "lesson_type": "memory_poem",
-  "brief_answer_guide": "<marking rubric>"
-}"""
+  "brief_answer_guide": "1 mark for correct recitation, 4 marks for explanation (content, interpretation, and coherence)"
+}}"""
         
         try:
             response = await self.generator.llm.generate(prompt, max_tokens=512, temperature=0.7)
             return self.generator._parse_json_response(response, single=True)
         except Exception as e:
             logger.error(f"Memory poem generation failed: {str(e)}")
-            return {}
+            # Return a default valid question
+            return {
+                "question_number": 45,
+                "part": "III",
+                "section": "Memory Poem",
+                "question_text": f"Recite the first stanza of '{selected_poem}' and explain its meaning.",
+                "marks": 5,
+                "internal_choice": False,
+                "unit_name": f"Memory Poem: {selected_poem}",
+                "lesson_type": "memory_poem",
+                "brief_answer_guide": "1 mark for correct recitation, 4 marks for explanation"
+            }
     
     async def _generate_part_iv_q46(self, story_name: str) -> Dict:
         """Generate Q46 with internal choice."""
@@ -684,4 +866,16 @@ Response format: Return ONLY valid JSON (no markdown):
         }
         
         return paper
+
+
+# Singleton instance
+_paper_generator = None
+
+
+def get_paper_generator() -> PaperGenerationRetriever:
+    """Get or create the paper generator singleton."""
+    global _paper_generator
+    if _paper_generator is None:
+        _paper_generator = PaperGenerationRetriever()
+    return _paper_generator
 

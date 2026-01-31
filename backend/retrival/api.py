@@ -232,6 +232,84 @@ async def evaluate_answer(request: EvaluateAnswerRequest) -> EvaluateAnswerRespo
         logger.error(f"Evaluate answer endpoint failed: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+# ===== /review-paper Endpoint =====
+@router.post("/review-paper")
+async def review_paper(request: dict):
+    """
+    Apply quality review fixes to a generated question paper.
+    
+    Applies TN Board alignment rules:
+    1. MCQ Quality Rules (proper distractors)
+    2. Grammar Ambiguity Elimination
+    3. Retrieval De-dependency Reduction
+    4. Writing Skills Context Simplification
+    5. Structure Validation
+    
+    Request body:
+    - questions: List of question objects to review
+    
+    Returns:
+    - Fixed questions with review report
+    """
+    request_id = str(uuid.uuid4())
+    logger.info(f"Quality review request received (ID: {request_id})")
+    
+    try:
+        questions_data = request.get("questions", [])
+        if not questions_data:
+            raise HTTPException(
+                status_code=400,
+                detail="No questions provided for review"
+            )
+        
+        # Convert to ReviewQuestionInput objects
+        from models import ReviewQuestionInput
+        questions = []
+        for q in questions_data:
+            questions.append(ReviewQuestionInput(
+                question_number=q.get("question_number", 0),
+                part=q.get("part", ""),
+                section=q.get("section", ""),
+                question_text=q.get("question_text", ""),
+                marks=q.get("marks", 0),
+                internal_choice=q.get("internal_choice", False),
+                unit_name=q.get("unit_name", ""),
+                lesson_type=q.get("lesson_type", ""),
+                options=q.get("options"),
+                correct_answer=q.get("correct_answer"),
+                poem_name=q.get("poem_name"),
+                story_name=q.get("story_name"),
+                grammar_area=q.get("grammar_area"),
+                choice_group=q.get("choice_group"),
+                lesson_number=q.get("lesson_number")
+            ))
+        
+        # Apply quality review
+        from retriever.quality_reviewer import get_quality_reviewer
+        reviewer = get_quality_reviewer()
+        fixed_questions, review_report = await reviewer.review_paper(questions)
+        
+        logger.info(f"Quality review complete: {review_report['total_fixes']} fixes")
+        logger.info(f"retrieval.quality_review")
+        
+        return {
+            "request_id": request_id,
+            "status": "reviewed",
+            "questions": [q.dict() for q in fixed_questions],
+            "review_report": review_report
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Quality review failed: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Quality review failed: {str(e)}"
+        )
+
+
 # ===== Metrics Endpoint =====
 @router.get("/metrics")
 async def get_metrics():

@@ -109,6 +109,36 @@ class EvaluateAnswerResponse(BaseModel):
     feedback: EvaluationFeedback
     confidence: float = Field(..., ge=0, le=1)
 
+# ===== Quality Review Models =====
+class ReviewQuestionInput(BaseModel):
+    """Input model for questions to be reviewed by quality reviewer."""
+    question_number: int = 0
+    part: str = ""
+    section: str = ""
+    question_text: str = ""
+    marks: int = 0
+    internal_choice: bool = False
+    unit_name: str = ""
+    lesson_type: str = ""
+    options: Optional[List[str]] = None
+    correct_answer: Optional[str] = None
+    poem_name: Optional[str] = None
+    story_name: Optional[str] = None
+    grammar_area: Optional[str] = None
+    choice_group: Optional[str] = None
+    lesson_number: Optional[int] = None
+
+class ReviewPaperRequest(BaseModel):
+    """Request model for /review-paper endpoint."""
+    questions: List[ReviewQuestionInput]
+
+class ReviewPaperResponse(BaseModel):
+    """Response model for /review-paper endpoint."""
+    request_id: str
+    status: str = "reviewed"
+    questions: List[dict]
+    review_report: dict
+
 # ===== Error Response =====
 class ErrorResponse(BaseModel):
     error: str

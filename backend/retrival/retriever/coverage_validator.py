@@ -312,3 +312,15 @@ class CoverageValidator:
             "coverage_details": self.coverage_report
         }
         return report
+
+
+# Singleton instance
+_coverage_validator = None
+
+
+def get_coverage_validator() -> CoverageValidator:
+    """Get or create the coverage validator singleton."""
+    global _coverage_validator
+    if _coverage_validator is None:
+        _coverage_validator = CoverageValidator()
+    return _coverage_validator
