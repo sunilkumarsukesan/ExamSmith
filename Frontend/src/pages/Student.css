@@ -4,7 +4,7 @@
 }
 
 .student-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
   color: white;
   padding: 3rem 2rem;
   text-align: center;
@@ -35,7 +35,7 @@
 }
 
 .generator-section h2 {
-  color: #667eea;
+  color: #D97706;
   margin-bottom: 1.5rem;
   font-size: 1.5rem;
 }
@@ -71,14 +71,14 @@
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #F59E0B;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
 }
 
 .generate-btn {
   grid-column: 1 / -1;
   padding: 1rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
   color: white;
   border: none;
   border-radius: 6px;
@@ -94,7 +94,7 @@
 
 .generate-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 8px 16px rgba(245, 158, 11, 0.3);
 }
 
 .generate-btn:disabled {
@@ -141,7 +141,7 @@
 }
 
 .questions-header h2 {
-  color: #667eea;
+  color: #D97706;
   font-size: 1.5rem;
   margin: 0;
 }
@@ -153,9 +153,9 @@
 
 .action-btn {
   padding: 0.8rem 1.5rem;
-  border: 2px solid #667eea;
+  border: 2px solid #D97706;
   background: transparent;
-  color: #667eea;
+  color: #D97706;
   border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
@@ -166,7 +166,7 @@
 }
 
 .action-btn:hover {
-  background: #667eea;
+  background: #D97706;
   color: white;
 }
 
@@ -179,7 +179,7 @@
   padding: 1.5rem;
   margin-bottom: 1.5rem;
   border-radius: 8px;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #F59E0B;
 }
 
 .question-header {
@@ -191,7 +191,7 @@
 }
 
 .question-number {
-  background: #667eea;
+  background: #F59E0B;
   color: white;
   padding: 0.4rem 0.8rem;
   border-radius: 4px;
@@ -221,7 +221,7 @@
 }
 
 .marks {
-  color: #667eea;
+  color: #D97706;
   font-weight: 600;
   margin-left: auto;
 }
@@ -269,8 +269,8 @@
 
 .answer-input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #F59E0B;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
 }
 
 .submit-section {
@@ -281,7 +281,7 @@
 
 .submit-btn {
   padding: 1rem 3rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
   color: white;
   border: none;
   border-radius: 6px;
@@ -293,7 +293,7 @@
 
 .submit-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 8px 16px rgba(245, 158, 11, 0.3);
 }
 
 @media screen and (max-width: 768px) {

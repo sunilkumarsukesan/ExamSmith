@@ -1,6 +1,7 @@
 from typing import Literal
 from .base import LLMProvider
 from .groq_provider import GroqProvider
+from config import settings
 
 class LLMFactory:
     """Factory for LLM provider selection."""
@@ -27,5 +28,12 @@ class LLMFactory:
         """Register new LLM provider (for future scaling)."""
         LLMFactory._providers[name] = provider_class
 
-# Global instance
-llm = LLMFactory.create("groq")
+def get_llm(provider: Literal["groq"] = "groq", **kwargs) -> LLMProvider:
+    """Get an LLM provider instance.
+
+    This is lazy by design so the service can start even when secrets
+    are not configured (e.g., GROQ_API_KEY is blank).
+    """
+    if provider == "groq" and not (kwargs.get("api_key") or settings.groq_api_key):
+        raise ValueError("GROQ_API_KEY is not set. Add it to the root .env to enable LLM features.")
+    return LLMFactory.create(provider, **kwargs)

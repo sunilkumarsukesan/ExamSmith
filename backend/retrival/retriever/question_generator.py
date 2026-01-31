@@ -8,7 +8,7 @@ using LLM with paraphrased textbook context.
 from typing import List, Dict, Tuple
 import logging
 import random
-from llm.factory import llm
+from llm.factory import get_llm
 from mongo.client import mongo_client
 from mongo.search import HybridSearch, HybridSearchConfig
 from models import Citation
@@ -20,7 +20,7 @@ class QuestionGenerator:
     """Generates original exam questions from retrieved textbook content."""
 
     def __init__(self):
-        self.llm = llm
+        self.llm = get_llm()
         self.hybrid_search = HybridSearch()
     
     def _get_random_unit(self) -> int:
@@ -127,13 +127,20 @@ Response format: Return ONLY valid JSON array (no markdown, no explanations):
 Generate all 14 questions now, ensuring DIVERSE UNIT COVERAGE:"""
 
         try:
+            logger.info("Calling LLM for Part I MCQ generation...")
             response = await self.llm.generate(
                 prompt=prompt,
-                max_tokens=2500,
-                temperature=0.7
+                max_tokens=4000,  # Increased for 14 questions with detailed JSON
+                temperature=0.5
             )
             
+            logger.info(f"LLM response received, length: {len(response)} chars")
+            
             questions = self._parse_json_response(response)
+            
+            if not questions:
+                logger.warning(f"Part I MCQ parsing returned empty. Raw response (first 500 chars): {response[:500]}")
+                return []
             
             # Log unit distribution
             unit_counts = {}
@@ -145,7 +152,7 @@ Generate all 14 questions now, ensuring DIVERSE UNIT COVERAGE:"""
             return questions
             
         except Exception as e:
-            logger.error(f"Part I MCQ generation failed: {str(e)}")
+            logger.error(f"Part I MCQ generation failed: {str(e)}", exc_info=True)
             return []
 
     async def generate_prose_questions(
@@ -366,6 +373,149 @@ Generate the question now:"""
             
         except Exception as e:
             logger.error(f"Grammar question generation failed: {str(e)}")
+            return {}
+
+    async def generate_supplementary_questions(
+        self,
+        story_name: str,
+        textbook_context: str,
+        marks: int = 5,
+        previous_paper_context: str = None,
+        unit_number: int = None,
+    ) -> Dict:
+        """
+        Generate supplementary reader question.
+        
+        Args:
+            story_name: Name of the supplementary story
+            textbook_context: Story content
+            marks: Question marks (typically 5)
+            previous_paper_context: Style reference
+            unit_number: Unit number (1-7)
+        """
+        if unit_number is None:
+            unit_number = self._get_random_unit()
+        
+        prompt = f"""You are a TN SSLC English exam question generator.
+
+SUPPLEMENTARY STORY: "{story_name}" (Unit {unit_number})
+STORY CONTEXT:
+{textbook_context}
+
+PREVIOUS EXAM STYLE (for reference only):
+{previous_paper_context or "Not provided"}
+
+Generate 1 ORIGINAL comprehension question about this supplementary story.
+
+REQUIREMENTS:
+- Question tests understanding of plot, characters, theme, or moral
+- Answer should be 5-8 sentences (paragraph length)
+- Difficulty appropriate for Class 10 board exam
+- Do NOT copy from previous papers
+- Use Indian English
+
+Response format (valid JSON only):
+{{
+  "question_number": 37,
+  "part": "III",
+  "section": "Supplementary",
+  "question_text": "<your original question about the story>",
+  "marks": {marks},
+  "internal_choice": true,
+  "unit_name": "Supplementary Unit {unit_number}",
+  "lesson_type": "supplementary",
+  "story_name": "{story_name}",
+  "brief_answer_guide": "<key points for answer>"
+}}"""
+
+        try:
+            response = await self.llm.generate(
+                prompt=prompt,
+                max_tokens=512,
+                temperature=0.7
+            )
+            
+            question = self._parse_json_response(response, single=True)
+            logger.info(f"Generated supplementary question for '{story_name}'")
+            return question
+            
+        except Exception as e:
+            logger.error(f"Supplementary question generation failed: {str(e)}")
+            return {}
+
+    async def generate_writing_questions(
+        self,
+        writing_type: str,
+        previous_paper_context: str = None,
+        unit_number: int = None,
+    ) -> Dict:
+        """
+        Generate writing skill question.
+        
+        Args:
+            writing_type: Type of writing (letter, email, paragraph, dialogue, story)
+            previous_paper_context: Style reference
+            unit_number: Unit number (1-7)
+        """
+        if unit_number is None:
+            unit_number = self._get_random_unit()
+        
+        writing_prompts = {
+            "letter": "formal or informal letter (complaint, request, appreciation, or personal)",
+            "email": "formal email for official communication",
+            "paragraph": "descriptive or narrative paragraph on a given topic",
+            "dialogue": "dialogue between two people on a relevant topic",
+            "story": "short story based on given hints or beginning"
+        }
+        
+        task_description = writing_prompts.get(writing_type, writing_type)
+        
+        prompt = f"""You are a TN SSLC English exam question generator.
+
+WRITING TASK TYPE: {writing_type.upper()}
+TASK DESCRIPTION: {task_description}
+
+PREVIOUS EXAM STYLE (for reference only):
+{previous_paper_context or "Not provided"}
+
+Generate 1 ORIGINAL writing task question.
+
+REQUIREMENTS:
+- Provide clear instructions and context for the writing task
+- For letters/emails: provide sender/receiver context
+- For paragraphs: give specific topic or theme
+- For dialogues: specify participants and situation
+- For stories: provide hints or opening line
+- Word limit guidance: 100-150 words
+- Difficulty appropriate for Class 10
+
+Response format (valid JSON only):
+{{
+  "question_number": 39,
+  "part": "III",
+  "section": "Writing",
+  "question_text": "<complete writing task with all instructions>",
+  "marks": 5,
+  "internal_choice": true,
+  "unit_name": "Writing Unit {unit_number}",
+  "lesson_type": "writing",
+  "writing_type": "{writing_type}",
+  "brief_answer_guide": "<key points/format for answer>"
+}}"""
+
+        try:
+            response = await self.llm.generate(
+                prompt=prompt,
+                max_tokens=512,
+                temperature=0.7
+            )
+            
+            question = self._parse_json_response(response, single=True)
+            logger.info(f"Generated writing question for '{writing_type}'")
+            return question
+            
+        except Exception as e:
+            logger.error(f"Writing question generation failed: {str(e)}")
             return {}
 
     def _parse_json_response(self, response: str, single: bool = False):

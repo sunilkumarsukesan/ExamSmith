@@ -86,7 +86,8 @@ class GeneratePaperResponse(BaseModel):
     questions: List[dict]
     total_marks: int = 100
     estimated_time_minutes: int = 180
-    blueprint: PaperBlueprint
+    blueprint: PaperBlueprint = Field(default_factory=PaperBlueprint)
+    coverage_validation: Optional[dict] = None
 
 # ===== /evaluate-answer Endpoint =====
 class EvaluateAnswerRequest(BaseModel):
@@ -145,3 +146,39 @@ class ErrorResponse(BaseModel):
     message: str
     status_code: int
     timestamp: datetime = Field(default_factory=datetime.utcnow)
+
+
+# ===== Question Revision (Human-in-the-Loop) =====
+class ReviseQuestionRequest(BaseModel):
+    """Request model for question revision"""
+    original_question: dict
+    teacher_feedback: str = Field(..., min_length=5, max_length=1000)
+    paper_id: str
+
+
+class ReviseQuestionResponse(BaseModel):
+    """Response model for question revision"""
+    success: bool
+    revised_question: dict
+    message: str
+
+
+class RegenerateAllRequest(BaseModel):
+    """Request model for regenerating all questions"""
+    paper_id: str
+    questions: List[dict]
+    teacher_feedback: str = Field(..., min_length=5, max_length=1000)
+
+
+class RegenerateAllResponse(BaseModel):
+    """Response model for regenerating all questions"""
+    success: bool
+    questions: List[dict]
+    message: str
+
+
+class RevisionHistoryResponse(BaseModel):
+    """Response model for revision history"""
+    paper_id: str
+    revisions: List[dict]
+    total_revisions: int

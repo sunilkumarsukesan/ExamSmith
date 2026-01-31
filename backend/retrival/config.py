@@ -11,14 +11,14 @@ class Settings(BaseSettings):
     """Load configuration from .env in project root"""
     
     # MongoDB
-    mongodb_uri: str = Field(..., alias="MONGODB_URI")
+    mongodb_uri: str = Field("", alias="MONGODB_URI")
     mongodb_db_textbook: str = Field("10_books", alias="MONGODB_BOOKS_DB")
     mongodb_collection_textbook: str = Field("english", alias="MONGODB_BOOKS_COLLECTION")
     mongodb_db_questionpapers: str = Field("10_questionpapers", alias="MONGODB_QUESTIONPAPERS_DB")
     mongodb_collection_questionpapers: str = Field("2025_public", alias="MONGODB_QUESTIONPAPERS_COLLECTION")
     
     # Groq
-    groq_api_key: str = Field(..., alias="GROQ_API_KEY")
+    groq_api_key: str = Field("", alias="GROQ_API_KEY")
     groq_model: str = Field("meta-llama/llama-4-maverick-17b-128e-instruct", alias="GROQ_MODEL")
     
     # Mistral Embeddings (for semantic search)

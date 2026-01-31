@@ -4,7 +4,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
+  timeout: 300000, // 5 minutes for paper generation
   headers: {
     'Content-Type': 'application/json',
   },
@@ -72,6 +72,58 @@ export const checkHealth = async () => {
     return response.data;
   } catch (error) {
     console.error('Error checking health:', error);
+    throw error;
+  }
+};
+
+// ===== Human-in-the-Loop: Question Revision APIs =====
+
+/**
+ * Revise a single question based on teacher feedback
+ * @param {Object} data - { original_question, teacher_feedback, paper_id }
+ * @returns {Object} - { success, revised_question, message }
+ */
+export const reviseQuestion = async (data) => {
+  try {
+    const response = await apiClient.post('/revise-question', data);
+    return response.data;
+  } catch (error) {
+    console.error('Error revising question:', error);
+    throw error;
+  }
+};
+
+/**
+ * Get revision history for a paper
+ * @param {string} paperId - The paper ID
+ * @param {number|null} questionNumber - Optional question number to filter
+ * @returns {Object} - { paper_id, revisions, total_revisions }
+ */
+export const getRevisionHistory = async (paperId, questionNumber = null) => {
+  try {
+    let url = `/revision-history/${paperId}`;
+    if (questionNumber !== null) {
+      url += `?question_number=${questionNumber}`;
+    }
+    const response = await apiClient.get(url);
+    return response.data;
+  } catch (error) {
+    console.error('Error getting revision history:', error);
+    return { revisions: [], total_revisions: 0 };
+  }
+};
+
+/**
+ * Regenerate all questions with global feedback
+ * @param {Object} data - { paper_id, questions, teacher_feedback }
+ * @returns {Object} - { success, questions, message }
+ */
+export const regenerateAllQuestions = async (data) => {
+  try {
+    const response = await apiClient.post('/regenerate-all', data);
+    return response.data;
+  } catch (error) {
+    console.error('Error regenerating all questions:', error);
     throw error;
   }
 };

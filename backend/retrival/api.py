@@ -1,15 +1,20 @@
 from fastapi import APIRouter, HTTPException, Depends
+from typing import Optional
 from models import (
     AskRequest, AskResponse,
     SimilarQuestionsRequest, SimilarQuestionsResponse,
-    GeneratePaperRequest, GeneratePaperResponse,
-    EvaluateAnswerRequest, EvaluateAnswerResponse
+    GeneratePaperRequest, GeneratePaperResponse, PaperBlueprint,
+    EvaluateAnswerRequest, EvaluateAnswerResponse,
+    ReviseQuestionRequest, ReviseQuestionResponse,
+    RegenerateAllRequest, RegenerateAllResponse,
+    RevisionHistoryResponse
 )
 from retriever.concept_explanation import ConceptExplanationRetriever
 from retriever.question_similarity import QuestionSimilarityRetriever
 from retriever.paper_generation import PaperGenerationRetriever
 from retriever.answer_evaluation import AnswerEvaluationRetriever
-from llm.factory import llm
+from retriever.question_reviser import get_question_reviser
+from llm.factory import get_llm
 from observability import track_retrieval, metrics
 import logging
 import uuid
@@ -56,7 +61,8 @@ RELEVANT TEXTBOOK CONTENT:
 Provide a clear, concise explanation using ONLY the provided textbook content.
 Do not hallucinate or add information outside the textbook.
 Answer in a way that a 10th standard student can understand."""
-        
+
+        llm = get_llm()
         answer = await llm.generate(prompt, max_tokens=512, temperature=0.7)
         
         return AskResponse(
@@ -148,34 +154,23 @@ async def generate_paper(request: GeneratePaperRequest) -> GeneratePaperResponse
         
         logger.info(f"Paper generation complete: {len(all_questions)} questions")
         
-        return GeneratePaperResponse(
+        # Log sample question for debugging
+        if all_questions:
+            logger.info(f"Sample question structure: {all_questions[0]}")
+        
+        # Build response with proper Pydantic model
+        response = GeneratePaperResponse(
             paper_id=paper_id,
             status="generated",
             questions=all_questions,
             total_marks=100,
             estimated_time_minutes=180,
-            blueprint={
-                "part_i": {"count": 14, "marks_each": 1},
-                "part_ii": {
-                    "prose": {"count": 3, "out_of": 4, "marks_each": 2},
-                    "poetry": {"count": 3, "out_of": 4, "marks_each": 2},
-                    "grammar": {"count": 3, "out_of": 5, "marks_each": 2},
-                    "map": {"count": 1, "marks_each": 2},
-                },
-                "part_iii": {
-                    "prose_paragraph": {"count": 2, "out_of": 4, "marks_each": 5},
-                    "poetry": {"count": 2, "out_of": 4, "marks_each": 5},
-                    "supplementary": {"count": 1, "out_of": 2, "marks_each": 5},
-                    "writing": {"count": 4, "out_of": 6, "marks_each": 5},
-                    "memory_poem": {"count": 1, "marks_each": 5},
-                },
-                "part_iv": {
-                    "question_46": {"marks": 8, "type": "internal_choice"},
-                    "question_47": {"marks": 8, "type": "internal_choice"},
-                }
-            },
-            coverage_validation=paper.get("coverage_validation")
+            blueprint=PaperBlueprint(),  # Use Pydantic model with defaults
+            coverage_validation=paper.get("coverage_validation") or {}
         )
+        
+        logger.info(f"Response questions count: {len(response.questions)}")
+        return response
     
     except Exception as e:
         logger.error(f"Generate paper endpoint failed: {str(e)}")
@@ -203,6 +198,7 @@ async def evaluate_answer(request: EvaluateAnswerRequest) -> EvaluateAnswerRespo
         evidence_chunks = context_blocks[1:] if len(context_blocks) > 1 else []
         
         # Use Groq to evaluate
+        llm = get_llm()
         evaluation = await llm.evaluate_answer(
             official_answer=official_answer,
             student_answer=request.student_answer,
@@ -318,3 +314,131 @@ async def get_metrics():
         "retrieval_stats": metrics.get_stats(),
         "timestamp": str(__import__("datetime").datetime.utcnow())
     }
+
+
+# ===== Human-in-the-Loop: Question Revision Endpoints =====
+
+@router.post("/revise-question", response_model=ReviseQuestionResponse)
+async def revise_question(request: ReviseQuestionRequest):
+    """
+    Revise a question based on teacher feedback using RAG.
+    
+    This endpoint:
+    1. Takes the original question and teacher's feedback
+    2. Searches textbook for relevant context (semantic search)
+    3. Searches question bank for similar questions
+    4. Uses LLM to generate a revised question
+    """
+    try:
+        logger.info(f"Revising question {request.original_question.get('question_number')} for paper {request.paper_id}")
+        logger.info(f"Teacher feedback: {request.teacher_feedback}")
+        
+        reviser = get_question_reviser()
+        revised_question = await reviser.revise_question(
+            original_question=request.original_question,
+            teacher_feedback=request.teacher_feedback,
+            paper_id=request.paper_id
+        )
+        
+        success = revised_question.get('is_revised', False) and 'revision_error' not in revised_question
+        
+        return ReviseQuestionResponse(
+            success=success,
+            revised_question=revised_question,
+            message="Question revised successfully" if success else f"Revision failed: {revised_question.get('revision_error', 'Unknown error')}"
+        )
+        
+    except Exception as e:
+        logger.error(f"Error revising question: {e}", exc_info=True)
+        return ReviseQuestionResponse(
+            success=False,
+            revised_question=request.original_question,
+            message=f"Error revising question: {str(e)}"
+        )
+
+
+@router.get("/revision-history/{paper_id}", response_model=RevisionHistoryResponse)
+async def get_revision_history(paper_id: str, question_number: Optional[int] = None):
+    """
+    Get revision history for a paper or specific question.
+    
+    Args:
+        paper_id: The paper ID
+        question_number: Optional question number to filter history
+    """
+    try:
+        reviser = get_question_reviser()
+        history = reviser.get_revision_history(paper_id, question_number)
+        
+        return RevisionHistoryResponse(
+            paper_id=paper_id,
+            revisions=history,
+            total_revisions=len(history)
+        )
+        
+    except Exception as e:
+        logger.error(f"Error getting revision history: {e}")
+        return RevisionHistoryResponse(
+            paper_id=paper_id,
+            revisions=[],
+            total_revisions=0
+        )
+
+
+@router.post("/regenerate-all", response_model=RegenerateAllResponse)
+async def regenerate_all_questions(request: RegenerateAllRequest):
+    """
+    Regenerate all questions in a paper based on teacher feedback.
+    
+    This applies the same feedback to all questions and regenerates them.
+    Use with caution as it will replace all questions.
+    """
+    try:
+        paper_id = request.paper_id
+        questions = request.questions
+        teacher_feedback = request.teacher_feedback
+        
+        if not questions:
+            return RegenerateAllResponse(
+                success=False,
+                questions=[],
+                message="No questions provided"
+            )
+        
+        logger.info(f"Regenerating all {len(questions)} questions for paper {paper_id}")
+        logger.info(f"Global feedback: {teacher_feedback}")
+        
+        reviser = get_question_reviser()
+        revised_questions = []
+        errors = []
+        
+        for question in questions:
+            try:
+                revised = await reviser.revise_question(
+                    original_question=question,
+                    teacher_feedback=teacher_feedback,
+                    paper_id=paper_id
+                )
+                revised_questions.append(revised)
+            except Exception as e:
+                logger.error(f"Error revising question {question.get('question_number')}: {e}")
+                errors.append(f"Q{question.get('question_number')}: {str(e)}")
+                revised_questions.append(question)  # Keep original on error
+        
+        success = len(errors) == 0
+        message = f"Regenerated {len(revised_questions)} questions" if success else f"Regenerated with {len(errors)} errors: {', '.join(errors[:3])}"
+        
+        return RegenerateAllResponse(
+            success=success,
+            questions=revised_questions,
+            message=message
+        )
+        
+    except Exception as e:
+        logger.error(f"Error regenerating all questions: {e}", exc_info=True)
+        return RegenerateAllResponse(
+            success=False,
+            questions=request.questions,
+            message=str(e)
+        )
+

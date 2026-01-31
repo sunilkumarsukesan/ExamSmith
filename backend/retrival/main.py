@@ -1,7 +1,10 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 import logging
+import sys
+import asyncio
 from observability import logger
 from mongo.client import mongo_client
 from api import router as retrieval_router
@@ -11,6 +14,11 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
+
+# Suppress asyncio connection reset errors on Windows
+if sys.platform == 'win32':
+    # Use WindowsSelectorEventLoopPolicy to avoid ProactorEventLoop issues
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -28,6 +36,15 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Add CORS middleware to allow frontend requests
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Include routes
 app.include_router(retrieval_router, prefix="/api/v1", tags=["retrieval"])
 
@@ -37,7 +54,7 @@ async def health_check():
     """Health check endpoint."""
     return {
         "status": "healthy",
-        "mongodb": "connected" if mongo_client.client else "disconnected",
+        "mongodb": "connected" if mongo_client.client is not None else "disconnected",
         "service": "ExamSmith Retrieval Backend"
     }
 
@@ -59,4 +76,5 @@ if __name__ == "__main__":
         host=settings.fastapi_host,
         port=settings.fastapi_port,
         log_level=settings.log_level.lower(),
+        timeout_keep_alive=300,  # 5 minutes timeout
     )

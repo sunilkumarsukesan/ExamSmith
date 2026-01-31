@@ -1,6 +1,6 @@
 .signin {
   min-height: calc(100vh - 80px);
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -59,7 +59,7 @@
 .input-icon {
   position: absolute;
   left: 12px;
-  color: #667eea;
+  color: #D97706;
   font-size: 1.1rem;
   pointer-events: none;
 }
@@ -83,13 +83,13 @@
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #F59E0B;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
 }
 
 .signin-btn {
   padding: 1rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
   color: white;
   border: none;
   border-radius: 8px;
@@ -106,7 +106,7 @@
 
 .signin-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 8px 16px rgba(245, 158, 11, 0.3);
 }
 
 .signin-btn:active {
@@ -134,14 +134,14 @@
 }
 
 .signin-footer a {
-  color: #667eea;
+  color: #D97706;
   text-decoration: none;
   font-weight: 600;
   transition: color 0.3s ease;
 }
 
 .signin-footer a:hover {
-  color: #764ba2;
+  color: #B45309;
   text-decoration: underline;
 }
 
@@ -150,7 +150,7 @@
 }
 
 .signin-visual {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
   color: white;
   padding: 3rem;
   display: flex;

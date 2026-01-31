@@ -1,6 +1,7 @@
 from .base import RetrieverMode
 from .question_generator import QuestionGenerator
 from .coverage_validator import CoverageValidator
+from .image_search import get_picture_question
 from mongo.client import mongo_client
 from mongo.search import HybridSearch, HybridSearchConfig
 from models import Citation
@@ -97,7 +98,7 @@ class PaperGenerationRetriever(RetrieverMode):
     
     async def generate_complete_paper(
         self,
-        max_retries: int = 3,
+        max_retries: int = 1,  # Reduced from 3 to 1
     ) -> Dict:
         """
         Generate complete, original SSLC English question paper.
@@ -109,14 +110,14 @@ class PaperGenerationRetriever(RetrieverMode):
         """
         
         logger.info("=" * 80)
-        logger.info("STARTING COMPLETE QUESTION PAPER GENERATION")
+        logger.info("STARTING COMPLETE QUESTION PAPER GENERATION (OPTIMIZED)")
         logger.info("=" * 80)
         
         all_questions = []
         retrieval_errors = []
         
         try:
-            # PHASE 1: Retrieve textbook context
+            # PHASE 1: Retrieve textbook context (parallel retrieval)
             logger.info("\n[PHASE 1] Retrieving textbook context for question generation...")
             
             # Retrieve textbook context by section
@@ -124,28 +125,40 @@ class PaperGenerationRetriever(RetrieverMode):
             previous_qp_context = await self._retrieve_previous_qp_context()
             
             if not textbook_context:
-                logger.warning("Textbook context retrieval failed")
+                logger.warning("Textbook context retrieval failed - using fallback")
                 retrieval_errors.append("Textbook context not available")
             
-            # PHASE 2: Generate Part I (MCQs)
-            logger.info("\n[PHASE 2] Generating Part I (14 MCQ questions)...")
+            # PHASE 2: Generate Part I (MCQs) - SINGLE LLM CALL
+            logger.info("\n[PHASE 2] Generating Part I (14 MCQ questions in one batch)...")
             try:
                 vocab_context = textbook_context.get("vocabulary", "")
+                logger.info(f"Vocabulary context length: {len(vocab_context)} chars")
+                
+                if not vocab_context:
+                    logger.warning("No vocabulary context found, using fallback for Part I")
+                    vocab_context = "Vocabulary words from TN SSLC English textbook covering all 7 units."
+                
                 part_i_questions = await self.generator.generate_part_i_mcqs(
                     textbook_context=vocab_context,
                     previous_paper_context=previous_qp_context.get("part_i", "")
                 )
-                all_questions.extend(part_i_questions)
-                logger.info(f"✓ Generated {len(part_i_questions)} Part I MCQ questions")
+                
+                logger.info(f"Part I generation returned: {len(part_i_questions)} questions")
+                
+                if part_i_questions:
+                    all_questions.extend(part_i_questions)
+                    logger.info(f"✓ Generated {len(part_i_questions)} Part I MCQ questions")
+                else:
+                    logger.warning("Part I generation returned empty list")
+                    
             except Exception as e:
-                logger.error(f"✗ Part I generation failed: {str(e)}")
+                logger.error(f"✗ Part I generation failed: {str(e)}", exc_info=True)
                 retrieval_errors.append(f"Part I MCQ generation: {str(e)}")
             
-            # PHASE 3: Generate Part II (Prose, Poetry, Grammar, Map)
+            # PHASE 3: Generate Part II (Prose, Poetry, Grammar, Map) - REDUCED CALLS
             logger.info("\n[PHASE 3] Generating Part II (Prose, Poetry, Grammar, Map)...")
             
-            # Part II Prose (4 questions from lessons 1-4, answer 3)
-            # Part III will cover lessons 5-7
+            # Part II Prose (4 questions from lessons 1-4, answer 3) - ONE CALL PER LESSON
             try:
                 for lesson_num in [1, 2, 3, 4]:
                     prose_context = await self._retrieve_prose_context(lesson_num)
@@ -302,24 +315,62 @@ class PaperGenerationRetriever(RetrieverMode):
                 logger.error(f"✗ Part III Supplementary failed: {str(e)}")
                 retrieval_errors.append(f"Part III Supplementary: {str(e)}")
             
-            # Part III Writing Skills (6 questions)
+            # Part III Writing Skills (6 questions - Q39-44)
+            # Q42 is a picture-based question
             try:
-                writing_types = ["letter", "email", "paragraph", "dialogue", "story"]
-                question_numbers = [39, 40, 41, 42, 43, 44]
+                writing_types = ["letter", "email", "paragraph"]  # Q39, 40, 41
+                question_numbers_before = [39, 40, 41]
                 
-                for idx, writing_type in enumerate(writing_types + ["letter"]):  # 6 total
-                    if idx < len(question_numbers):
-                        random_unit = self.generator._get_random_unit()
-                        question = await self.generator.generate_writing_questions(
-                            writing_type=writing_type,
-                            previous_paper_context=previous_qp_context.get("part_iii_writing", ""),
-                            unit_number=random_unit
-                        )
-                        if question:
-                            question["question_number"] = question_numbers[idx]
-                            question["part"] = "III"
-                            all_questions.append(question)
-                logger.info(f"✓ Generated {len([q for q in all_questions if q.get('lesson_type') == 'writing'])} writing skill questions")
+                # Generate Q39-41 (letter, email, paragraph)
+                for idx, writing_type in enumerate(writing_types):
+                    random_unit = self.generator._get_random_unit()
+                    question = await self.generator.generate_writing_questions(
+                        writing_type=writing_type,
+                        previous_paper_context=previous_qp_context.get("part_iii_writing", ""),
+                        unit_number=random_unit
+                    )
+                    if question:
+                        question["question_number"] = question_numbers_before[idx]
+                        question["part"] = "III"
+                        all_questions.append(question)
+                
+                # Q42: Picture-based question (special handling)
+                try:
+                    picture_question = await get_picture_question()
+                    picture_question["question_number"] = 42
+                    picture_question["part"] = "III"
+                    all_questions.append(picture_question)
+                    logger.info(f"✓ Generated Q42 picture question: {picture_question.get('image_topic', 'Unknown')}")
+                except Exception as pic_err:
+                    logger.error(f"✗ Picture question failed: {str(pic_err)}")
+                    # Fallback to regular paragraph question
+                    fallback_q = await self.generator.generate_writing_questions(
+                        writing_type="paragraph",
+                        previous_paper_context="",
+                        unit_number=self.generator._get_random_unit()
+                    )
+                    if fallback_q:
+                        fallback_q["question_number"] = 42
+                        fallback_q["part"] = "III"
+                        all_questions.append(fallback_q)
+                
+                # Q43-44: dialogue and story
+                writing_types_after = ["dialogue", "story"]
+                question_numbers_after = [43, 44]
+                
+                for idx, writing_type in enumerate(writing_types_after):
+                    random_unit = self.generator._get_random_unit()
+                    question = await self.generator.generate_writing_questions(
+                        writing_type=writing_type,
+                        previous_paper_context=previous_qp_context.get("part_iii_writing", ""),
+                        unit_number=random_unit
+                    )
+                    if question:
+                        question["question_number"] = question_numbers_after[idx]
+                        question["part"] = "III"
+                        all_questions.append(question)
+                
+                logger.info(f"✓ Generated {len([q for q in all_questions if q.get('lesson_type') in ['writing', 'picture_composition']])} writing skill questions")
             except Exception as e:
                 logger.error(f"✗ Part III Writing Skills failed: {str(e)}")
                 retrieval_errors.append(f"Part III Writing: {str(e)}")
@@ -359,72 +410,27 @@ class PaperGenerationRetriever(RetrieverMode):
                 logger.error(f"✗ Q47 generation failed: {str(e)}")
                 retrieval_errors.append(f"Q47: {str(e)}")
             
-            # PHASE 6: Validate coverage
+            # PHASE 6: Validate coverage (WARNING ONLY - NO RETRIES)
             logger.info("\n[PHASE 6] Validating coverage rules...")
             is_valid, violations = self.validator.validate_paper(all_questions)
             
-            if not is_valid and max_retries > 0:
-                logger.warning(f"Coverage validation failed. Retrying ({max_retries} retries left)...")
-                # In production, would regenerate missing sections
-                # For now, just log violations
+            if not is_valid:
+                logger.warning(f"Coverage validation found {len(violations)} violations (proceeding anyway for speed)")
+                # Log violations but don't retry - user can regenerate manually if needed
+            else:
+                logger.info("✓ All coverage rules passed")
             
-            # PHASE 6.5: Quality Review (Apply TN Board alignment fixes)
-            logger.info("\n[PHASE 6.5] Applying quality review fixes...")
-            try:
-                from .quality_reviewer import get_quality_reviewer
-                quality_reviewer = get_quality_reviewer()
-                
-                # Convert dict questions to QuestionResult for review
-                question_results = []
-                for q in all_questions:
-                    if isinstance(q, dict):
-                        from ..models import QuestionResult
-                        question_results.append(QuestionResult(
-                            question_number=q.get("question_number", 0),
-                            part=q.get("part", ""),
-                            section=q.get("section", ""),
-                            question_text=q.get("question_text", ""),
-                            marks=q.get("marks", 0),
-                            internal_choice=q.get("internal_choice", False),
-                            unit_name=q.get("unit_name", ""),
-                            lesson_type=q.get("lesson_type", ""),
-                            options=q.get("options"),
-                            correct_answer=q.get("correct_answer"),
-                            poem_name=q.get("poem_name"),
-                            story_name=q.get("story_name"),
-                            grammar_area=q.get("grammar_area"),
-                            choice_group=q.get("choice_group"),
-                            lesson_number=q.get("lesson_number")
-                        ))
-                    else:
-                        question_results.append(q)
-                
-                # Apply quality review
-                reviewed_questions, review_report = await quality_reviewer.review_paper(question_results)
-                
-                # Convert back to dict format
-                all_questions = []
-                for q in reviewed_questions:
-                    if hasattr(q, 'dict'):
-                        all_questions.append(q.dict())
-                    else:
-                        all_questions.append(q)
-                
-                logger.info(f"✓ Quality review: {review_report['total_fixes']} fixes applied")
-                if review_report['details']:
-                    for detail in review_report['details'][:5]:  # Show first 5
-                        logger.info(f"  - Q{detail['question_number']}: {detail['fix_type']} fix")
-            except Exception as e:
-                logger.warning(f"Quality review skipped: {str(e)}")
+            # PHASE 6.5: Quality Review SKIPPED FOR SPEED
+            logger.info("\n[PHASE 6.5] Skipping quality review (optimization)...")
             
             # PHASE 7: Assemble final paper
             logger.info("\n[PHASE 7] Assembling final question paper...")
             paper = self._assemble_paper_json(all_questions)
             
             logger.info("=" * 80)
-            logger.info("QUESTION PAPER GENERATION COMPLETE")
+            logger.info("QUESTION PAPER GENERATION COMPLETE (OPTIMIZED)")
             logger.info(f"Total questions generated: {len(all_questions)}")
-            logger.info(f"Validation status: {'✓ PASSED' if is_valid else '✗ FAILED with violations'}")
+            logger.info(f"Validation status: {'✓ PASSED' if is_valid else '⚠️ WARNINGS (see logs)'}")
             logger.info("=" * 80)
             
             return paper

@@ -1,0 +1,16 @@
+{
+  "name": "examsmith",
+  "version": "1.0.0",
+  "description": "AI-powered question paper generation platform",
+  "private": true,
+  "scripts": {
+    "start": "concurrently --kill-others \"npm run backend\" \"npm run frontend\"",
+    "backend": "cd backend/retrival && python -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload",
+    "frontend": "cd Frontend && npm run dev",
+    "install:all": "cd Frontend && npm install",
+    "dev": "concurrently --kill-others --names \"API,WEB\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run backend\" \"npm run frontend\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
