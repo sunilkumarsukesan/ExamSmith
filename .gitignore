@@ -7,3 +7,6 @@ __pycache__/
 
 # Logs
 logs/
+
+# Playwright artifacts
+.playwright-mcp/

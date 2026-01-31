@@ -17,6 +17,9 @@ class MongoDBClient:
         except ConnectionFailure as e:
             logger.error(f"✗ MongoDB connection failed: {str(e)}")
             self.client = None
+        except Exception as e:
+            logger.error(f"✗ MongoDB init failed: {str(e)}")
+            self.client = None
     
     @property
     def textbook_collection(self):
