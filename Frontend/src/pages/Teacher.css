@@ -322,7 +322,25 @@
 }
 
 .download-btn {
-  background: #8b5cf6 !important;
+  background-color: #c7d2fe;
+  color: #4c1d95 !important;
+}
+
+.download-btn svg {
+  color: #4c1d95 !important;
+  fill: #4c1d95 !important;
+  width: 1.2em;
+  height: 1.2em;
+}
+
+.download-btn:hover {
+  background-color: #a5b4fc;
+  color: #fff !important;
+}
+
+.download-btn:hover svg {
+  color: #fff !important;
+  fill: #fff !important;
 }
 
 .spin {

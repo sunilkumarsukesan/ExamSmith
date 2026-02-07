@@ -82,9 +82,13 @@ class HybridSearch:
     ) -> list[dict]:
         """BM25 search using MongoDB Atlas Search."""
         try:
+            # Use the actual index name from MongoDB Atlas
+            bm25_index_name = getattr(settings, 'bm25_index_name', 'bm25_english')
+            
             pipeline = [
                 {
                     "$search": {
+                        "index": bm25_index_name,
                         "text": {
                             "query": query,
                             "path": "content",
@@ -118,22 +122,54 @@ class HybridSearch:
     ) -> list[dict]:
         """Vector search using MongoDB Atlas Vector Search."""
         try:
-            pipeline = [
-                {
-                    "$search": {
-                        "cosmosSearch": True,
-                        "vector": query_embedding,
-                        "k": top_k,
+            # Prefer the native $vectorSearch stage (MongoDB 7.0+/Atlas).
+            # If the cluster doesn't support it, fall back to Atlas Search knnBeta.
+            vector_index_name = getattr(settings, 'vector_index_name', 'vector_index_english')
+            vector_path = "embedding"     # per ingestion schema
+            num_candidates = max(50, top_k * 10)
+
+            try:
+                vector_stage: dict = {
+                    "$vectorSearch": {
+                        "index": vector_index_name,
+                        "path": vector_path,
+                        "queryVector": query_embedding,
+                        "numCandidates": num_candidates,
+                        "limit": top_k,
                     }
+                }
+                if filters:
+                    # $vectorSearch supports server-side filtering.
+                    vector_stage["$vectorSearch"]["filter"] = filters
+
+                pipeline = [
+                    vector_stage,
+                    {"$addFields": {"vector_score": {"$meta": "vectorSearchScore"}}},
+                ]
+                results = list(collection.aggregate(pipeline))
+                logger.debug(f"Vector search returned {len(results)} results")
+                return results
+            except Exception as inner:
+                # Fall back to $search + knnBeta (older Atlas Search vector syntax)
+                logger.debug(f"$vectorSearch unavailable, falling back to knnBeta: {inner}")
+
+            search_body: dict = {
+                "index": vector_index_name,
+                "knnBeta": {
+                    "vector": query_embedding,
+                    "path": vector_path,
+                    "k": top_k,
                 },
-                {
-                    "$addFields": {"vector_score": {"$meta": "searchScore"}}
-                },
+            }
+            # Apply filters after $search if provided (safe across Atlas versions)
+            pipeline = [
+                {"$search": search_body},
+                {"$addFields": {"vector_score": {"$meta": "searchScore"}}},
             ]
-            
             if filters:
-                pipeline.insert(1, {"$match": filters})
-            
+                pipeline.append({"$match": filters})
+            pipeline.append({"$limit": top_k})
+
             results = list(collection.aggregate(pipeline))
             logger.debug(f"Vector search returned {len(results)} results")
             return results

@@ -55,7 +55,8 @@ class MistralEmbeddings:
                 "Please add MISTRAL_API_KEY to your .env file."
             )
         
-        return await self._call_api([text])[0]
+        result = await self._call_api([text])
+        return result[0]
     
     async def embed_texts(self, texts: List[str]) -> List[List[float]]:
         """

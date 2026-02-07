@@ -388,4 +388,36 @@ export const regenerateAllQuestions = async (data) => {
   }
 };
 
+// ===== Chat APIs =====
+
+/**
+ * Get chat quota for current user
+ * @returns {Object} - { remaining, limit, reset_date }
+ */
+export const getChatQuota = async () => {
+  const response = await apiClient.get('/student/chat/quota');
+  return response.data;
+};
+
+/**
+ * Get chat sessions for current user
+ * @returns {Object} - { sessions, total }
+ */
+export const getChatSessions = async (skip = 0, limit = 20) => {
+  const response = await apiClient.get('/student/chat/sessions', {
+    params: { skip, limit }
+  });
+  return response.data;
+};
+
+/**
+ * Get messages for a chat session
+ * @param {string} sessionId - Session ID
+ * @returns {Object} - { session_id, title, messages }
+ */
+export const getChatSessionMessages = async (sessionId) => {
+  const response = await apiClient.get(`/student/chat/sessions/${sessionId}/messages`);
+  return response.data;
+};
+
 export default apiClient;

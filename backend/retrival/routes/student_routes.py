@@ -10,6 +10,7 @@ from datetime import datetime
 import uuid
 import logging
 import sys
+import json
 from pathlib import Path
 
 # Add parent to path for imports
@@ -24,6 +25,7 @@ from models_db.evaluation import (
 from auth.dependencies import require_role, TokenPayload
 from mongo.client import mongo_client
 from config import settings
+from services.response_formatter import format_chat_response
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/student", tags=["Student"])
@@ -766,3 +768,439 @@ async def get_my_results(
     except Exception as e:
         logger.error(f"Get my results failed: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to get results")
+
+
+# ===== Chat Learning Assistant (Students & Admins only) =====
+
+from models import ChatRequest, ChatResponse, ChatQuotaResponse, SelectedQuestion
+import json
+import asyncio
+
+# Role restriction for chat - Students and Admins only (NOT instructors)
+require_chat_access = require_role(["ADMIN", "STUDENT"])
+
+CHAT_DAILY_LIMIT = 20
+
+
+def get_chat_sessions_collection():
+    """Get chat sessions collection."""
+    if not mongo_client.client:
+        raise HTTPException(status_code=503, detail="Database unavailable")
+    return mongo_client.chat_sessions_collection
+
+
+def get_chat_messages_collection():
+    """Get chat messages collection."""
+    if not mongo_client.client:
+        raise HTTPException(status_code=503, detail="Database unavailable")
+    return mongo_client.chat_messages_collection
+
+
+def build_chat_context(selected_questions: List[dict], textbook_content: List[str]) -> str:
+    """Build context from selected questions and textbook content."""
+    context_parts = []
+    
+    if selected_questions:
+        context_parts.append("=== QUESTIONS THE STUDENT IS ASKING ABOUT ===")
+        for q in selected_questions:
+            context_parts.append(f"\nQuestion {q.get('question_number', '?')}: {q.get('question_text', '')}")
+            if q.get('student_answer'):
+                context_parts.append(f"Student's Answer: {q['student_answer']}")
+            if q.get('correct_answer'):
+                context_parts.append(f"Correct Answer: {q['correct_answer']}")
+            if q.get('is_correct') is not None:
+                context_parts.append(f"Was Correct: {'Yes' if q['is_correct'] else 'No'}")
+    
+    if textbook_content:
+        context_parts.append("\n\n=== RELEVANT TEXTBOOK CONTENT ===")
+        for i, content in enumerate(textbook_content, 1):
+            context_parts.append(f"\n[Source {i}]: {content}")
+    
+    return "\n".join(context_parts)
+
+
+def build_chat_prompt(query: str, context: str, chat_history: List[dict]) -> str:
+    """Build the chat prompt for the LLM."""
+    
+    # Check if this is a vocabulary question
+    is_vocabulary_question = any(word in query.lower() for word in 
+        ['vocabulary', 'vocab', 'exercise', 'construct meaningful sentences', 
+         'coward', 'gradual', 'praise', 'courageous', 'starvation', 'unit 1', 'exercise e'])
+    
+    # Check if this is a speech writing question
+    is_speech_writing_question = any(word in query.lower() for word in
+        ['write a speech', 'speech', 'exercise m', 'literary association', 
+         'school celebration', 'given lead', 'speech writing'])
+    
+    history_text = ""
+    if chat_history:
+        history_text = "\n=== PREVIOUS CONVERSATION ===\n"
+        for msg in chat_history[-6:]:  # Last 6 messages for context
+            role = "Student" if msg.get("role") == "user" else "Tutor"
+            history_text += f"{role}: {msg.get('content', '')}\n"
+    
+    # Special instruction for vocabulary questions
+    vocabulary_instruction = ""
+    if is_vocabulary_question:
+        vocabulary_instruction = """
+SPECIAL INSTRUCTION FOR VOCABULARY EXERCISE QUESTIONS:
+- If the student is asking about vocabulary exercises (like "E. Use the following words..."), provide DIRECT ANSWERS with:
+  1. The specific vocabulary words with their definitions
+  2. Meaningful example sentences for each word
+  3. Context from the lesson where applicable
+  4. Clear structure with one word per section
+- DO NOT provide generic tips on how to construct sentences unless specifically asked
+- ALWAYS provide the actual words and definitions being requested
+- Use the vocabulary context provided to give lesson-specific examples
+
+"""
+    
+    # Special instruction for speech writing questions
+    speech_instruction = ""
+    if is_speech_writing_question:
+        speech_instruction = """
+SPECIAL INSTRUCTION FOR SPEECH WRITING EXERCISE QUESTIONS:
+- If the student is asking about speech writing exercise (Exercise M), provide:
+  1. The EXACT "given lead" that they should base their speech on
+  2. The exercise requirements and word count
+  3. A clear breakdown of what should be in introduction, body, and conclusion
+  4. Guidelines for effective speech writing with examples
+  5. Tips for connecting to literary themes from Unit 1
+- DO NOT provide generic speech-writing tips without first presenting the exercise details
+- ALWAYS clearly highlight the "given lead" that the student must use
+- Provide the specific prompt/lead from the textbook (e.g., "The joy of reading literature")
+- Structure the response to help students understand what they need to do
+
+"""
+    
+    prompt = f"""You are an expert English tutor for TN SSLC (10th Standard) students. Your role is to help students understand their exam answers and learn from their mistakes.
+
+GUIDELINES:
+1. Be encouraging and supportive while being educational
+2. If the student got an answer wrong, explain WHY it was wrong and how to remember the correct answer
+3. Use the textbook content provided to give accurate, curriculum-aligned explanations
+4. If the student asks about a poem or prose, explain the meaning, themes, and literary devices
+5. Make your explanations clear and suitable for 10th standard students
+6. If you don't have enough context, ask clarifying questions
+7. Always relate back to the TN SSLC English syllabus when relevant
+
+RESPONSE FORMAT REQUIREMENTS:
+- Structure your response with clear sections and line breaks for readability
+- Use bullet points (starting with - or •) for lists of concepts, examples, or points
+- Use numbered steps (1. 2. 3.) for sequential processes or explanations
+- Start each major idea on a new line
+- Group related concepts together with proper spacing
+- For definitions: Write in the format "Term – Definition" or "Term is defined as..."
+- For key points: Start lines with "Important:" or "Remember:" 
+- Use "For example:" or "Example:" when providing examples
+- Use "Note:" for additional helpful information
+- Break long explanations into multiple shorter paragraphs (2-3 sentences each)
+- Avoid walls of text - ensure proper spacing between concepts
+
+{vocabulary_instruction}{speech_instruction}
+
+TEXTBOOK CONTEXT AND VOCABULARY DATA:
+{context}
+
+{history_text}
+
+STUDENT'S QUESTION: {query}
+
+Provide a helpful, educational response that helps the student truly understand the concept. Remember to format it clearly with proper structure and spacing:"""
+    
+    return prompt
+
+
+@router.get("/chat/quota")
+async def get_chat_quota(
+    current_user: TokenPayload = Depends(require_chat_access)
+):
+    """
+    Get remaining chat quota for today.
+    Only available to Students and Admins.
+    """
+    remaining = mongo_client.get_remaining_quota(current_user.user_id, CHAT_DAILY_LIMIT)
+    today = datetime.now().strftime("%Y-%m-%d")
+    
+    return ChatQuotaResponse(
+        remaining=remaining,
+        limit=CHAT_DAILY_LIMIT,
+        reset_date=today
+    )
+
+
+@router.post("/chat/stream")
+async def chat_stream(
+    request: ChatRequest,
+    current_user: TokenPayload = Depends(require_chat_access)
+):
+    """
+    Streaming chat endpoint for student learning assistant.
+    Uses Server-Sent Events for real-time token streaming.
+    Only available to Students and Admins (NOT instructors).
+    """
+    from sse_starlette.sse import EventSourceResponse
+    
+    # Check rate limit
+    allowed, remaining = mongo_client.check_and_increment_quota(
+        current_user.user_id, CHAT_DAILY_LIMIT
+    )
+    
+    if not allowed:
+        raise HTTPException(
+            status_code=429,
+            detail={
+                "error": "rate_limit_exceeded",
+                "message": f"Daily chat limit of {CHAT_DAILY_LIMIT} reached. Try again tomorrow.",
+                "remaining": 0,
+                "reset_date": datetime.now().strftime("%Y-%m-%d")
+            }
+        )
+    
+    async def generate_stream():
+        try:
+            logger.info(f"Chat stream started for user: {current_user.user_id}")
+            from langchain_groq import ChatGroq
+            from retriever.concept_explanation import ConceptExplanationRetriever
+            
+            # Create or continue session
+            session_id = request.session_id or str(uuid.uuid4())
+            
+            # Send session metadata first
+            yield {
+                "event": "meta",
+                "data": json.dumps({"session_id": session_id, "remaining_quota": remaining}),
+            }
+            
+            # Extract unit filters from selected questions
+            unit_filters = set()
+            for q in request.selected_questions:
+                if q.source_unit:
+                    unit_filters.add(q.source_unit)
+                if q.unit_name:
+                    unit_filters.add(q.unit_name)
+            
+            # Retrieve textbook content based on query and unit context
+            textbook_content = []
+            citations = []
+            
+            try:
+                retriever = ConceptExplanationRetriever()
+                
+                # Build search query including question context
+                search_query = request.query
+                if request.selected_questions:
+                    q_texts = [q.question_text for q in request.selected_questions if q.question_text]
+                    if q_texts:
+                        search_query = f"{request.query} {' '.join(q_texts[:2])}"
+                
+                # Check if this is a vocabulary question
+                is_vocab_query = any(word in request.query.lower() for word in 
+                    ['vocabulary', 'vocab', 'exercise', 'construct meaningful sentences', 
+                     'coward', 'gradual', 'praise', 'courageous', 'starvation'])
+                
+                # Apply unit filter if we have specific units
+                filters = {"metadata.lang": "en"} if not is_vocab_query else {}
+                if unit_filters and not is_vocab_query:
+                    # Try to extract numeric unit
+                    for uf in unit_filters:
+                        try:
+                            if isinstance(uf, str) and uf.lower().startswith("unit"):
+                                unit_num = int(uf.lower().replace("unit", "").strip())
+                                filters["metadata.unit"] = unit_num
+                                break
+                            elif isinstance(uf, int):
+                                filters["metadata.unit"] = uf
+                                break
+                        except:
+                            pass
+                
+                context_blocks, citations = await retriever.retrieve(
+                    query=search_query,
+                    vector_weight=0.5,
+                    bm25_weight=0.5,
+                    top_k=5 if not is_vocab_query else 10,  # Get more results for vocab
+                    filters=filters
+                )
+                textbook_content = context_blocks
+                
+            except Exception as e:
+                logger.warning(f"Textbook retrieval failed: {e}")
+            
+            # Build context and prompt
+            selected_q_dicts = [q.model_dump() for q in request.selected_questions]
+            context = build_chat_context(selected_q_dicts, textbook_content)
+            chat_history = [msg.model_dump() for msg in request.chat_history]
+            prompt = build_chat_prompt(request.query, context, chat_history)
+            
+            # Stream using LangChain + Groq with astream
+            llm = ChatGroq(
+                api_key=settings.groq_api_key,
+                model=settings.groq_model,
+                temperature=0.7,
+                max_tokens=1024,
+                streaming=True
+            )
+            
+            full_response = ""
+            
+            # Stream tokens as they arrive using astream
+            async for chunk in llm.astream(prompt):
+                token = chunk.content if hasattr(chunk, 'content') else str(chunk)
+                if token:
+                    full_response += token
+                    yield {
+                        "event": "token",
+                        "data": json.dumps({"token": token}),
+                    }
+            
+            # Save to chat history
+            try:
+                sessions_coll = get_chat_sessions_collection()
+                messages_coll = get_chat_messages_collection()
+                
+                # Upsert session
+                sessions_coll.update_one(
+                    {"session_id": session_id},
+                    {
+                        "$set": {
+                            "user_id": current_user.user_id,
+                            "updated_at": datetime.utcnow(),
+                            "selected_questions": selected_q_dicts
+                        },
+                        "$setOnInsert": {
+                            "created_at": datetime.utcnow(),
+                            "title": request.query[:50] + "..." if len(request.query) > 50 else request.query
+                        }
+                    },
+                    upsert=True
+                )
+                
+                # Save messages
+                messages_coll.insert_many([
+                    {
+                        "message_id": str(uuid.uuid4()),
+                        "session_id": session_id,
+                        "user_id": current_user.user_id,
+                        "role": "user",
+                        "content": request.query,
+                        "created_at": datetime.utcnow()
+                    },
+                    {
+                        "message_id": str(uuid.uuid4()),
+                        "session_id": session_id,
+                        "user_id": current_user.user_id,
+                        "role": "assistant",
+                        "content": full_response,
+                        "created_at": datetime.utcnow(),
+                        "sources": [{"chunk_id": str(c.chunk_id), "lesson_name": c.lesson_name} for c in citations]
+                    }
+                ])
+            except Exception as e:
+                logger.error(f"Failed to save chat history: {e}")
+            
+            # Send done event with sources
+            yield {
+                "event": "done",
+                "data": json.dumps(
+                    {
+                        "sources": [
+                            {"chunk_id": str(c.chunk_id), "lesson_name": c.lesson_name}
+                            for c in citations
+                        ],
+                        "remaining_quota": remaining,
+                    }
+                ),
+            }
+            
+        except Exception as e:
+            logger.error(f"Chat stream error: {str(e)}")
+            yield {
+                "event": "error",
+                "data": json.dumps({"error": str(e)}),
+            }
+    
+    return EventSourceResponse(generate_stream())
+
+
+@router.get("/chat/sessions")
+async def get_chat_sessions(
+    skip: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=50),
+    current_user: TokenPayload = Depends(require_chat_access)
+):
+    """
+    Get chat sessions for current user.
+    """
+    try:
+        sessions_coll = get_chat_sessions_collection()
+        
+        cursor = sessions_coll.find({
+            "user_id": current_user.user_id
+        }).sort("updated_at", -1).skip(skip).limit(limit)
+        
+        sessions = []
+        for doc in cursor:
+            sessions.append({
+                "session_id": doc["session_id"],
+                "title": doc.get("title", "Chat"),
+                "created_at": doc.get("created_at"),
+                "updated_at": doc.get("updated_at")
+            })
+        
+        total = sessions_coll.count_documents({"user_id": current_user.user_id})
+        
+        return {"sessions": sessions, "total": total}
+        
+    except Exception as e:
+        logger.error(f"Get chat sessions failed: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get chat sessions")
+
+
+@router.get("/chat/sessions/{session_id}/messages")
+async def get_session_messages(
+    session_id: str,
+    current_user: TokenPayload = Depends(require_chat_access)
+):
+    """
+    Get messages for a specific chat session.
+    """
+    try:
+        sessions_coll = get_chat_sessions_collection()
+        messages_coll = get_chat_messages_collection()
+        
+        # Verify session belongs to user
+        session = sessions_coll.find_one({
+            "session_id": session_id,
+            "user_id": current_user.user_id
+        })
+        
+        if not session:
+            raise HTTPException(status_code=404, detail="Session not found")
+        
+        cursor = messages_coll.find({
+            "session_id": session_id
+        }).sort("created_at", 1)
+        
+        messages = []
+        for doc in cursor:
+            messages.append({
+                "message_id": doc["message_id"],
+                "role": doc["role"],
+                "content": doc["content"],
+                "created_at": doc.get("created_at"),
+                "sources": doc.get("sources", [])
+            })
+        
+        return {
+            "session_id": session_id,
+            "title": session.get("title"),
+            "selected_questions": session.get("selected_questions", []),
+            "messages": messages
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Get session messages failed: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get messages")

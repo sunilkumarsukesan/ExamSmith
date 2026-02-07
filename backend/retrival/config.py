@@ -37,6 +37,10 @@ class Settings(BaseSettings):
     hybrid_default_bm25_weight: float = Field(0.5, alias="BM25_WEIGHT")
     hybrid_default_top_k: int = Field(10, alias="HYBRID_SEARCH_TOP_K")
     
+    # MongoDB Atlas Search Index Names
+    bm25_index_name: str = Field("bm25_english", alias="BM25_INDEX_NAME")
+    vector_index_name: str = Field("vector_index_english", alias="VECTOR_INDEX_NAME")
+    
     # Logging
     log_level: str = Field("INFO", alias="LOG_LEVEL")
     

@@ -3,7 +3,7 @@ import './Student.css';
 import { 
   FaSpinner, FaDownload, FaPlay, FaClipboardList, 
   FaCheckCircle, FaTimesCircle, FaClock, FaPaperPlane,
-  FaChartBar, FaEye
+  FaChartBar, FaEye, FaComments, FaRobot
 } from 'react-icons/fa';
 import { 
   getPipelinePapers, 
@@ -14,9 +14,10 @@ import {
   getResult,
   downloadPaperPdf 
 } from '../services/api';
+import Chatbot from '../components/Chatbot';
 
 export default function Student() {
-  const [activeTab, setActiveTab] = useState('available'); // available, my-attempts, results
+  const [activeTab, setActiveTab] = useState('available'); // available, my-attempts, chat
   const [papers, setPapers] = useState([]);
   const [attempts, setAttempts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,6 +32,11 @@ export default function Student() {
   
   // Results state
   const [viewingResult, setViewingResult] = useState(null);
+  
+  // Chatbot state
+  const [chatbotOpen, setChatbotOpen] = useState(false);
+  const [selectedQuestionsForChat, setSelectedQuestionsForChat] = useState([]);
+  const [questionSelections, setQuestionSelections] = useState({});
 
   // Fetch available papers
   const fetchPapers = useCallback(async () => {
@@ -383,10 +389,43 @@ export default function Student() {
           </div>
           
           <div className="question-results">
-            <h3>Question-by-Question Analysis</h3>
+            <div className="question-results-header">
+              <h3>Question-by-Question Analysis</h3>
+              <button 
+                className="chat-now-btn"
+                onClick={() => {
+                  const selected = viewingResult.question_results.filter(
+                    (_, idx) => questionSelections[idx]
+                  );
+                  if (selected.length === 0) {
+                    // If none selected, open chat without specific questions
+                    setSelectedQuestionsForChat([]);
+                  } else {
+                    setSelectedQuestionsForChat(selected);
+                  }
+                  setChatbotOpen(true);
+                }}
+              >
+                <FaComments /> {Object.values(questionSelections).filter(Boolean).length > 0 
+                  ? `Chat About Selected (${Object.values(questionSelections).filter(Boolean).length})`
+                  : 'Ask Tutor'}
+              </button>
+            </div>
             {viewingResult.question_results.map((qr, idx) => (
               <div key={idx} className={`question-result ${qr.is_correct ? 'correct' : qr.question_type === 'MCQ' ? 'incorrect' : ''}`}>
                 <div className="qr-header">
+                  <label className="qr-checkbox">
+                    <input 
+                      type="checkbox"
+                      checked={questionSelections[idx] || false}
+                      onChange={(e) => {
+                        setQuestionSelections(prev => ({
+                          ...prev,
+                          [idx]: e.target.checked
+                        }));
+                      }}
+                    />
+                  </label>
                   <span className="qr-number">Q{qr.question_number}</span>
                   <span className="qr-type">{qr.question_type}</span>
                   <span className="qr-marks">
@@ -428,6 +467,16 @@ export default function Student() {
             ))}
           </div>
         </div>
+        
+        {/* Chatbot for results */}
+        <Chatbot 
+          isOpen={chatbotOpen}
+          onClose={() => {
+            setChatbotOpen(false);
+            setSelectedQuestionsForChat([]);
+          }}
+          selectedQuestions={selectedQuestionsForChat}
+        />
       </div>
     );
   }
@@ -454,6 +503,12 @@ export default function Student() {
             onClick={() => setActiveTab('my-attempts')}
           >
             <FaChartBar /> My Attempts
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 'chat' ? 'active' : ''}`}
+            onClick={() => setActiveTab('chat')}
+          >
+            <FaRobot /> Ask Tutor
           </button>
         </div>
 
@@ -514,7 +569,7 @@ export default function Student() {
               ))
             )}
           </div>
-        ) : (
+        ) : activeTab === 'my-attempts' ? (
           <div className="attempts-list">
             {attempts.length === 0 ? (
               <div className="empty-state">
@@ -558,8 +613,50 @@ export default function Student() {
               </table>
             )}
           </div>
-        )}
+        ) : activeTab === 'chat' ? (
+          <div className="chat-tab-content">
+            <div className="chat-intro">
+              <div className="chat-intro-icon">
+                <FaRobot />
+              </div>
+              <h2>English Learning Assistant</h2>
+              <p>
+                Ask me anything about your English textbook! I can help you understand 
+                poems, prose, grammar, and answer any questions about your TN SSLC syllabus.
+              </p>
+              <button 
+                className="start-chat-btn"
+                onClick={() => {
+                  setSelectedQuestionsForChat([]);
+                  setChatbotOpen(true);
+                }}
+              >
+                <FaComments /> Start Chatting
+              </button>
+            </div>
+            
+            <div className="chat-tips">
+              <h3>💡 What can you ask?</h3>
+              <ul>
+                <li>Explain the meaning of a poem or prose passage</li>
+                <li>Help me understand a grammar concept</li>
+                <li>Why was my exam answer wrong?</li>
+                <li>Give me examples of literary devices</li>
+                <li>Summarize a chapter or story</li>
+              </ul>
+            </div>
+          </div>
+        ) : null}
       </div>
+      
+      {/* Chatbot Modal (for general chat from tab) */}
+      {activeTab === 'chat' && (
+        <Chatbot 
+          isOpen={chatbotOpen}
+          onClose={() => setChatbotOpen(false)}
+          selectedQuestions={selectedQuestionsForChat}
+        />
+      )}
     </div>
   );
 }

@@ -182,3 +182,56 @@ class RevisionHistoryResponse(BaseModel):
     paper_id: str
     revisions: List[dict]
     total_revisions: int
+
+
+# ===== Chat Models (Student Learning Assistant) =====
+class ChatMessage(BaseModel):
+    """Individual chat message"""
+    role: Literal["user", "assistant", "system"]
+    content: str
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+
+
+class SelectedQuestion(BaseModel):
+    """Question selected by student for chat context"""
+    question_number: int
+    question_text: str
+    student_answer: Optional[str] = None
+    correct_answer: Optional[str] = None
+    is_correct: Optional[bool] = None
+    source_unit: Optional[str] = None
+    unit_name: Optional[str] = None
+    lesson_type: Optional[str] = None
+
+
+class ChatRequest(BaseModel):
+    """Request model for student chat"""
+    query: str = Field(..., min_length=1, max_length=2000)
+    selected_questions: List[SelectedQuestion] = Field(default_factory=list)
+    session_id: Optional[str] = None  # For continuing existing session
+    chat_history: List[ChatMessage] = Field(default_factory=list)
+
+
+class ChatResponse(BaseModel):
+    """Response model for student chat (non-streaming)"""
+    session_id: str
+    message: str
+    sources: List[Citation] = Field(default_factory=list)
+    remaining_quota: int
+    
+
+class ChatSession(BaseModel):
+    """Chat session for persistence"""
+    session_id: str
+    user_id: str
+    title: Optional[str] = None
+    selected_questions: List[SelectedQuestion] = Field(default_factory=list)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    
+
+class ChatQuotaResponse(BaseModel):
+    """Response for quota check"""
+    remaining: int
+    limit: int
+    reset_date: str
