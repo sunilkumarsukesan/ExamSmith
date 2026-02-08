@@ -96,17 +96,28 @@ export default function SignIn() {
   return (
     <div className="signin">
       <div className="signin-container">
-        <form className="signin-form" onSubmit={handleSubmit}>
-          <h1>{isLogin ? 'Welcome Back' : 'Create Account'}</h1>
-          <p className="signin-subtitle">
-            {isLogin ? 'Sign in to your ExamSmith account' : 'Register for a new student account'}
-          </p>
+        {/* Left Side - Visual/Branding */}
+        <div className="signin-visual">
+          <h2>ExamSmith</h2>
+          <p>AI-Powered Question Paper Generation</p>
+          <div className="visual-content">
+            <div className="visual-item">📚 Learn Smarter</div>
+            <div className="visual-item">🎯 Practice Better</div>
+            <div className="visual-item">✨ Succeed Together</div>
+          </div>
+        </div>
 
-          {!isLogin && (
-            <div className="form-group">
-              <label htmlFor="name">Full Name *</label>
-              <div className="input-wrapper">
-                <FaUser className="input-icon" />
+        {/* Right Side - Form */}
+        <div className="signin-form-wrapper">
+          <form className="signin-form" onSubmit={handleSubmit}>
+            <h1>{isLogin ? 'Welcome Back' : 'Create Account'}</h1>
+            <p className="signin-subtitle">
+              {isLogin ? 'Sign in to your ExamSmith account' : 'Register for a new student account'}
+            </p>
+
+            {!isLogin && (
+              <div className="form-group">
+                <label htmlFor="name">Full Name *</label>
                 <input
                   type="text"
                   id="name"
@@ -118,13 +129,10 @@ export default function SignIn() {
                   disabled={loading}
                 />
               </div>
-            </div>
-          )}
+            )}
 
-          <div className="form-group">
-            <label htmlFor="email">Email Address *</label>
-            <div className="input-wrapper">
-              <FaEnvelope className="input-icon" />
+            <div className="form-group">
+              <label htmlFor="email">Email Address *</label>
               <input
                 type="email"
                 id="email"
@@ -136,12 +144,9 @@ export default function SignIn() {
                 disabled={loading}
               />
             </div>
-          </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Password *</label>
-            <div className="input-wrapper">
-              <FaLock className="input-icon" />
+            <div className="form-group">
+              <label htmlFor="password">Password *</label>
               <input
                 type="password"
                 id="password"
@@ -154,13 +159,10 @@ export default function SignIn() {
                 disabled={loading}
               />
             </div>
-          </div>
 
-          {!isLogin && (
-            <div className="form-group">
-              <label htmlFor="confirmPassword">Confirm Password *</label>
-              <div className="input-wrapper">
-                <FaLock className="input-icon" />
+            {!isLogin && (
+              <div className="form-group">
+                <label htmlFor="confirmPassword">Confirm Password *</label>
                 <input
                   type="password"
                   id="confirmPassword"
@@ -172,60 +174,50 @@ export default function SignIn() {
                   disabled={loading}
                 />
               </div>
-            </div>
-          )}
-
-          {error && (
-            <div className="error-message">
-              ✗ {error}
-            </div>
-          )}
-
-          {success && (
-            <div className="success-message">
-              ✓ {success}
-            </div>
-          )}
-
-          <button type="submit" className="signin-btn" disabled={loading}>
-            {loading ? 'Please wait...' : (isLogin ? 'Sign In' : 'Create Account')}
-            {!loading && <FaArrowRight />}
-          </button>
-
-          <div className="signin-footer">
-            {isLogin ? (
-              <>
-                <a href="#forgot">Forgot password?</a>
-                <span>•</span>
-                <button type="button" className="link-btn" onClick={toggleMode}>
-                  Create account
-                </button>
-              </>
-            ) : (
-              <>
-                <span>Already have an account?</span>
-                <button type="button" className="link-btn" onClick={toggleMode}>
-                  Sign in
-                </button>
-              </>
             )}
-          </div>
 
-          {!isLogin && (
-            <p className="register-note">
-              Note: Self-registration is for students only. Instructors and admins must be created by an administrator.
-            </p>
-          )}
-        </form>
+            {error && (
+              <div className="error-message">
+                ✗ {error}
+              </div>
+            )}
 
-        <div className="signin-visual">
-          <h2>ExamSmith</h2>
-          <p>AI-Powered Question Paper Generation</p>
-          <div className="visual-content">
-            <div className="visual-item">📚 Learn Smarter</div>
-            <div className="visual-item">🎯 Practice Better</div>
-            <div className="visual-item">✨ Succeed Together</div>
-          </div>
+            {success && (
+              <div className="success-message">
+                ✓ {success}
+              </div>
+            )}
+
+            <button type="submit" className="signin-btn" disabled={loading}>
+              {loading ? 'Please wait...' : (isLogin ? 'Sign In' : 'Create Account')}
+              {!loading && <FaArrowRight />}
+            </button>
+
+            <div className="signin-footer">
+              {isLogin ? (
+                <>
+                  <a href="#forgot">Forgot password?</a>
+                  <span>•</span>
+                  <button type="button" className="link-btn" onClick={toggleMode}>
+                    Create account
+                  </button>
+                </>
+              ) : (
+                <>
+                  <span>Already have an account?</span>
+                  <button type="button" className="link-btn" onClick={toggleMode}>
+                    Sign in
+                  </button>
+                </>
+              )}
+            </div>
+
+            {!isLogin && (
+              <p className="register-note">
+                Note: Self-registration is for students only. Instructors and admins must be created by an administrator.
+              </p>
+            )}
+          </form>
         </div>
       </div>
     </div>

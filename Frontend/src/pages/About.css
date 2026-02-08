@@ -1,135 +1,137 @@
 .about {
-  min-height: calc(100vh - 80px);
-  background-color: #f9fafb;
+  min-height: calc(100vh - 72px);
+  background-color: var(--color-off-white);
 }
 
 .about-hero {
-  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
-  color: white;
-  padding: 4rem 2rem;
+  background: linear-gradient(135deg, var(--color-mint) 0%, var(--color-teal) 100%);
+  color: var(--color-white);
+  padding: var(--space-3xl) var(--space-2xl);
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: var(--space-3xl);
 }
 
 .about-hero h1 {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  font-weight: 700;
+  font-size: var(--text-4xl);
+  margin-bottom: var(--space-md);
+  font-weight: var(--font-bold);
 }
 
 .about-hero p {
-  font-size: 1.3rem;
-  opacity: 0.9;
+  font-size: var(--text-2xl);
+  opacity: 0.95;
 }
 
 .about-container {
   max-width: 1000px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: var(--space-2xl);
 }
 
 .about-section {
-  background: white;
-  padding: 2.5rem;
-  margin-bottom: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: var(--color-white);
+  padding: var(--space-2xl);
+  margin-bottom: var(--space-2xl);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
 }
 
 .about-section h2 {
-  color: #D97706;
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
-  border-bottom: 3px solid #D97706;
-  padding-bottom: 0.5rem;
+  color: var(--color-mint);
+  font-size: var(--text-3xl);
+  margin-bottom: var(--space-xl);
+  border-bottom: 3px solid var(--color-mint);
+  padding-bottom: var(--space-sm);
 }
 
 .about-section p {
-  color: #555;
-  line-height: 1.8;
-  font-size: 1.05rem;
+  color: var(--color-gray-600);
+  line-height: var(--leading-relaxed);
+  font-size: var(--text-lg);
 }
 
 .about-list {
   list-style: none;
   padding: 0;
-  color: #555;
+  color: var(--color-gray-600);
   line-height: 2;
 }
 
 .about-list li {
-  padding: 0.8rem 0;
-  padding-left: 2rem;
+  padding: var(--space-md) 0;
+  padding-left: var(--space-2xl);
   position: relative;
-  font-size: 1.05rem;
+  font-size: var(--text-lg);
 }
 
 .about-list li::before {
   content: '✓';
   position: absolute;
   left: 0;
-  color: #D97706;
-  font-weight: bold;
-  font-size: 1.3rem;
+  color: var(--color-mint);
+  font-weight: var(--font-bold);
+  font-size: var(--text-lg);
 }
 
 .how-it-works {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem;
+  gap: var(--space-2xl);
+  margin-top: var(--space-2xl);
 }
 
 .step {
   text-align: center;
-  padding: 2rem;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  border-radius: 12px;
-  transition: all 0.3s ease;
+  padding: var(--space-2xl);
+  background: linear-gradient(135deg, var(--color-mint-light) 0%, var(--color-teal-light) 100%);
+  border-radius: var(--radius-xl);
+  transition: all var(--transition-base);
+  border: 1px solid var(--color-gray-200);
 }
 
 .step:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(245, 158, 11, 0.2);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-mint);
 }
 
 .step-number {
   width: 50px;
   height: 50px;
-  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
-  color: white;
-  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-sage) 0%, var(--color-sage-dark) 100%);
+  color: var(--color-white);
+  border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin: 0 auto 1rem;
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  margin: 0 auto var(--space-md);
 }
 
 .step h3 {
-  color: #1a1a2e;
-  margin-bottom: 0.5rem;
-  font-size: 1.2rem;
+  color: var(--color-charcoal);
+  margin-bottom: var(--space-sm);
+  font-size: var(--text-xl);
 }
 
 .step p {
-  color: #666;
+  color: var(--color-gray-600);
   margin: 0;
-  line-height: 1.6;
+  line-height: var(--leading-relaxed);
 }
 
 @media screen and (max-width: 768px) {
   .about-hero h1 {
-    font-size: 1.8rem;
+    font-size: var(--text-2xl);
   }
 
   .about-section {
-    padding: 1.5rem;
+    padding: var(--space-xl);
   }
 
   .about-section h2 {
-    font-size: 1.5rem;
+    font-size: var(--text-2xl);
   }
 
   .how-it-works {
@@ -137,6 +139,6 @@
   }
 
   .about-container {
-    padding: 1rem;
+    padding: var(--space-md);
   }
 }

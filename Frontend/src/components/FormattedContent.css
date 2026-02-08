@@ -19,14 +19,14 @@
 
 .formatted-header.h1 {
   font-size: 1.4rem;
-  border-bottom: 2px solid #667eea;
+  border-bottom: 2px solid #06B6D4;
   padding-bottom: 0.5rem;
   margin-top: 1.5rem;
 }
 
 .formatted-header.h2 {
   font-size: 1.2rem;
-  color: #667eea;
+  color: #059669;
   margin-top: 1.2rem;
 }
 
@@ -72,7 +72,7 @@
   content: "•";
   position: absolute;
   left: 0;
-  color: #667eea;
+  color: #06B6D4;
   font-weight: bold;
   font-size: 1.1em;
 }

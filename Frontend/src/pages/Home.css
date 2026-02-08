@@ -1,9 +1,10 @@
 .home {
   min-height: calc(100vh - 80px);
+  background-color: var(--color-off-white);
 }
 
 .hero {
-  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  background: linear-gradient(135deg, #06B6D4 0%, #059669 100%);
   color: white;
   padding: 5rem 2rem;
   text-align: center;
@@ -71,7 +72,7 @@
 }
 
 .feature-item {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: linear-gradient(135deg, #CCFBF1 0%, #D1FAE5 100%);
   padding: 2rem;
   border-radius: 12px;
   text-align: center;
@@ -80,7 +81,7 @@
 
 .feature-item:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(245, 158, 11, 0.2);
+  box-shadow: 0 8px 16px rgba(5, 150, 105, 0.2);
 }
 
 .feature-item h3 {

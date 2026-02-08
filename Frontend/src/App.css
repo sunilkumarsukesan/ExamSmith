@@ -27,21 +27,21 @@ button:active {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #667eea;
+  background: #06B6D4;
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #764ba2;
+  background: #059669;
 }
 
 /* Selection */
 ::selection {
-  background-color: #667eea;
+  background-color: #06B6D4;
   color: white;
 }
 
 ::-moz-selection {
-  background-color: #667eea;
+  background-color: #06B6D4;
   color: white;
 }

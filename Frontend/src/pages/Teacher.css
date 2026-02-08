@@ -4,7 +4,7 @@
 }
 
 .teacher-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #06B6D4 0%, #059669 100%);
   color: white;
   padding: 3rem 2rem;
   text-align: center;
@@ -32,7 +32,7 @@
 
 .create-btn {
   padding: 1rem 2rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #06B6D4 0%, #059669 100%);
   color: white;
   border: none;
   border-radius: 6px;
@@ -47,7 +47,7 @@
 
 .create-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 8px 16px rgba(6, 182, 212, 0.3);
 }
 
 .create-btn:disabled {
@@ -92,7 +92,7 @@
 }
 
 .papers-section h2 {
-  color: #667eea;
+  color: #06B6D4;
   margin-bottom: 1.5rem;
   font-size: 1.5rem;
 }
@@ -131,7 +131,7 @@
 
 .paper-title {
   font-weight: 600;
-  color: #667eea;
+  color: #06B6D4;
 }
 
 .status-badge {
@@ -205,7 +205,7 @@
 }
 
 .stats-section h2 {
-  color: #667eea;
+  color: #06B6D4;
   margin-bottom: 1.5rem;
   font-size: 1.5rem;
 }
@@ -217,7 +217,7 @@
 }
 
 .stat-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #06B6D4 0%, #059669 100%);
   color: white;
   padding: 2rem;
   border-radius: 12px;
@@ -227,7 +227,7 @@
 
 .stat-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 8px 16px rgba(6, 182, 212, 0.3);
 }
 
 .stat-value {
@@ -298,7 +298,7 @@
 }
 
 .tab-navigation .tab-btn.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #06B6D4 0%, #059669 100%);
   color: white;
   border-color: transparent;
 }
@@ -314,7 +314,7 @@
 }
 
 .publish-btn {
-  background: #3b82f6 !important;
+  background: #059669 !important;
 }
 
 .unpublish-btn {
@@ -322,19 +322,19 @@
 }
 
 .download-btn {
-  background-color: #c7d2fe;
-  color: #4c1d95 !important;
+  background-color: #CCFBF1;
+  color: #047857 !important;
 }
 
 .download-btn svg {
-  color: #4c1d95 !important;
-  fill: #4c1d95 !important;
+  color: #047857 !important;
+  fill: #047857 !important;
   width: 1.2em;
   height: 1.2em;
 }
 
 .download-btn:hover {
-  background-color: #a5b4fc;
+  background-color: #A7F3D0;
   color: #fff !important;
 }
 
@@ -366,7 +366,7 @@
 }
 
 .status-published {
-  background: #3b82f6;
+  background: #059669;
 }
 
 /* Loading State */
@@ -382,7 +382,7 @@
 .loading-state svg {
   font-size: 2rem;
   margin-bottom: 1rem;
-  color: #667eea;
+  color: #06B6D4;
 }
 
 /* Empty State */
@@ -404,7 +404,7 @@
 }
 
 .stat-card.published {
-  border-left: 4px solid #3b82f6;
+  border-left: 4px solid #059669;
 }
 
 /* Workflow Guide */
@@ -443,7 +443,7 @@
 .step-number {
   width: 32px;
   height: 32px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #06B6D4 0%, #059669 100%);
   color: white;
   border-radius: 50%;
   display: flex;
