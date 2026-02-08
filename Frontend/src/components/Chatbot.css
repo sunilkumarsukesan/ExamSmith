@@ -1,5 +1,5 @@
 /* ============================================
-   Chatbot - Bigger, Professional Design
+   Chatbot - Friendly Learning Buddy Design
    ============================================ */
 
 .chatbot-side-panel {
@@ -7,15 +7,15 @@
   right: 0;
   top: 0;
   bottom: 0;
-  width: 560px; /* Increased from 420px */
-  background-color: var(--color-white);
-  box-shadow: -4px 0 24px rgba(6, 182, 212, 0.12);
+  width: 560px;
+  background-color: var(--color-canvas, #f8faf9);
+  box-shadow: -4px 0 24px rgba(16, 185, 129, 0.12);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  z-index: var(--z-modal);
+  z-index: 1001;
   animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border-left: 1px solid var(--color-gray-200);
+  border-left: 1px solid var(--color-gray-200, #e5e7eb);
 }
 
 @keyframes slideInRight {
@@ -31,23 +31,33 @@
 
 /* Header */
 .chatbot-header {
-  background: linear-gradient(135deg, #06B6D4 0%, #059669 100%);
-  color: var(--color-white);
-  padding: var(--space-lg) var(--space-xl);
+  background: linear-gradient(135deg, var(--color-growth, #10b981) 0%, var(--color-focus, #06b6d4) 100%);
+  color: white;
+  padding: 1rem 1.25rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
 }
 
 .chatbot-title {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
   letter-spacing: -0.01em;
+}
+
+.tutor-emoji {
+  font-size: 1.75rem;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
 }
 
 .robot-icon {
@@ -60,40 +70,46 @@
   50% { transform: translateY(-4px); }
 }
 
-.chatbot-header-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-}
-
-.quota-badge {
-  background: rgba(255, 255, 255, 0.2);
-  padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-full);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  white-space: nowrap;
-  backdrop-filter: blur(10px);
-}
-
 .close-btn {
   background: rgba(255, 255, 255, 0.15);
   border: none;
-  color: var(--color-white);
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-md);
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all var(--transition-base);
-  font-size: var(--font-size-lg);
+  transition: all 0.2s ease;
+  font-size: 1rem;
+  flex-shrink: 0;
 }
 
 .close-btn:hover {
   background: rgba(255, 255, 255, 0.25);
   transform: rotate(90deg);
+}
+
+/* Quota Bar - Separate Row */
+.quota-bar {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+  padding: 0.5rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid rgba(16, 185, 129, 0.15);
+  flex-shrink: 0;
+}
+
+.quota-badge {
+  background: linear-gradient(135deg, var(--color-growth, #10b981) 0%, var(--color-focus, #06b6d4) 100%);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 2rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 /* Selected Questions Bar */
@@ -274,6 +290,13 @@
   overflow-y: auto;
   transition: all var(--transition-base);
   line-height: var(--line-height-normal);
+  color: #1a2e1a;
+}
+
+.chatbot-input textarea::placeholder {
+  color: #6b7280;
+  opacity: 1;
+  font-size: 0.9rem;
 }
 
 .chatbot-input textarea:focus {
@@ -363,8 +386,27 @@
     }
   }
 
+  .chatbot-header {
+    padding: 0.75rem 1rem;
+  }
+
   .chatbot-title {
-    font-size: var(--font-size-base);
+    font-size: 0.9rem;
+  }
+
+  .chatbot-title span:last-child {
+    display: none;
+  }
+
+  .quota-badge {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .close-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 0.875rem;
   }
 
   .chatbot-messages {

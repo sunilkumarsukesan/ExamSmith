@@ -29,11 +29,20 @@ export default function Navbar() {
     return '/student';
   };
 
+  // Get role-specific dashboard label
+  const getDashboardLabel = () => {
+    if (isAdmin) return 'Admin';
+    if (isInstructor) return 'My Papers';
+    return 'My Learning';
+  };
+
   return (
     <nav className="navbar">
       <div className="navbar-container">
         <Link to="/" className="navbar-logo" onClick={closeMenu}>
-          📚 ExamSmith
+          <span className="logo-icon">🎯</span>
+          <span className="logo-text">ExamSmith</span>
+          <span className="logo-tagline">Learn Smarter</span>
         </Link>
 
         <ul className="nav-menu">
@@ -49,13 +58,16 @@ export default function Navbar() {
           </li>
           <li className="nav-item">
             <Link to="/contact" className="nav-links" onClick={closeMenu}>
-              Contact Us
+              Contact
             </Link>
           </li>
           {isAuthenticated && (
             <li className="nav-item">
-              <Link to={getDashboardLink()} className="nav-links" onClick={closeMenu}>
-                Dashboard
+              <Link to={getDashboardLink()} className="nav-links dashboard-link" onClick={closeMenu}>
+                <span className="dashboard-icon">
+                  {isAdmin ? '⚙️' : isInstructor ? '📄' : '📊'}
+                </span>
+                {getDashboardLabel()}
               </Link>
             </li>
           )}
@@ -63,23 +75,32 @@ export default function Navbar() {
 
         <div className="nav-auth">
           {isAuthenticated ? (
-            <>
-              <span className="user-info">
-                {user?.name}
-              </span>
+            <div className="auth-section">
+              <div className="user-badge">
+                <span className="user-avatar">
+                  {user?.name?.charAt(0)?.toUpperCase() || '👤'}
+                </span>
+                <span className="user-name">{user?.name}</span>
+                <span className="user-role">{user?.role}</span>
+              </div>
               <button 
                 onClick={handleLogout}
-                className="nav-links-btn"
+                className="logout-btn"
               >
-                Logout
+                Sign Out
               </button>
-            </>
+            </div>
           ) : (
             <Link to="/signin" className="nav-links-btn" onClick={closeMenu}>
-              Sign In
+              <span className="btn-icon">🚀</span> Start Learning
             </Link>
           )}
         </div>
+
+        {/* Mobile Menu Toggle */}
+        <button className="menu-toggle" onClick={toggleMenu} aria-label="Toggle menu">
+          <span className={`hamburger ${menuOpen ? 'active' : ''}`}></span>
+        </button>
       </div>
     </nav>
   );

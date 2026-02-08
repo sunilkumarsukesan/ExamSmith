@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Admin.css';
-import { FaUser, FaEdit, FaTrash, FaLock, FaCog, FaTimes, FaCheck } from 'react-icons/fa';
+import { FaUser, FaEdit, FaTrash, FaLock, FaCog, FaTimes, FaCheck, FaShieldAlt, FaUsers, FaChalkboardTeacher, FaUserGraduate, FaUserCheck } from 'react-icons/fa';
 import { listUsers, createUser, disableUser, enableUser } from '../services/api';
 
 export default function Admin() {
@@ -83,9 +83,52 @@ export default function Admin() {
 
   return (
     <div className="admin">
+      {/* Header with Stats Bar */}
       <div className="admin-header">
-        <h1>Admin Dashboard</h1>
-        <p>Manage users and system configuration</p>
+        <div className="header-content">
+          <div className="header-welcome">
+            <span className="admin-badge">🛡️ Admin Control Center</span>
+            <h1>System Management</h1>
+            <p>Manage users, settings, and security for ExamSmith</p>
+          </div>
+        </div>
+        <div className="stats-bar">
+          <div className="stat-item">
+            <FaUsers className="stat-icon" />
+            <div className="stat-info">
+              <span className="stat-value">{totalUsers}</span>
+              <span className="stat-label">Total Users</span>
+            </div>
+          </div>
+          <div className="stat-item">
+            <FaUserGraduate className="stat-icon" />
+            <div className="stat-info">
+              <span className="stat-value">{students}</span>
+              <span className="stat-label">Students</span>
+            </div>
+          </div>
+          <div className="stat-item">
+            <FaChalkboardTeacher className="stat-icon" />
+            <div className="stat-info">
+              <span className="stat-value">{instructors}</span>
+              <span className="stat-label">Teachers</span>
+            </div>
+          </div>
+          <div className="stat-item">
+            <FaShieldAlt className="stat-icon" />
+            <div className="stat-info">
+              <span className="stat-value">{admins}</span>
+              <span className="stat-label">Admins</span>
+            </div>
+          </div>
+          <div className="stat-item">
+            <FaUserCheck className="stat-icon" />
+            <div className="stat-info">
+              <span className="stat-value">{activeUsers}</span>
+              <span className="stat-label">Active</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="admin-container">
@@ -113,9 +156,9 @@ export default function Admin() {
         {activeTab === 'users' && (
           <div className="tab-content">
             <div className="section-header">
-              <h2>User Management</h2>
+              <h2>👥 User Management</h2>
               <button className="add-user-btn" onClick={() => setShowModal(true)}>
-                + Add New User
+                ➕ Add New User
               </button>
             </div>
 
@@ -183,7 +226,7 @@ export default function Admin() {
 
         {activeTab === 'settings' && (
           <div className="tab-content">
-            <h2>System Settings</h2>
+            <h2>⚙️ System Settings</h2>
             <div className="settings-grid">
               <div className="setting-item">
                 <h3>Platform Name</h3>
@@ -205,13 +248,13 @@ export default function Admin() {
                 <input type="checkbox" />
               </div>
             </div>
-            <button className="save-settings-btn">Save Settings</button>
+            <button className="save-settings-btn">💾 Save Settings</button>
           </div>
         )}
 
         {activeTab === 'security' && (
           <div className="tab-content">
-            <h2>Security Settings</h2>
+            <h2>🔒 Security Settings</h2>
             <div className="security-items">
               <div className="security-item">
                 <h3>Enable Two-Factor Authentication</h3>
@@ -232,35 +275,9 @@ export default function Admin() {
                 <textarea placeholder="Enter IP addresses (one per line)" rows="4"></textarea>
               </div>
             </div>
-            <button className="save-settings-btn">Save Security Settings</button>
+            <button className="save-settings-btn">💾 Save Security Settings</button>
           </div>
         )}
-
-        <div className="stats-section">
-          <h2>System Statistics</h2>
-          <div className="stats-grid">
-            <div className="stat-card">
-              <div className="stat-value">{totalUsers}</div>
-              <div className="stat-label">Total Users</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-value">{admins}</div>
-              <div className="stat-label">Admins</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-value">{instructors}</div>
-              <div className="stat-label">Instructors</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-value">{students}</div>
-              <div className="stat-label">Students</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-value">{activeUsers}</div>
-              <div className="stat-label">Active Users</div>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Add User Modal */}

@@ -54,12 +54,12 @@ export default function Chatbot({
       
       setMessages([{
         role: 'assistant',
-        content: `👋 Hello! I'm your English tutor. I can see you've selected ${selectedQuestions.length} question(s) to discuss:\n\n${questionList}\n\nWhat would you like to understand better? Feel free to ask about why an answer was correct or incorrect, or any concepts you're struggling with!`
+        content: `👋 Hey there, learning champ! 🌟\n\nI see you've got ${selectedQuestions.length} question(s) you want to explore:\n\n${questionList}\n\n💡 What would you like to understand better?\n\n✏️ You can ask me:\n• "Why was my answer wrong?"\n• "Explain this concept"\n• "Give me tips to remember this"\n\nLet's learn together! 💪`
       }]);
     } else if (isOpen && selectedQuestions.length === 0 && messages.length === 0) {
       setMessages([{
         role: 'assistant',
-        content: `👋 Hello! I'm your English tutor for TN SSLC. Ask me anything about your English textbook - poems, prose, grammar, or any topic you'd like to understand better!`
+        content: `👋 Hey there! I'm your friendly English tutor for TN SSLC! 📚\n\n🎯 I can help you with:\n• 🎭 Poetry - meanings, themes & literary devices\n• 📖 Prose - story analysis & character study\n• ✍️ Grammar - rules & examples\n• 📝 Vocabulary - words & their usage\n\n💡 Just type your question and let's start learning! 💪`
       }]);
     }
   }, [isOpen, selectedQuestions]);
@@ -309,20 +309,20 @@ export default function Chatbot({
       {/* Header */}
       <div className="chatbot-header">
         <div className="chatbot-title">
-          <FaRobot className="robot-icon" />
-          <span>English Tutor</span>
+          <span className="tutor-emoji">🎓</span>
+          <span>Your Study Buddy</span>
         </div>
-        <div className="chatbot-header-actions">
-          {remainingQuota !== null && (
-            <span className="quota-badge" title="Daily message quota">
-              {remainingQuota} left
-            </span>
-          )}
-          <button className="close-btn" onClick={onClose} title="Close chat">
-            <FaTimes />
-          </button>
-        </div>
+        <button className="close-btn" onClick={onClose} title="Close chat">
+          <FaTimes />
+        </button>
       </div>
+      
+      {/* Quota Badge - Separate Row */}
+      {remainingQuota !== null && (
+        <div className="quota-bar">
+          <span className="quota-badge">💬 {remainingQuota} messages left today</span>
+        </div>
+      )}
       
       {/* Selected Questions Info */}
       {selectedQuestions.length > 0 && (
@@ -406,7 +406,7 @@ export default function Chatbot({
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyPress={handleKeyPress}
-          placeholder="Ask about your answers..."
+          placeholder="Ask me anything! 💭"
           disabled={isLoading || remainingQuota === 0}
           rows={1}
         />
@@ -422,7 +422,7 @@ export default function Chatbot({
       
       {remainingQuota === 0 && (
         <div className="quota-exhausted">
-          Daily limit reached. Come back tomorrow!
+          ⏰ You've used all your questions for today! Come back tomorrow for more learning! 🌟
         </div>
       )}
     </div>

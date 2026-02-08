@@ -3,7 +3,8 @@ import './Student.css';
 import { 
   FaSpinner, FaDownload, FaPlay, FaClipboardList, 
   FaCheckCircle, FaTimesCircle, FaClock, FaPaperPlane,
-  FaChartBar, FaEye, FaComments, FaRobot
+  FaChartBar, FaEye, FaComments, FaRobot, FaFire, FaTrophy,
+  FaStar, FaArrowUp, FaBook, FaLightbulb
 } from 'react-icons/fa';
 import { 
   getPipelinePapers, 
@@ -37,6 +38,16 @@ export default function Student() {
   const [chatbotOpen, setChatbotOpen] = useState(false);
   const [selectedQuestionsForChat, setSelectedQuestionsForChat] = useState([]);
   const [questionSelections, setQuestionSelections] = useState({});
+
+  // Student stats (could be fetched from API in future)
+  const [studentStats] = useState({
+    streak: 5,
+    totalAttempts: 12,
+    averageScore: 78,
+    topicsImproved: 4,
+    practiceMinutes: 156,
+    masteryLevel: 'Intermediate'
+  });
 
   // Fetch available papers
   const fetchPapers = useCallback(async () => {
@@ -484,31 +495,83 @@ export default function Student() {
   // Main dashboard view
   return (
     <div className="student">
+      {/* Learning-Focused Header */}
       <div className="student-header">
-        <h1>Student Dashboard</h1>
-        <p>Take exams and view your results</p>
+        <div className="header-content">
+          <div className="header-left">
+            <div className="greeting-section">
+              <span className="greeting-emoji">🎯</span>
+              <div className="greeting-text">
+                <h1>Your Learning Hub</h1>
+                <p className="subtitle">Practice smart, improve fast, score high!</p>
+              </div>
+            </div>
+          </div>
+          <div className="header-right">
+            <div className="streak-badge">
+              <FaFire className="streak-icon" />
+              <span className="streak-count">{studentStats.streak}</span>
+              <span className="streak-label">Day Streak!</span>
+            </div>
+          </div>
+        </div>
+        
+        {/* Motivational Stats Bar */}
+        <div className="stats-bar">
+          <div className="stat-item">
+            <span className="stat-icon">📝</span>
+            <span className="stat-value">{studentStats.totalAttempts}</span>
+            <span className="stat-label">Exams Taken</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-icon">📈</span>
+            <span className="stat-value">{studentStats.averageScore}%</span>
+            <span className="stat-label">Avg Score</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-icon">⭐</span>
+            <span className="stat-value">{studentStats.topicsImproved}</span>
+            <span className="stat-label">Topics Improved</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-icon">🏆</span>
+            <span className="stat-value">{studentStats.masteryLevel}</span>
+            <span className="stat-label">Level</span>
+          </div>
+        </div>
       </div>
 
       <div className="student-container">
-        {/* Tab Navigation */}
+        {/* Encouragement Banner */}
+        <div className="encouragement-banner">
+          <span className="encouragement-icon">💡</span>
+          <p className="encouragement-text">
+            <strong>You're doing great!</strong> Keep your streak going - just one more practice session today!
+          </p>
+          <button className="quick-practice-btn" onClick={() => setActiveTab('available')}>
+            Quick Practice →
+          </button>
+        </div>
+
+        {/* Tab Navigation - Learning Focused Labels */}
         <div className="tab-navigation">
           <button
             className={`tab-btn ${activeTab === 'available' ? 'active' : ''}`}
             onClick={() => setActiveTab('available')}
           >
-            <FaClipboardList /> Available Exams
+            <FaPlay /> Practice Now
           </button>
           <button
             className={`tab-btn ${activeTab === 'my-attempts' ? 'active' : ''}`}
             onClick={() => setActiveTab('my-attempts')}
           >
-            <FaChartBar /> My Attempts
+            <FaChartBar /> My Progress
           </button>
           <button
             className={`tab-btn ${activeTab === 'chat' ? 'active' : ''}`}
             onClick={() => setActiveTab('chat')}
           >
-            <FaRobot /> Ask Tutor
+            <FaRobot /> AI Tutor
           </button>
         </div>
 
@@ -517,133 +580,229 @@ export default function Student() {
         {loading ? (
           <div className="loading-state">
             <FaSpinner className="spin" />
-            <p>Loading...</p>
+            <p>Loading your learning content...</p>
           </div>
         ) : activeTab === 'available' ? (
-          <div className="papers-grid">
-            {papers.length === 0 ? (
-              <div className="empty-state">
-                <p>No exams available at the moment. Check back later!</p>
-              </div>
-            ) : (
-              papers.map(paper => (
-                <div key={paper.paper_id} className="paper-card">
-                  <div className="paper-card-header">
-                    <h3>{paper.title}</h3>
-                    {paper.already_attempted && (
-                      <span className="attempted-badge">Attempted</span>
-                    )}
-                  </div>
-                  <div className="paper-card-body">
-                    <p className="paper-description">{paper.description || 'Model question paper'}</p>
-                    <div className="paper-meta">
-                      <span><FaClipboardList /> {paper.total_questions} Questions</span>
-                      <span><FaChartBar /> {paper.total_marks} Marks</span>
-                      <span><FaClock /> {paper.duration_minutes ? `${paper.duration_minutes} min` : 'No limit'}</span>
-                    </div>
-                    <div className="paper-info">
-                      <small>Published by: {paper.published_by_name || 'Instructor'}</small>
-                    </div>
-                  </div>
-                  <div className="paper-card-actions">
-                    {paper.already_attempted ? (
-                      <button className="view-result-btn" onClick={() => {
-                        setActiveTab('my-attempts');
-                        fetchAttempts();
-                      }}>
-                        <FaEye /> View Result
-                      </button>
-                    ) : (
-                      <button className="start-exam-btn" onClick={() => handleStartExam(paper)}>
-                        <FaPlay /> Start Exam
-                      </button>
-                    )}
-                    <button 
-                      className="download-btn" 
-                      onClick={() => handleDownloadPdf(paper.paper_id, paper.title)}
-                    >
-                      <FaDownload />
-                    </button>
-                  </div>
+          <div className="practice-section">
+            <div className="section-header">
+              <h2><FaBook /> Ready to Practice</h2>
+              <p className="section-subtitle">Choose a topic and start building mastery</p>
+            </div>
+            <div className="papers-grid">
+              {papers.length === 0 ? (
+                <div className="empty-state">
+                  <span className="empty-icon">📚</span>
+                  <h3>No practice papers available yet</h3>
+                  <p>Check back soon for new learning materials!</p>
                 </div>
-              ))
-            )}
+              ) : (
+                papers.map(paper => (
+                  <div key={paper.paper_id} className="paper-card">
+                    <div className="paper-card-header">
+                      <div className="paper-title-section">
+                        <h3>{paper.title}</h3>
+                        {paper.already_attempted && (
+                          <span className="attempted-badge">
+                            <FaCheckCircle /> Completed
+                          </span>
+                        )}
+                      </div>
+                      <div className="paper-difficulty">
+                        <span className="difficulty-tag medium">Practice</span>
+                      </div>
+                    </div>
+                    <div className="paper-card-body">
+                      <p className="paper-description">{paper.description || 'Practice paper to help you master the concepts'}</p>
+                      <div className="paper-meta">
+                        <span className="meta-item">
+                          <FaClipboardList /> {paper.total_questions} Questions
+                        </span>
+                        <span className="meta-item">
+                          <FaStar /> {paper.total_marks} Points
+                        </span>
+                        <span className="meta-item">
+                          <FaClock /> {paper.duration_minutes ? `${paper.duration_minutes} min` : 'Self-paced'}
+                        </span>
+                      </div>
+                      <div className="paper-teacher-info">
+                        <span>By: {paper.published_by_name || 'Instructor'}</span>
+                      </div>
+                    </div>
+                    <div className="paper-card-actions">
+                      {paper.already_attempted ? (
+                        <>
+                          <button className="view-result-btn" onClick={() => {
+                            setActiveTab('my-attempts');
+                            fetchAttempts();
+                          }}>
+                            <FaChartBar /> View Progress
+                          </button>
+                          <button className="retry-btn" onClick={() => handleStartExam(paper)}>
+                            <FaArrowUp /> Practice Again
+                          </button>
+                        </>
+                      ) : (
+                        <button className="start-exam-btn" onClick={() => handleStartExam(paper)}>
+                          <FaPlay /> Start Practice
+                        </button>
+                      )}
+                      <button 
+                        className="download-btn" 
+                        onClick={() => handleDownloadPdf(paper.paper_id, paper.title)}
+                        title="Download PDF"
+                      >
+                        <FaDownload />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         ) : activeTab === 'my-attempts' ? (
-          <div className="attempts-list">
-            {attempts.length === 0 ? (
-              <div className="empty-state">
-                <p>You haven't attempted any exams yet.</p>
-              </div>
-            ) : (
-              <table className="attempts-table">
-                <thead>
-                  <tr>
-                    <th>Paper</th>
-                    <th>Status</th>
-                    <th>Started</th>
-                    <th>Submitted</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {attempts.map(attempt => (
-                    <tr key={attempt.attempt_id}>
-                      <td>{attempt.paper_title || attempt.paper_id}</td>
-                      <td>
-                        <span className={`status-badge status-${attempt.status}`}>
-                          {attempt.status}
-                        </span>
-                      </td>
-                      <td>{new Date(attempt.started_at).toLocaleString()}</td>
-                      <td>{attempt.submitted_at ? new Date(attempt.submitted_at).toLocaleString() : '-'}</td>
-                      <td>
-                        {attempt.status === 'evaluated' && (
-                          <button 
-                            className="view-result-btn"
-                            onClick={() => handleViewResult(attempt.attempt_id)}
-                          >
-                            <FaEye /> View Results
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-        ) : activeTab === 'chat' ? (
-          <div className="chat-tab-content">
-            <div className="chat-intro">
-              <div className="chat-intro-icon">
-                <FaRobot />
-              </div>
-              <h2>English Learning Assistant</h2>
-              <p>
-                Ask me anything about your English textbook! I can help you understand 
-                poems, prose, grammar, and answer any questions about your TN SSLC syllabus.
-              </p>
-              <button 
-                className="start-chat-btn"
-                onClick={() => {
-                  setSelectedQuestionsForChat([]);
-                  setChatbotOpen(true);
-                }}
-              >
-                <FaComments /> Start Chatting
-              </button>
+          <div className="progress-section">
+            <div className="section-header">
+              <h2><FaTrophy /> Your Progress</h2>
+              <p className="section-subtitle">Track your learning journey and see how far you've come</p>
             </div>
             
-            <div className="chat-tips">
-              <h3>💡 What can you ask?</h3>
-              <ul>
-                <li>Explain the meaning of a poem or prose passage</li>
-                <li>Help me understand a grammar concept</li>
-                <li>Why was my exam answer wrong?</li>
-                <li>Give me examples of literary devices</li>
-                <li>Summarize a chapter or story</li>
-              </ul>
+            {/* Progress Overview Cards */}
+            <div className="progress-overview">
+              <div className="overview-card highlight">
+                <span className="overview-icon">🎯</span>
+                <div className="overview-content">
+                  <span className="overview-value">{attempts.filter(a => a.status === 'evaluated').length}</span>
+                  <span className="overview-label">Completed</span>
+                </div>
+              </div>
+              <div className="overview-card">
+                <span className="overview-icon">📈</span>
+                <div className="overview-content">
+                  <span className="overview-value">{studentStats.averageScore}%</span>
+                  <span className="overview-label">Average</span>
+                </div>
+              </div>
+              <div className="overview-card">
+                <span className="overview-icon">🔥</span>
+                <div className="overview-content">
+                  <span className="overview-value">{studentStats.streak}</span>
+                  <span className="overview-label">Day Streak</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="attempts-list">
+              {attempts.length === 0 ? (
+                <div className="empty-state">
+                  <span className="empty-icon">🚀</span>
+                  <h3>No practice sessions yet</h3>
+                  <p>Start practicing to track your progress!</p>
+                  <button className="start-now-btn" onClick={() => setActiveTab('available')}>
+                    <FaPlay /> Start Practicing
+                  </button>
+                </div>
+              ) : (
+                <div className="attempts-cards">
+                  {attempts.map(attempt => (
+                    <div key={attempt.attempt_id} className={`attempt-card status-${attempt.status}`}>
+                      <div className="attempt-main">
+                        <div className="attempt-info">
+                          <h4>{attempt.paper_title || 'Practice Session'}</h4>
+                          <div className="attempt-dates">
+                            <span><FaClock /> {new Date(attempt.started_at).toLocaleDateString()}</span>
+                            {attempt.submitted_at && (
+                              <span>• Completed: {new Date(attempt.submitted_at).toLocaleDateString()}</span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="attempt-status-section">
+                          <span className={`status-badge status-${attempt.status}`}>
+                            {attempt.status === 'evaluated' ? '✅ Reviewed' : 
+                             attempt.status === 'submitted' ? '📝 Pending' : 
+                             '⏳ In Progress'}
+                          </span>
+                          {attempt.status === 'evaluated' && (
+                            <button 
+                              className="view-analysis-btn"
+                              onClick={() => handleViewResult(attempt.attempt_id)}
+                            >
+                              <FaChartBar /> Analysis
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        ) : activeTab === 'chat' ? (
+          <div className="tutor-section">
+            <div className="section-header">
+              <h2><FaLightbulb /> AI Learning Assistant</h2>
+              <p className="section-subtitle">Get instant help and explanations from your personal tutor</p>
+            </div>
+            
+            <div className="chat-tab-content">
+              <div className="chat-intro">
+                <div className="chat-intro-icon">
+                  <span className="tutor-avatar">🤖</span>
+                </div>
+                <h2>Hi! I'm your AI Tutor</h2>
+                <p className="tutor-description">
+                  I'm here to help you understand concepts, explain answers, and guide your learning journey.
+                  Ask me anything about your syllabus!
+                </p>
+                <button 
+                  className="start-chat-btn"
+                  onClick={() => {
+                    setSelectedQuestionsForChat([]);
+                    setChatbotOpen(true);
+                  }}
+                >
+                  <FaComments /> Start Learning Chat
+                </button>
+              </div>
+              
+              <div className="chat-suggestions">
+                <h3>💡 Try asking me about:</h3>
+                <div className="suggestion-chips">
+                  <button className="suggestion-chip" onClick={() => { setChatbotOpen(true); }}>
+                    📖 Explain a poem or passage
+                  </button>
+                  <button className="suggestion-chip" onClick={() => { setChatbotOpen(true); }}>
+                    ✍️ Grammar help
+                  </button>
+                  <button className="suggestion-chip" onClick={() => { setChatbotOpen(true); }}>
+                    ❓ Why was my answer wrong?
+                  </button>
+                  <button className="suggestion-chip" onClick={() => { setChatbotOpen(true); }}>
+                    📝 Summarize a chapter
+                  </button>
+                  <button className="suggestion-chip" onClick={() => { setChatbotOpen(true); }}>
+                    🎯 Practice questions
+                  </button>
+                </div>
+              </div>
+              
+              <div className="tutor-benefits">
+                <div className="benefit-card">
+                  <span className="benefit-icon">⚡</span>
+                  <h4>Instant Answers</h4>
+                  <p>Get help right when you need it</p>
+                </div>
+                <div className="benefit-card">
+                  <span className="benefit-icon">🎯</span>
+                  <h4>Personalized</h4>
+                  <p>Learns your weak areas</p>
+                </div>
+                <div className="benefit-card">
+                  <span className="benefit-icon">🔄</span>
+                  <h4>Always Available</h4>
+                  <p>24/7 learning support</p>
+                </div>
+              </div>
             </div>
           </div>
         ) : null}

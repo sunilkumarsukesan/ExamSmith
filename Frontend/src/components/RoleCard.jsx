@@ -1,22 +1,49 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FaArrowRight } from 'react-icons/fa';
 import './RoleCard.css';
 
-export default function RoleCard({ icon: Icon, title, description, path }) {
+export default function RoleCard({ icon: Icon, title, description, path, highlight, badge }) {
   const navigate = useNavigate();
 
   const handleClick = () => {
     navigate(path);
   };
 
+  // Learning-focused labels based on role
+  const getCtaText = () => {
+    if (title.toLowerCase().includes('student')) return 'Start Learning';
+    if (title.toLowerCase().includes('teacher') || title.toLowerCase().includes('instructor')) return 'Create Papers';
+    if (title.toLowerCase().includes('admin')) return 'Manage Platform';
+    return 'Get Started';
+  };
+
+  const getAccent = () => {
+    if (title.toLowerCase().includes('student')) return 'student';
+    if (title.toLowerCase().includes('teacher') || title.toLowerCase().includes('instructor')) return 'teacher';
+    if (title.toLowerCase().includes('admin')) return 'admin';
+    return 'default';
+  };
+
   return (
-    <div style={{ background: 'white', borderRadius: '12px', padding: '2rem', textAlign: 'center', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', transition: 'all 0.3s ease', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '350px' }} onClick={handleClick} onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-10px)'; e.currentTarget.style.boxShadow = '0 12px 24px rgba(6, 182, 212, 0.3)'; }} onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)'; }}>
-      <div style={{ fontSize: '4rem', marginBottom: '1rem', color: '#06B6D4', transition: 'transform 0.3s ease' }}>
-        <Icon />
+    <div 
+      className={`role-card role-card--${getAccent()} ${highlight ? 'role-card--highlight' : ''}`}
+      onClick={handleClick}
+    >
+      {badge && <span className="role-badge">{badge}</span>}
+      
+      <div className="role-card-icon-wrapper">
+        <Icon className="role-card-icon" />
       </div>
-      <h3 style={{ fontSize: '1.8rem', marginBottom: '1rem', color: '#1a1a2e', fontWeight: '600' }}>{title}</h3>
-      <p style={{ fontSize: '1rem', color: '#666', marginBottom: '1.5rem', lineHeight: '1.6', flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{description}</p>
-      <button style={{ background: 'linear-gradient(135deg, #06B6D4 0%, #059669 100%)', color: 'white', border: 'none', padding: '10px 30px', borderRadius: '25px', fontSize: '1rem', cursor: 'pointer', fontWeight: '600', transition: 'all 0.3s ease', marginTop: 'auto' }} onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(6, 182, 212, 0.4)'; }} onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = 'none'; }}>Get Started</button>
+      
+      <h3 className="role-card-title">{title}</h3>
+      
+      <p className="role-card-description">{description}</p>
+      
+      <button className="role-card-button">
+        <span>{getCtaText()}</span>
+        <FaArrowRight className="btn-arrow" />
+      </button>
     </div>
   );
 }
