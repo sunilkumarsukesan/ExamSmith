@@ -650,8 +650,9 @@ export default function Student() {
                         className="download-btn" 
                         onClick={() => handleDownloadPdf(paper.paper_id, paper.title)}
                         title="Download PDF"
+                        style={{ background: '#10b981', color: '#ffffff', fontSize: '1rem', fontWeight: 'bold' }}
                       >
-                        <FaDownload />
+                        ⬇
                       </button>
                     </div>
                   </div>

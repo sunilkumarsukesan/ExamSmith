@@ -448,13 +448,22 @@
 }
 
 .download-btn {
-  background: var(--color-growth-light, #d1fae5);
-  color: var(--color-growth-dark, #047857);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
+}
+
+.download-btn svg {
+  fill: #ffffff !important;
+  color: #ffffff !important;
+  width: 16px;
+  height: 16px;
 }
 
 .download-btn:hover {
-  background: var(--color-growth, #10b981);
-  color: white;
+  background: linear-gradient(135deg, #1d4ed8, #1e40af) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.45);
 }
 
 .approve-btn {

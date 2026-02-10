@@ -687,3 +687,18 @@
     transform: rotate(360deg);
   }
 }
+
+/* Quality Testing Tab */
+.quality-tab {
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+}
+
+.quality-tab h2 {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  margin-bottom: 1.5rem;
+}

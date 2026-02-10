@@ -420,4 +420,133 @@ export const getChatSessionMessages = async (sessionId) => {
   return response.data;
 };
 
+// ===== DeepEval Quality Testing APIs =====
+
+const DEEPEVAL_URL = import.meta.env.VITE_DEEPEVAL_URL || 'http://localhost:8001';
+
+/**
+ * Evaluate using DeepEval metric
+ * @param {Object} payload - Evaluation payload with metric, query, context, output, etc.
+ * @returns {Object} - Evaluation result with score, explanation
+ */
+export const evaluateMetric = async (payload) => {
+  try {
+    const response = await fetch(`${DEEPEVAL_URL}/eval-only`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
+  } catch (error) {
+    console.error('DeepEval metric evaluation error:', error);
+    throw error;
+  }
+};
+
+/**
+ * Run sample evaluation for paper generation or chatbot
+ * @param {string} testType - 'paper_generation' or 'chatbot'
+ * @param {string} metric - Metric to evaluate (faithfulness, answer_relevancy, etc.)
+ * @returns {Object} - Evaluation result
+ */
+export const runSampleEvaluation = async (testType, metric) => {
+  // Sample test data for quick evaluation
+  const sampleData = {
+    paper_generation: {
+      query: "Generate a question about photosynthesis for 10th grade biology",
+      context: [
+        "Photosynthesis is the process by which green plants use sunlight to synthesize nutrients from carbon dioxide and water.",
+        "Chlorophyll is the green pigment in plants that absorbs sunlight for photosynthesis.",
+        "The process of photosynthesis produces glucose and releases oxygen as a byproduct."
+      ],
+      output: "What is the role of chlorophyll in the process of photosynthesis? Explain how plants convert sunlight into energy.",
+      expected_output: "Chlorophyll absorbs sunlight which is used to convert carbon dioxide and water into glucose and oxygen."
+    },
+    chatbot: {
+      query: "What is the formula for calculating area of a circle?",
+      context: [
+        "The area of a circle is calculated using the formula A = πr², where r is the radius of the circle.",
+        "Pi (π) is a mathematical constant approximately equal to 3.14159.",
+        "The radius is the distance from the center of the circle to any point on its circumference."
+      ],
+      output: "The area of a circle can be calculated using the formula A = πr², where 'A' represents the area, 'π' (pi) is approximately 3.14159, and 'r' is the radius of the circle.",
+      expected_output: "The area of a circle is A = πr², where r is the radius of the circle."
+    }
+  };
+
+  const testData = sampleData[testType] || sampleData.paper_generation;
+  
+  const payload = {
+    metric,
+    query: testData.query,
+    context: testData.context,
+    output: testData.output,
+    expected_output: testData.expected_output,
+    retrieval_context: testData.context
+  };
+
+  return evaluateMetric(payload);
+};
+
+// ===== Quality Evaluation APIs =====
+
+/**
+ * Get latest paper evaluation results
+ * @returns {Object} - Latest paper evaluation result with aggregate scores
+ */
+export const getLatestPaperEvaluation = async () => {
+  const response = await apiClient.get('/evaluation/latest-paper-results');
+  return response.data;
+};
+
+/**
+ * Get latest chatbot evaluation results
+ * @returns {Object} - Latest chatbot evaluation result with metric scores
+ */
+export const getLatestChatbotEvaluation = async () => {
+  const response = await apiClient.get('/evaluation/latest-chatbot-results');
+  return response.data;
+};
+
+/**
+ * Run paper evaluation - generates full paper (47 questions) and evaluates selected parts
+ * @param {Array} parts - Array of parts to evaluate (e.g., ['I', 'II', 'III', 'IV'])
+ * @returns {Object} - Evaluation result with sampled questions and aggregate scores
+ */
+export const runPaperEvaluation = async (parts = ['I', 'II', 'III', 'IV']) => {
+  const response = await apiClient.post('/evaluation/evaluate-paper', { parts }, {
+    timeout: 1800000 // 30 minutes for full paper generation + evaluation
+  });
+  return response.data;
+};
+
+/**
+ * Run chatbot evaluation with a query
+ * @param {string} query - Query to test chatbot with
+ * @returns {Object} - Evaluation result with metric scores
+ */
+export const runChatbotEvaluation = async (query) => {
+  const response = await apiClient.post('/evaluation/evaluate-chatbot', { query }, {
+    timeout: 300000 // 5 minutes
+  });
+  return response.data;
+};
+
+/**
+ * Get all evaluation results history
+ * @returns {Object} - All paper and chatbot evaluation history
+ */
+export const getAllEvaluationResults = async () => {
+  const response = await apiClient.get('/evaluation/all-results');
+  return response.data;
+};
+
 export default apiClient;

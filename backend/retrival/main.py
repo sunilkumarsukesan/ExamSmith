@@ -1,10 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 import logging
 import sys
 import asyncio
+import traceback
 from observability import logger
 from mongo.client import mongo_client
 from api import router as retrieval_router
@@ -15,6 +16,7 @@ from routes.admin_routes import router as admin_router
 from routes.instructor_routes import router as instructor_router
 from routes.student_routes import router as student_router
 from routes.pdf_routes import router as pdf_router
+from routes.evaluation_routes import router as evaluation_router
 
 # Configure logging
 logging.basicConfig(
@@ -70,6 +72,7 @@ app.include_router(admin_router, prefix="/api/v1", tags=["admin"])
 app.include_router(instructor_router, prefix="/api/v1", tags=["instructor"])
 app.include_router(student_router, prefix="/api/v1", tags=["student"])
 app.include_router(pdf_router, prefix="/api/v1", tags=["pdf"])
+app.include_router(evaluation_router, prefix="/api/v1", tags=["evaluation"])
 
 # Health check
 @app.get("/health")
@@ -89,8 +92,9 @@ async def health_check():
 
 # Global exception handler
 @app.exception_handler(Exception)
-async def global_exception_handler(request, exc):
+async def global_exception_handler(request: Request, exc: Exception):
     logger.error(f"Unhandled exception: {str(exc)}")
+    logger.error(f"Traceback: {''.join(traceback.format_tb(exc.__traceback__))}")
     return JSONResponse(
         status_code=500,
         content={"error": "Internal server error", "detail": str(exc)}

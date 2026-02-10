@@ -1,0 +1,1141 @@
+{
+  "paper_evaluations": [
+    {
+      "timestamp": "2026-02-09T09:59:11.593114",
+      "aggregate_scores": {
+        "faithfulness": null,
+        "contextual_recall": null,
+        "contextual_precision": null,
+        "hallucination": null
+      },
+      "samples": [
+        {
+          "part": "II",
+          "question_number": "16",
+          "question": "How did the narrator's brother Herman react when he was awoken by the narrator in the middle of the ...",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": null,
+              "error": "Evaluation failed: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01jk032jj8e66ahde6cs6ta3kn` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99770, Requested 379. Please try again in 2m8.735999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+              "explanation": ""
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": null,
+              "error": "Evaluation failed: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01jk032jj8e66ahde6cs6ta3kn` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99767, Requested 466. Please try again in 3m21.312s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+              "explanation": ""
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": null,
+              "error": "Evaluation failed: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01jk032jj8e66ahde6cs6ta3kn` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99764, Requested 543. Please try again in 4m25.248s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+              "explanation": ""
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": null,
+              "error": "Evaluation failed: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01jk032jj8e66ahde6cs6ta3kn` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99761, Requested 595. Please try again in 5m7.584s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+              "explanation": ""
+            }
+          }
+        },
+        {
+          "part": "II",
+          "question_number": "17",
+          "question": "How has the role of women in Indian society evolved over time, and what notable achievement exemplif...",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": null,
+              "error": "Evaluation failed: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01jk032jj8e66ahde6cs6ta3kn` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99758, Requested 392. Please try again in 2m9.6s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+              "explanation": ""
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": null,
+              "error": "Evaluation failed: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01jk032jj8e66ahde6cs6ta3kn` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99755, Requested 493. Please try again in 3m34.272s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+              "explanation": ""
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": null,
+              "error": "Evaluation failed: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01jk032jj8e66ahde6cs6ta3kn` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99752, Requested 570. Please try again in 4m38.208s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+              "explanation": ""
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": null,
+              "error": "Evaluation failed: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01jk032jj8e66ahde6cs6ta3kn` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99749, Requested 608. Please try again in 5m8.448s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+              "explanation": ""
+            }
+          }
+        },
+        {
+          "part": "II",
+          "question_number": "19",
+          "question": "How does the speaker's attitude towards the passage of time influence their approach to living life,...",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": null,
+              "error": "Evaluation failed: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01jk032jj8e66ahde6cs6ta3kn` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99746, Requested 390. Please try again in 1m57.504s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+              "explanation": ""
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": null,
+              "error": "Evaluation failed: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01jk032jj8e66ahde6cs6ta3kn` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99743, Requested 489. Please try again in 3m20.448s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+              "explanation": ""
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": null,
+              "error": "Evaluation failed: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01jk032jj8e66ahde6cs6ta3kn` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99740, Requested 567. Please try again in 4m25.248s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+              "explanation": ""
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": null,
+              "error": "Evaluation failed: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01jk032jj8e66ahde6cs6ta3kn` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99738, Requested 607. Please try again in 4m58.08s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+              "explanation": ""
+            }
+          }
+        }
+      ],
+      "total_questions_generated": 47,
+      "total_questions_evaluated": 3
+    },
+    {
+      "timestamp": "2026-02-09T10:37:15.797152",
+      "aggregate_scores": {
+        "faithfulness": 0.0,
+        "contextual_recall": 0.6666666666666666,
+        "contextual_precision": 0.7092592592592593,
+        "hallucination": 0.39999999999999997
+      },
+      "samples": [
+        {
+          "part": "I",
+          "question_number": "6",
+          "question": "Choose an antonym for 'humour' as used in Unit 2?\nOptions:\na) Amusement\nb) Comedy\nc) Seriousness\nd) ...",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": 0.0,
+              "explanation": "The score is 0.00 because there are no contradictions, indicating the actual output is likely completely inaccurate or unrelated to the retrieval context, but the absence of contradictions is unusual and suggests a potential issue with the evaluation process.",
+              "error": null
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because the expected output 'Correct answer: c' is directly attributed to node(s) in retrieval context, specifically the 2nd node, indicating a perfect match.",
+              "error": null
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": 0.5888888888888889,
+              "explanation": "The score is 0.59 because the first node, 'The passage is a narrative story and does not directly relate to generating a vocabulary question about Unit 2.', is irrelevant and ranked higher than some relevant nodes. Specifically, the second and third nodes, 'It directly mentions 'Topic: Unit 2', which is relevant to the task of generating a vocabulary question about Unit 2.' and 'It specifies 'Lesson Type: vocabulary', aligning with the task of generating a vocabulary question.', are relevant and ranked lower than the first irrelevant node. However, the score is not lower because the fourth node, ''Marks: 1' is related to the assessment but does not directly contribute to generating a vocabulary question.', is also irrelevant and ranked lower than the relevant third node, and the fifth node is relevant, maintaining a balance. The score is at 0.59 because some relevant nodes are ranked higher than irrelevant ones, like the third node being ranked higher than the fourth irrelevant node.",
+              "error": null
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": 0.2,
+              "explanation": "The score is 0.20 because despite some contradictions, the actual output aligns with the context in several key aspects such as being related to 'Unit 2', being a vocabulary question, having 'Marks: 1', and matching the correct answer 'c'.",
+              "error": null
+            }
+          }
+        },
+        {
+          "part": "I",
+          "question_number": "13",
+          "question": "Choose the correct tense: By the time I reached, they ______ their journey.\nOptions:\na) have complet...",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": 0.0,
+              "explanation": "The score is 0.00 because there are no contradictions, indicating the actual output is likely completely unrelated to the retrieval context, which is a strong negative signal.",
+              "error": null
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": 0.0,
+              "explanation": "The score is 0.00 because the sentence 'Correct answer: b' in the expected output cannot be attributed to any node in the retrieval context, as it discusses answer choices unrelated to the narrative in the retrieval context.",
+              "error": null
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": 0.5888888888888889,
+              "explanation": "The score is 0.59 because the first node, which is irrelevant as it is 'a narrative and does not directly relate to generating a grammar question about Unit 4,' is ranked higher than relevant nodes. The second and third nodes in the retrieval contexts are relevant, with the second node being relevant because 'Topic: Unit 4' directly corresponds to the input's request, and the third node being relevant as 'Lesson Type: grammar' specifies the type of question to be generated. However, the presence of an irrelevant node at the first rank and another irrelevant node at the fourth rank, with 'Marks: 1' being related to assessment but not directly contributing to generating the grammar question, brings down the score. The score is not 1 because of these irrelevant nodes being ranked higher or among the relevant ones, but it is not lower than 0.59 because the relevant nodes, such as the second and third nodes, are still ranked relatively high.",
+              "error": null
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": 0.6,
+              "explanation": "The score is 0.60 because the actual output partially aligns with the context, being a grammar exercise consistent with 'Lesson Type: grammar', but largely contradicts the context as it doesn't relate to the passage about a conversation between Aditya and the narrator.",
+              "error": null
+            }
+          }
+        },
+        {
+          "part": "I",
+          "question_number": "11",
+          "question": "Identify the compound word related to 'sailboat' as used in Unit 3.\nOptions:\na) Sail-boat\nb) Sea-far...",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": 0.0,
+              "explanation": "The score is 0.00 because there are no contradictions, indicating the actual output is likely completely unrelated to the retrieval context, but the absence of contradictions is unusual and suggests a potential issue with the evaluation process.",
+              "error": null
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because the expected output 'Correct answer: a' is directly supported by the 1st node in retrieval context, indicating a perfect match.",
+              "error": null
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": 0.95,
+              "explanation": "The score is 0.95 because the relevant nodes in retrieval contexts, such as the third node 'Lesson Type: vocabulary' directly relating to the task, are generally ranked higher than irrelevant nodes like the fourth node, which contains 'Marks: 1', a detail not directly related to generating a vocabulary question. However, the score isn't 1 because the fifth node, while relevant, is ranked lower than the fourth irrelevant node is not true, it's actually ranked after, but there are multiple relevant nodes ranked highly, indicating a strong contextual precision.",
+              "error": null
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": 0.4,
+              "explanation": "The score is 0.40 because the actual output has some factual alignments with the context, such as matching 'Unit 3' and 'Correct Answer: a', but also has some unrelated or contradictory elements, indicating a moderate level of hallucination.",
+              "error": null
+            }
+          }
+        }
+      ],
+      "total_questions_generated": 46,
+      "total_questions_evaluated": 3
+    },
+    {
+      "timestamp": "2026-02-09T10:50:12.504660",
+      "aggregate_scores": {
+        "faithfulness": 0.0,
+        "contextual_recall": 0.6666666666666666,
+        "contextual_precision": 0.6189814814814815,
+        "hallucination": 0.7999999999999999
+      },
+      "samples": [
+        {
+          "part": "I",
+          "question_number": "9",
+          "question": "What does 'INSV' stand for in 'INSV Tarini'?\nOptions:\na) Indian Naval Ship Vessel\nb) Indian Navigati...",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": 0.0,
+              "explanation": "The score is 0.00 because although there are no listed contradictions, a score of 0.00 indicates significant discrepancies between the actual output and the retrieval context, suggesting substantial unfaithfulness.",
+              "error": null
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because the expected output 'Correct answer: b' is directly attributed to the 1st node in retrieval context, showing a perfect match.",
+              "error": null
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": 0.5888888888888889,
+              "explanation": "The score is 0.59 because the first node in the retrieval contexts is irrelevant as it 'does not relate to generating a vocabulary question about Unit 3', and should be ranked lower, while relevant nodes like the second node with 'Topic: Unit 3' and the third node with 'Lesson Type: vocabulary' are ranked higher but not at the top. The presence of an irrelevant node at the first rank and a somewhat relevant node ('Marks: 1') at the fourth rank, which is below relevant nodes, contributes to the score not being higher. However, relevant nodes like the second, third, and fifth nodes ('Correct answer: b') are ranked higher or close to the irrelevant ones, justifying the current score.",
+              "error": null
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": 0.6,
+              "explanation": "The score is 0.60 because the actual output partially aligns with the context by asking the same question, but also contains contradictions related to the topic, lesson type, and marks, indicating a moderate level of hallucination.",
+              "error": null
+            }
+          }
+        },
+        {
+          "part": "I",
+          "question_number": "3",
+          "question": "What is a synonym for the word 'hullabaloo'?\nOptions:\na) Commotion\nb) Silence\nc) Calmness\nd) Stillne...",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": 0.0,
+              "explanation": "The score is 0.00 because there are no contradictions, indicating the actual output is likely completely inaccurate or unrelated to the retrieval context, which is quite concerning.",
+              "error": null
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because all sentences in the expected output are directly attributed to relevant nodes in the retrieval context, such as sentence 'Correct answer: a' being related to the 4th node.",
+              "error": null
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": 0.6791666666666667,
+              "explanation": "The score is 0.68 because the first node in the retrieval contexts is irrelevant as it 'does not directly relate to generating a vocabulary question about Unit 2', and is ranked higher than relevant nodes like the second node which is relevant due to 'Topic: Unit 2', the third node with 'Lesson Type: vocabulary', the fourth node with 'Marks: 1', and the fifth node with 'Correct answer: a'. The presence of this irrelevant node at the top rank lowers the score, but since most of the other nodes are relevant and ranked below it, the score isn't 0. It indicates a somewhat effective ranking but with room for improvement by placing relevant nodes like those referencing 'Unit 2', 'vocabulary', 'Marks: 1', and 'Correct answer: a' at the top.",
+              "error": null
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because the actual output is entirely unrelated to the provided contexts, with contradictions indicating a complete mismatch in content and purpose.",
+              "error": null
+            }
+          }
+        },
+        {
+          "part": "I",
+          "question_number": "5",
+          "question": "What is an antonym for the word 'freedom'?\nOptions:\na) Liberty\nb) Captivity\nc) Autonomy\nd) Sovereign...",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": 0.0,
+              "explanation": "The score is 0.00 because there are no contradictions, indicating the actual output is likely completely unfaithful or the retrieval context is empty or not relevant, but given the empty list, it's more about the output being entirely inaccurate or unrelated.",
+              "error": null
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": 0.0,
+              "explanation": "The score is 0.00 because the sentence 'Correct answer: b' in the expected output cannot be attributed to any node in the retrieval context, as it appears to be an answer key without any context.",
+              "error": null
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": 0.5888888888888889,
+              "explanation": "The score is 0.59 because the first node in the retrieval contexts is irrelevant as it discusses 'INSV Tarini', while relevant nodes like the second and third nodes, which mention 'Unit 3' and 'vocabulary', are ranked lower. The fourth node, which is about 'Marks: 1', is also irrelevant and is ranked fourth. However, relevant nodes like the fifth node, which is about 'Correct answer: b', are ranked after some irrelevant ones, indicating a mixed ranking. The score is not higher because the first node is irrelevant, but it's not lower because relevant nodes like the second and third nodes are still ranked relatively high.",
+              "error": null
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": 0.8,
+              "explanation": "The score is 0.80 because the actual output is unrelated to the context, topic, and lesson type, indicating a high degree of hallucination.",
+              "error": null
+            }
+          }
+        }
+      ],
+      "total_questions_generated": 47,
+      "total_questions_evaluated": 3
+    },
+    {
+      "timestamp": "2026-02-09T11:04:35.745004",
+      "aggregate_scores": {
+        "faithfulness": 0.0,
+        "contextual_recall": 0.8333333333333334,
+        "contextual_precision": 0.7393518518518518,
+        "hallucination": 0.6
+      },
+      "samples": [
+        {
+          "part": "I",
+          "question_number": "2",
+          "question": "What is the synonym of the word 'adventurous'?\nOptions:\na) Daring\nb) Timid\nc) Cautious\nd) Fearful",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": 0.0,
+              "explanation": "The score is 0.00 because there are no contradictions, indicating the actual output is likely completely unrelated to the retrieval context, but the absence of contradictions is unusual and suggests a potential issue with the evaluation process.",
+              "error": null
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because the entire expected output 'Correct answer: a' is perfectly attributed to node 2 in the retrieval context, showing a flawless match.",
+              "error": null
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": 0.6791666666666667,
+              "explanation": "The score is 0.68 because the first node in the retrieval contexts is irrelevant, with the 'reason' stating it doesn't relate to generating a vocabulary question, and is ranked higher than relevant nodes like the second node with 'reason' 'Topic: Unit 7' directly relating to the input, the third node with 'reason' 'Lesson Type: vocabulary' matching the input requirement, and other relevant nodes. The presence of this irrelevant node at the top rank lowers the score, but the score isn't lower because the relevant nodes are ranked closely together starting from the second node.",
+              "error": null
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": 0.8,
+              "explanation": "The score is 0.80 because the actual output does not align with most of the provided contexts, showing a significant deviation in terms of relevance and content, thus indicating a high level of hallucination.",
+              "error": null
+            }
+          }
+        },
+        {
+          "part": "I",
+          "question_number": "9",
+          "question": "What is the expanded form of 'INSV'?\nOptions:\na) Indian Navy Sail Vessel\nb) Indian Naval Ship Voyage...",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": 0.0,
+              "explanation": "The score is 0.00 because there are no contradictions, indicating the actual output is likely completely unfaithful or unrelated to the retrieval context, but the absence of contradictions is unusual and suggests a potential issue with the evaluation process.",
+              "error": null
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because the expected output 'Correct answer: a' is directly supported by the 1st node(s) in retrieval context, indicating a perfect match.",
+              "error": null
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": 0.95,
+              "explanation": "The score is 0.95 because the relevant nodes in retrieval contexts, such as the first node 'The text contains a vocabulary question about Unit 3...', the second node 'The text 'Topic: Unit 3' directly relates to the input', and the third node ''Lesson Type: vocabulary' is relevant', are ranked higher than the irrelevant node, like the fourth node ''Marks: 1' is not directly related to generating a vocabulary question'. The presence of a relevant fifth node ''Correct answer: a' matches the expected output' maintains the high score, but the score isn't 1 because the irrelevant fourth node is still ranked before a relevant node, indicating a minor ranking issue.",
+              "error": null
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": 0.2,
+              "explanation": "The score is 0.20 because the actual output is generally aligned with the context in terms of topic and task, but there is a contradiction in the format of the output as it doesn't directly answer the questions provided in the context, though the hallucination is minimal.",
+              "error": null
+            }
+          }
+        },
+        {
+          "part": "I",
+          "question_number": "10",
+          "question": "Identify the phrasal verb in the sentence: 'The ghost got into our house.'\nOptions:\na) got into\nb) g...",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": 0.0,
+              "explanation": "The score is 0.00 because there are no contradictions, indicating the actual output is likely entirely inaccurate or unrelated to the retrieval context, but the absence of contradictions is unusual and suggests a potential issue with the evaluation process.",
+              "error": null
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": 0.5,
+              "explanation": "The score is 0.50 because the sentence 'Correct answer: a' is supported by node(s) in retrieval context, specifically the last element, but the sentence 'Retrieval Context:' lacks any corresponding node(s) in retrieval context.",
+              "error": null
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": 0.5888888888888889,
+              "explanation": "The score is 0.59 because the first node 'The passage is a narrative text and does not directly relate to generating a grammar question about Unit 2.' is irrelevant and ranked higher than relevant nodes like the second node 'The text 'Topic: Unit 2' directly corresponds to the input 'Generate a grammar question about Unit 2'.', the third node 'The text 'Lesson Type: grammar' is relevant to generating a grammar question.', and the fifth node 'The text 'Correct answer: a' matches the expected output 'Correct answer: a', indicating its relevance.' in the retrieval contexts. The fourth node 'Marks: 1' is also irrelevant but is ranked lower than the first node, which is correct. Overall, the score is not higher because the irrelevant first node is ranked too high, but it is at 0.59 because the other relevant nodes are ranked relatively higher or lower than the irrelevant ones in a somewhat reasonable order.",
+              "error": null
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": 0.8,
+              "explanation": "The score is 0.80 because the actual output is largely unrelated to the given contexts, with the contradictions highlighting significant discrepancies between the output and the contexts, indicating a high degree of hallucination.",
+              "error": null
+            }
+          }
+        }
+      ],
+      "total_questions_generated": 45,
+      "total_questions_evaluated": 3
+    },
+    {
+      "timestamp": "2026-02-09T11:24:03.354081",
+      "aggregate_scores": {
+        "faithfulness": 0.3333333333333333,
+        "contextual_recall": 1.0,
+        "contextual_precision": 0.9166666666666666,
+        "hallucination": 1.0
+      },
+      "samples": [
+        {
+          "part": "I",
+          "question_number": "9",
+          "question": "What is the full form of the abbreviation 'INSV'?",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": 0.0,
+              "explanation": "The score is 0.00 because there are no contradictions, indicating the actual output is likely completely unrelated to the retrieval context, which is a strong negative signal.",
+              "error": null
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because the expected output 'Correct answer: a' is directly attributed to node 4 in retrieval context, showing a perfect match.",
+              "error": null
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": 0.9166666666666666,
+              "explanation": "The score is 0.92 because the relevant nodes in retrieval contexts, such as the first node 'Topic: Unit 3' and the second node 'Lesson Type: vocabulary', are ranked higher than the irrelevant node 'Marks: 1', which is the third node. However, the fourth node 'Correct answer: a' is relevant and ranked after the irrelevant node, which slightly lowers the score. Overall, the relevant nodes are mostly ranked higher than the irrelevant ones, resulting in a high score.",
+              "error": null
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because the actual output completely contradicts the given contexts in multiple aspects, including topic, lesson type, marks, and correct answer, indicating a total hallucination.",
+              "error": null
+            }
+          }
+        },
+        {
+          "part": "I",
+          "question_number": "1",
+          "question": "What is the synonym of the word 'empowering'?",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": 0.0,
+              "explanation": "The score is 0.00 because there are no contradictions, indicating the actual output is likely entirely inaccurate or unrelated to the retrieval context, but the absence of contradictions is unusual and suggests a potential issue with the evaluation process.",
+              "error": null
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because the expected output 'Correct answer: a' is directly attributed to node 4 in retrieval context, showing a perfect match.",
+              "error": null
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": 0.9166666666666666,
+              "explanation": "The score is 0.92 because the relevant nodes in retrieval contexts, such as the first node 'Topic: Unit 3', the second node 'Lesson Type: vocabulary', and the fourth node 'Correct answer: a', are generally ranked higher than the irrelevant node, like the third node 'Marks: 1'. The third node is ranked lower at 3, indicating that the relevant information is prioritized, but the score isn't 1 likely due to the presence of this irrelevant node at the third rank.",
+              "error": null
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because the actual output contradicts the given contexts in multiple aspects, such as topic indication, lesson type, marks, and correct answer, indicating a complete mismatch.",
+              "error": null
+            }
+          }
+        },
+        {
+          "part": "I",
+          "question_number": "11",
+          "question": "Identify the compound word from the given options.",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because the actual output is perfectly faithful to the retrieval context, with no contradictions found.",
+              "error": null
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because the expected output 'Correct answer: a' is directly attributed to node 4 in retrieval context, showing a perfect match.",
+              "error": null
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": 0.9166666666666666,
+              "explanation": "The score is 0.92 because the relevant nodes in retrieval contexts, such as the first node 'Topic: Unit 2', second node 'Lesson Type: vocabulary', and fourth node 'Correct answer: a', are generally ranked higher, but the presence of an irrelevant node 'Marks: 1' at the third rank slightly lowers the score. The node 'Marks: 1' is ranked lower than the relevant nodes, as indicated by its \"not directly related\" reason, which is correct, thus the score is high but not perfect.",
+              "error": null
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because the actual output contradicts multiple contexts, including 'Topic: Unit 2', 'Marks: 1', and 'Correct answer: a', and lacks specific content or format implied by the contexts, indicating a complete hallucination.",
+              "error": null
+            }
+          }
+        }
+      ],
+      "total_questions_generated": 46,
+      "total_questions_evaluated": 3
+    },
+    {
+      "timestamp": "2026-02-09T11:30:59.448513",
+      "aggregate_scores": {
+        "faithfulness": 0.7000000000000001,
+        "contextual_recall": 1.0,
+        "contextual_precision": 0.3666666666666667,
+        "hallucination": 0.20000000000000004
+      },
+      "samples": [
+        {
+          "part": "II",
+          "question_number": "28",
+          "question": "Ramu wants to go to the temple from the school. The map shows the route. Describe the directions from the school to the temple via the park and the ma...",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": 0.6,
+              "explanation": "The score is 0.60 because the actual output contains 'Bus Stand' as a landmark, which is not supported by the retrieval context that only lists school, park, market, and temple, indicating a partial deviation from the provided information.",
+              "error": null
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because the expected output is perfectly supported by node(s) in retrieval context, specifically the 5th node, which is identical to the output.",
+              "error": null
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": 0.2,
+              "explanation": "The score is 0.20 because the relevant node 'From the school to the temple via the park and the market' is ranked fifth among the nodes in retrieval contexts, while irrelevant nodes such as 'Topic: Directions Unit 3' (first node), 'Lesson Type: map' (second node), 'Section: Map/Directions' (third node), and 'Marks: 2' (fourth node) are ranked higher. The reasons for the 'no' verdicts, such as 'Topic: Directions Unit 3' providing context but not directly contributing to the expected output, indicate that these nodes should be ranked lower than the 'yes' verdict node, which directly answers the input. The score is not higher because the relevant node is not among the top-ranked nodes.",
+              "error": null
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": 0.0,
+              "explanation": "The score is 0.00 because the actual output is entirely consistent with the given context, describing directions using a map and matching the expected details, with no contradictions found.",
+              "error": null
+            }
+          }
+        },
+        {
+          "part": "II",
+          "question_number": "20",
+          "question": "How does the poet use the Grumble Family's surroundings to reflect their attitude towards life?",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because the actual output perfectly aligns with the retrieval context, as evidenced by the absence of any contradictions.",
+              "error": null
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because the expected output is directly supported by node(s) in retrieval context, specifically the 2nd node, which contains the exact sentence.",
+              "error": null
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": 0.7,
+              "explanation": "The score is 0.70 because the first node in the retrieval contexts is relevant, as indicated by 'Topic: Poetry Unit 4: The Grumble Family' being relevant, but is followed by irrelevant nodes such as the second node 'Lesson Type: poetry' which \"does not directly contribute to understanding how the poet conveys the Grumble Family's dissatisfaction\". The fifth node is relevant, as it \"directly addresses how the poet uses names to convey the Grumble Family's dissatisfaction\", but is ranked lower than some irrelevant nodes. The score is not 1 because irrelevant nodes like the third node 'Section: Poetry' ranked third and fourth node 'Marks: 2' ranked fourth are ranked higher than some relevant nodes. However, the score is 0.70 because the most relevant information is still ranked relatively high, with the first relevant node being the first node.",
+              "error": null
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": 0.2,
+              "explanation": "The score is 0.20 because the actual output generally aligns with the context in terms of topic and section, but has some contradictions, such as not discussing specific details like the use of names of streets, cities, and rivers, indicating a relatively low level of hallucination.",
+              "error": null
+            }
+          }
+        },
+        {
+          "part": "II",
+          "question_number": "15",
+          "question": "How did the young seagull's family react to his inability to fly, and what did they do to encourage him?",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": 0.5,
+              "explanation": "The score is 0.50 because although there are no listed contradictions, a score of 0.50 indicates some discrepancies likely exist between the actual output and the retrieval context.",
+              "error": null
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because the entire expected output is directly supported by the 1st node(s) in retrieval context, indicating a perfect match.",
+              "error": null
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": 0.2,
+              "explanation": "The score is 0.20 because the first four nodes in the retrieval contexts are irrelevant as they contain metadata or topic information that does not contribute to the content of the expected output, such as 'Topic: Prose Unit 6' (node 1), 'Lesson Type: prose' (node 2), 'Section: Prose' (node 3), and 'Marks: 2' (node 4), whereas the relevant node 'The family scolded and threatened him...' (node 5) is ranked last. The score is not higher because the relevant node is not ranked higher than the irrelevant nodes, but it is at 0.20 because there is at least one relevant node among the retrieval contexts.",
+              "error": null
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": 0.4,
+              "explanation": "The score is 0.40 because the actual output aligns with the context in describing the family's reaction to the young seagull, but contradicts the context in directly addressing the topic 'Prose Unit 6' and not indicating the marks, showing a moderate level of hallucination.",
+              "error": null
+            }
+          }
+        }
+      ],
+      "total_questions_generated": 47,
+      "total_questions_evaluated": 3
+    },
+    {
+      "timestamp": "2026-02-09T11:36:35.556225",
+      "aggregate_scores": {
+        "faithfulness": 0.5666666666666667,
+        "contextual_recall": 1.0,
+        "contextual_precision": 0.2722222222222222,
+        "hallucination": 0.2777777777777778
+      },
+      "samples": [
+        {
+          "part": "III",
+          "question_number": "37",
+          "question": "Describe the relationship between Prospero and his daughter Miranda, highlighting how their isolation on the island has influenced their bond and unde...",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because there are no contradictions, indicating the actual output is perfectly faithful to the retrieval context.",
+              "error": null
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because all sentences in the expected output are directly supported by the 2nd node in retrieval context, indicating a perfect match between the expected output and the retrieved information.",
+              "error": null
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": 0.41666666666666663,
+              "explanation": "The score is 0.42 because the second node in the retrieval contexts, which is relevant due to its relation to 'Supplementary Unit 7', is ranked higher than some irrelevant nodes, but is preceded by the first node, which is irrelevant as per 'The list of explorers is not relevant to the topic of Supplementary Unit 7'. Additionally, relevant information like 'The statement directly matches the expected output' is found in the sixth node, indicating that irrelevant nodes like the third node with 'Lesson Type: supplementary' being too general, the fourth node with 'Section: Supplementary' being too general, and the fifth node with 'Marks: 5' being related to assessment, are ranked higher. The score is not higher because the relevant nodes are not consistently ranked higher than the irrelevant ones.",
+              "error": null
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": 0.8333333333333334,
+              "explanation": "The score is 0.83 because the actual output has multiple contradictions with the context, including not relating to the list of explorers and not matching the topic, lesson type, section, and marks, indicating a significant amount of hallucination.",
+              "error": null
+            }
+          }
+        },
+        {
+          "part": "III",
+          "question_number": "43",
+          "question": "You are a student who has recently participated in a school debate on 'The Importance of Protecting the Environment'. Write a dialogue between you and...",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": 0.5,
+              "explanation": "The score is 0.50 because the actual output contradicts the retrieval context by specifying a word limit and misinterpreting the context as a school debate, when in fact it's about a dialogue between two friends on protecting the environment.",
+              "error": null
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because all sentences in the expected output are directly attributed to node 1 in retrieval context, indicating a perfect match.",
+              "error": null
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": 0.2,
+              "explanation": "The score is 0.20 because the relevant node 'The dialogue should be between two friends discussing ways to protect the environment. Key points to include: reducing waste, reusing items, recycling materials, and any other relevant eco-friendly practices. The conversation should be natural and fluid.' is ranked 5th, while irrelevant nodes such as 'Topic: Writing Unit 4' (1st node), 'Lesson Type: writing' (2nd node), 'Section: Writing' (3rd node), and 'Marks: 5' (4th node) are ranked higher. The irrelevant nodes, which provide information like \"'Topic: Writing Unit 4' only indicates the topic but doesn't provide any relevant information to the expected output\" and \"'Lesson Type: writing' is about the type of lesson, not directly related to the content of the expected output\", should be ranked lower than the relevant node, indicating a suboptimal ranking.",
+              "error": null
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": 0.0,
+              "explanation": "The score is 0.00 because the actual output aligns with the given context in terms of topic, lesson type, and section, with no contradictions found.",
+              "error": null
+            }
+          }
+        },
+        {
+          "part": "III",
+          "question_number": "40",
+          "question": "You are the Secretary of the School Council. Your school is organizing a 'Science Exhibition' for the students of Classes 8 to 10. Write a formal emai...",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": 0.2,
+              "explanation": "The score is 0.20 because the actual output incorrectly assumed a specific word count range of 100-150 words, which is not directly stated in the retrieval context, despite the marks being specified as 5.",
+              "error": null
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because the expected output is perfectly aligned with the information provided in node(s) in retrieval context, specifically node 1, which contains all the required key points and format details.",
+              "error": null
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": 0.2,
+              "explanation": "The score is 0.20 because the relevant node, which 'directly matches the expected output', is ranked fifth among the retrieval contexts nodes, while the first four nodes are irrelevant, with reasons such as 'Topic: Writing Unit 6 only indicates the topic but doesn't provide any relevant information' and 'Lesson Type: writing is too general'. The presence of these irrelevant nodes at higher ranks than the relevant node results in a low contextual precision score, indicating that the relevant information is not prioritized.",
+              "error": null
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": 0.0,
+              "explanation": "The score is 0.00 because the actual output aligns perfectly with the given contexts, following a formal email structure and adhering to the specified word count and marking scheme, with no contradictions found.",
+              "error": null
+            }
+          }
+        }
+      ],
+      "total_questions_generated": 47,
+      "total_questions_evaluated": 3
+    },
+    {
+      "timestamp": "2026-02-09T11:43:03.986461",
+      "aggregate_scores": {
+        "faithfulness": null,
+        "contextual_recall": null,
+        "contextual_precision": null,
+        "hallucination": null
+      },
+      "samples": [
+        {
+          "part": "IV",
+          "question_number": "46",
+          "question": "",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": null,
+              "error": "{\"detail\":\"output field is required for faithfulness metric\"}",
+              "explanation": ""
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": null,
+              "error": "{\"detail\":\"expected_output field is required for contextual_recall metric\"}",
+              "explanation": ""
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": null,
+              "error": "{\"detail\":\"expected_output field is required for contextual_precision metric\"}",
+              "explanation": ""
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": null,
+              "error": "{\"detail\":\"output field is required for hallucination metric\"}",
+              "explanation": ""
+            }
+          }
+        },
+        {
+          "part": "IV",
+          "question_number": "47",
+          "question": "",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": null,
+              "error": "{\"detail\":\"output field is required for faithfulness metric\"}",
+              "explanation": ""
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": null,
+              "error": "{\"detail\":\"expected_output field is required for contextual_recall metric\"}",
+              "explanation": ""
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": null,
+              "error": "{\"detail\":\"expected_output field is required for contextual_precision metric\"}",
+              "explanation": ""
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": null,
+              "error": "{\"detail\":\"output field is required for hallucination metric\"}",
+              "explanation": ""
+            }
+          }
+        }
+      ],
+      "total_questions_generated": 47,
+      "total_questions_evaluated": 2
+    },
+    {
+      "timestamp": "2026-02-10T08:44:12.402195",
+      "aggregate_scores": {
+        "faithfulness": 1.0,
+        "contextual_recall": 1.0,
+        "contextual_precision": 0.5,
+        "hallucination": 0.4166666666666667
+      },
+      "samples": [
+        {
+          "part": "I",
+          "question_number": "4",
+          "question": "Vocabulary: 'humour' (antonym)",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because there are no contradictions, indicating the actual output is perfectly faithful to the retrieval context.",
+              "error": null
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because the expected output is perfectly supported by node(s) in retrieval context, specifically sentence 'Correct answer: b' is directly mentioned in the 4th node.",
+              "error": null
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": 0.5,
+              "explanation": "The score is 0.50 because the second node 'Lesson Type: vocabulary' and the fourth node 'Correct answer: b' in retrieval contexts are relevant, but they are not ranked higher than all irrelevant nodes, as the first node 'Topic: Unit 2' is irrelevant and ranked higher than the second relevant node, and the third node 'Marks: 1' is irrelevant and ranked between the second and fourth relevant nodes. The fourth node 'Correct answer: b' is ranked last among the relevant nodes, indicating some relevant information is not prioritized.",
+              "error": null
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": 0.25,
+              "explanation": "The score is 0.25 because the actual output 'humour' is mostly aligned with the context, being related to the topic 'Unit 2' and agreeing with the 'Lesson Type: vocabulary', but partially contradicts the 'Correct answer: b', indicating some hallucination.",
+              "error": null
+            }
+          }
+        },
+        {
+          "part": "I",
+          "question_number": "9",
+          "question": "Vocabulary: 'ecommerce' (vocabulary)",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because the actual output is perfectly faithful to the retrieval context, with no contradictions found.",
+              "error": null
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because the expected output 'Correct answer: a' is directly attributed to node 4 in retrieval context, showing a perfect match.",
+              "error": null
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": 0.5,
+              "explanation": "The score is 0.50 because the second and fourth nodes in the retrieval contexts are relevant, with the second node being 'Lesson Type: vocabulary' and the fourth node being 'Correct answer: a', but they are not ranked consecutively, with irrelevant nodes like 'Topic: Unit 5' being ranked first and 'Marks: 1' being ranked third. The presence of irrelevant nodes at ranks 1 and 3 indicates that the relevant nodes are not prioritized effectively, preventing a higher score, yet the relevant nodes are still present, hence the score is at 0.50.",
+              "error": null
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": 0.75,
+              "explanation": "The score is 0.75 because the actual output 'ecommerce' is a single word that doesn't align with the expected context, such as 'Unit 5' and 'vocabulary', and contradicts the correct answer 'a', indicating a significant hallucination.",
+              "error": null
+            }
+          }
+        },
+        {
+          "part": "I",
+          "question_number": "7",
+          "question": "Vocabulary: 'footstep' (plural)",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because there are no contradictions, indicating the actual output is perfectly faithful to the retrieval context.",
+              "error": null
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because the expected output 'Correct answer: a' is directly attributed to node 4 in retrieval context, indicating a perfect match.",
+              "error": null
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": 0.5,
+              "explanation": "The score is 0.50 because the second node in retrieval contexts, 'Lesson Type: vocabulary', is relevant and ranked higher than the first irrelevant node, but the first node is ranked higher than the second relevant node and the fourth relevant node is ranked lower than the third irrelevant node 'Marks: 1'. The presence of relevant nodes like the second and fourth nodes being outranked or closely ranked with irrelevant nodes like the first and third nodes, with reasons like \"'Topic: Unit 2' is relevant to the unit in question but does not directly address the presence of 'footstep'.\" and \"'Marks: 1' is not relevant\", results in a moderate score.",
+              "error": null
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": 0.25,
+              "explanation": "The score is 0.25 because the actual output 'footstep' contradicts the context 'Correct answer: a', indicating a hallucination, but the output is related to the vocabulary lesson type, showing some alignment.",
+              "error": null
+            }
+          }
+        }
+      ],
+      "total_questions_generated": 46,
+      "total_questions_evaluated": 3
+    },
+    {
+      "timestamp": "2026-02-10T08:58:52.756020",
+      "aggregate_scores": {
+        "faithfulness": 0.8333333333333334,
+        "contextual_recall": 1.0,
+        "contextual_precision": 0.42083333333333334,
+        "hallucination": 0.5111111111111112
+      },
+      "samples": [
+        {
+          "part": "II",
+          "question_number": "25",
+          "question": "Read the sentence given below and correct the punctuation: 'Lets go to the park my friend said with a smile' Rewrite the sentence with correct punctua...",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": 0.5,
+              "explanation": "The score is 0.50 because the actual output contains punctuation errors as seen in the contradiction where 'Let's go to the park,' is incorrectly rendered as 'Lets go to the park my friend said with a smile', indicating partial faithfulness to the retrieval context.",
+              "error": null
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because the expected output is perfectly supported by node(s) in retrieval context, specifically the 1st node, which directly contains the sentence.",
+              "error": null
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": 0.2,
+              "explanation": "The score is 0.20 because the relevant node, 'The sentence...', is ranked 5th, after four irrelevant nodes in the retrieval contexts, such as the 1st node 'Topic: Grammar Unit 3: Punctuation' which is relevant to the topic but does not directly contribute to the expected output, and the 2nd node 'Lesson Type: grammar' which is too general. The score is not higher because the relevant information is not prioritized, but it is at 0.20 because at least one relevant node is present, albeit at a lower rank.",
+              "error": null
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": 0.2,
+              "explanation": "The score is 0.20 because the actual output aligns with the context in terms of grammar and punctuation correction, with multiple factual alignments supporting this, and only one minor contradiction that doesn't directly impact the overall alignment.",
+              "error": null
+            }
+          }
+        },
+        {
+          "part": "II",
+          "question_number": "15",
+          "question": "How did the young seagull's family react to his inability to fly, and what actions did they take to encourage him?",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because the actual output is perfectly faithful to the retrieval context, with no contradictions found.",
+              "error": null
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because the expected output is perfectly supported by node(s) in retrieval context, specifically the sentence is directly found in the 2nd node.",
+              "error": null
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": 0.6458333333333333,
+              "explanation": "The score is 0.65 because the first node in the retrieval contexts is irrelevant as it discusses a ghost and a narrator's experience, as stated in \"The text talks about a ghost and a narrator's experience, which is unrelated to the expected output about a young seagull.\" and is ranked higher than relevant nodes. Additionally, the fifth node, ranked fifth, is also irrelevant with the reason being \"'Marks: 2' is related to assessment but doesn't directly relate to the content of the expected output or the input's request to generate a prose question.\" However, the score isn't lower because the majority of the relevant nodes, such as the second, third, fourth, and sixth nodes in the retrieval contexts, are ranked higher or close to the irrelevant ones, with reasons like \"The text mentions 'Prose Unit 2'\", \"The text indicates that the lesson type is 'prose'\", \"The text states that the section is 'Prose'\", and 'The sentence exactly matches the expected output, directly providing the answer.'",
+              "error": null
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": 0.5,
+              "explanation": "The score is 0.50 because the actual output aligns with some contexts related to prose and a young seagull's family, but contradicts or doesn't directly relate to other contexts such as 'Topic: Prose Unit 2' and a ghost story, indicating a moderate level of hallucination.",
+              "error": null
+            }
+          }
+        },
+        {
+          "part": "II",
+          "question_number": "17",
+          "question": "How has the role of women in Indian society evolved over time, and what is a notable example of their achievement?",
+          "metrics": {
+            "faithfulness": {
+              "metric": "faithfulness",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because the actual output is perfectly faithful to the retrieval context, with no contradictions found.",
+              "error": null
+            },
+            "contextual_recall": {
+              "metric": "contextual_recall",
+              "score": 1.0,
+              "explanation": "The score is 1.00 because the expected output is perfectly supported by node(s) in retrieval context, specifically the 5th node, which contains the exact sentence.",
+              "error": null
+            },
+            "contextual_precision": {
+              "metric": "contextual_precision",
+              "score": 0.41666666666666663,
+              "explanation": "The score is 0.42 because the first node in the retrieval contexts, which is irrelevant as it talks about a 'ghost story', is ranked higher than relevant nodes. For example, the second node is relevant as it 'directly mentions Prose Unit 2'. Irrelevant nodes like the third node, ranked third, with the 'reason' 'Lesson Type: prose' is too general, and the fourth node, ranked fourth, with the 'reason' 'Section: Prose' is also too general, should be ranked lower. However, there are relevant nodes like the second and sixth nodes, with the sixth node having a 'reason' that 'directly matches the expected output', ranked higher than some but not all irrelevant nodes, resulting in a moderate score.",
+              "error": null
+            },
+            "hallucination": {
+              "metric": "hallucination",
+              "score": 0.8333333333333334,
+              "explanation": "The score is 0.83 because the actual output has multiple contradictions with the contexts, indicating a significant deviation from the provided information, but not a complete hallucination as there is at least one alignment.",
+              "error": null
+            }
+          }
+        }
+      ],
+      "total_questions_generated": 47,
+      "total_questions_evaluated": 3
+    }
+  ],
+  "chatbot_evaluations": [
+    {
+      "timestamp": "2026-02-08T14:28:39.571327",
+      "query": "Explain the process of photosynthesis in plants.",
+      "response": "Unfortunately, the provided textbook content does not contain information about the process of photosynthesis in plants. The given content seems to be related to a different topic, possibly about a selection process and training of a crew. \n\nAs a result, I am unable to explain the process of photosynthesis using the provided textbook content. However, I can suggest that we can explore other resources, such as our science textbook or the internet, to learn about photosynthesis.",
+      "context_count": 5,
+      "metrics": {
+        "faithfulness": {
+          "metric": "faithfulness",
+          "score": 0.6666666666666666,
+          "explanation": "The score is 0.67 because there are no contradictions listed, indicating a strong alignment between the actual output and the retrieval context, although there may be some minor discrepancies that prevented a perfect score.",
+          "error": null
+        },
+        "answer_relevancy": {
+          "metric": "answer_relevancy",
+          "score": 0.5,
+          "explanation": "The score is 0.50 because the actual output contains irrelevant statements about the textbook content not covering photosynthesis and being about a different topic, which detracts from the relevancy, but it may have still attempted to address the question, thus not being a complete failure.",
+          "error": null
+        },
+        "hallucination": {
+          "metric": "hallucination",
+          "score": 0.2,
+          "explanation": "The score is 0.20 because the actual output mostly aligns with the provided context, with only one minor contradiction regarding the response length and inclusion of drawings, indicating a relatively low level of hallucination.",
+          "error": null
+        }
+      }
+    },
+    {
+      "timestamp": "2026-02-08T14:30:29.871976",
+      "query": "Explain the process of photosynthesis in plants.",
+      "response": "Unfortunately, the provided textbook content does not relate to the question about the process of photosynthesis in plants. The given content appears to be related to a different topic, possibly about a selection process or training for a crew.\n\nAs a result, I am unable to provide an explanation about photosynthesis using the provided textbook content. However, I can tell you that photosynthesis is a topic typically covered in science textbooks, not English language textbooks.\n\nIf you'd like, I can help you find a simple explanation of photosynthesis. Photosynthesis is the process by which plants, algae, and some bacteria convert light energy, usually from the sun, into chemical energy stored in glucose. This process involves the conversion of carbon dioxide and water into glucose and oxygen using sunlight as energy.\n\nHere's a simplified overview:\n1. **Light absorption**: Plants absorb light through their leaves using pigments like chlorophyll.\n2. **Water absorption**: Plants absorb water from the soil through their roots.\n3. **Carbon dioxide absorption**: Plants absorb CO2 from the atmosphere.\n4. **Conversion**: Using sunlight, plants convert CO2 and H2O into glucose and O2.\n5. **Release**: Oxygen is released as a byproduct into the atmosphere.\n\nPlease let me know if you need more information or if there's anything else I can help you with.",
+      "context_count": 5,
+      "metrics": {
+        "answer_relevancy": {
+          "metric": "answer_relevancy",
+          "score": 0.8333333333333334,
+          "explanation": "The score is 0.83 because although the output provided some relevant information about photosynthesis, it was somewhat marred by redundant statements that didn't add to the explanation of the process, preventing the score from being higher.",
+          "error": null
+        },
+        "pii_leakage": {
+          "metric": "pii_leakage",
+          "score": 1.0,
+          "explanation": "The score is 1.00 because no specific privacy violations were identified, indicating a perfect privacy score with no issues found.",
+          "error": null
+        }
+      }
+    },
+    {
+      "timestamp": "2026-02-08T14:30:57.628198",
+      "query": "Explain poem in unit 5",
+      "response": "The poem \"The Secret of the Machines\" by Rudyard Kipling is about the capabilities and limitations of machines. \n\nThe poem begins by describing how machines are made, \"We were taken from the ore-bed and the mine, / We were melted in the furnace and the pit / We were cast and wrought and hammered to design.\" Here, 'we' refers to machines (Answer to question 1: b. Machines). The machines are explaining their creation and capabilities to humans, making humans the listeners.\n\nThe machines can perform various tasks like \"pull and haul and push and lift and drive, / We can print and plough and weave and heat and light.\" They require fuel like water, coal, or oil to operate. The machines warn humans that they are not capable of understanding lies or showing emotions like love, pity, or forgiveness. If humans make a mistake in handling them, they can be disastrous.\n\nThe poem highlights the machines' capabilities but also reminds humans that they are creations of the human brain, \"Because, for all our power and weight and size, / We are nothing more than children of your brain!\"\n\nSome of the answers to the questions can be derived as follows:\n2. The speakers are machines, and the listeners are humans.\n3. Iron is obtained from ores and mines.\n4. Machines like axes, hammers, and ploughs are hammered to design.\n5. Machines like cars, trains, and ships run on water, coal, or oil.\n6. Machines used for various tasks include cranes (lifting), tractors (ploughing), printers (printing), and computers (reading and writing).\n\nThe poem employs various poetic devices, including rhyme scheme (a, b, a, b), imagery, personification (\"We can pull and haul and push and lift and drive\"), assonance (\"all we ask\"), connotation (\"Though our smoke may hide the Heavens from your eyes\"), and alliteration (\"We can print and plough and weave and heat and light\").",
+      "context_count": 3,
+      "metrics": {
+        "answer_relevancy": {
+          "metric": "answer_relevancy",
+          "score": 1.0,
+          "explanation": "The score is 1.00 because the output perfectly addresses the input, providing a clear and relevant explanation of the poem in unit 5, with no irrelevant statements to detract from its score.",
+          "error": null
+        },
+        "pii_leakage": {
+          "metric": "pii_leakage",
+          "score": 1.0,
+          "explanation": "The score is 1.00 because no specific privacy violations were identified, indicating a perfect privacy score.",
+          "error": null
+        }
+      }
+    },
+    {
+      "timestamp": "2026-02-09T11:08:09.221435",
+      "query": "Explain the process of photosynthesis in plants.",
+      "response": "Unfortunately, the provided textbook content does not contain any information about the process of photosynthesis in plants. The given content appears to be related to a different topic, possibly about a selection process and training of a crew.\n\nHowever, I can tell you that photosynthesis is a topic typically covered in Science textbooks, not English textbooks. If you'd like, I can try to provide a general explanation of photosynthesis, but it won't be based on the provided content. \n\nPhotosynthesis is not something I can explain using the given content. If you need help with understanding a different concept or topic from the given content, I'd be happy to assist you.",
+      "context_count": 5,
+      "metrics": {
+        "answer_relevancy": {
+          "metric": "answer_relevancy",
+          "score": 0.16666666666666666,
+          "explanation": "The score is 0.17 because the actual output contains multiple statements that are irrelevant to explaining the process of photosynthesis in plants, such as discussing unrelated topics or failing to provide relevant information, thus significantly lowering the relevancy score.",
+          "error": null
+        },
+        "pii_leakage": {
+          "metric": "pii_leakage",
+          "score": 1.0,
+          "explanation": "The score is 1.00 because no specific privacy violations were identified, suggesting that the data or system in question adheres to privacy standards or no sensitive information was found to be compromised.",
+          "error": null
+        }
+      }
+    },
+    {
+      "timestamp": "2026-02-10T09:02:22.374275",
+      "query": "can you explain Poem from Unit 5?",
+      "response": "The poem \"The Secret of the Machines\" by Rudyard Kipling is about the capabilities and limitations of machines. The poem is written from the perspective of machines, which describe how they are created, what they need to function, and what they can do.\n\nThe machines say that they were taken from ore-beds and mines, melted in furnaces, and shaped through various processes like hammering, cutting, and filing. They need fuel like water, coal, and oil to work and require precise adjustments to function properly.\n\nThe machines can perform various tasks like pulling, hauling, pushing, lifting, driving, printing, ploughing, weaving, heating, and lighting. They can also run, race, swim, fly, and dive. However, they have limitations - they cannot comprehend lies, love, pity, or forgive.\n\nThe machines warn that if humans make a mistake in handling them, they can be fatal. Despite their power and capabilities, the machines acknowledge that they are creations of the human brain and are subject to the laws set by humans.\n\nThe poem highlights the relationship between humans and machines, emphasizing that machines are designed to serve humanity, but they also require careful handling and maintenance.\n\nThe poem uses various poetic devices like rhyme, imagery, personification, assonance, connotation, and alliteration to convey its message. The rhyme scheme is evident in the stanzas, with a pattern like a, b, a, b. Personification is used to give machines human-like qualities, making them seem like they are speaking to humans.\n\nOverall, the poem explores the capabilities and limitations of machines and their relationship with humans, highlighting the importance of responsible handling and maintenance of machines.",
+      "context_count": 3,
+      "metrics": {
+        "answer_relevancy": {
+          "metric": "answer_relevancy",
+          "score": 1.0,
+          "explanation": "The score is 1.00 because the actual output perfectly addresses the input, with no irrelevant statements, providing a clear and relevant explanation for the poem from Unit 5.",
+          "error": null
+        },
+        "pii_leakage": {
+          "metric": "pii_leakage",
+          "score": 1.0,
+          "explanation": "The score is 1.00 because no privacy violations were identified.",
+          "error": null
+        }
+      }
+    }
+  ]
+}

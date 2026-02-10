@@ -192,8 +192,9 @@ export default function Teacher() {
           title="Download PDF"
           onClick={() => handleDownloadPdf(paper.paper_id, paper.title)}
           disabled={isLoading}
+          style={{ background: '#10b981', color: '#ffffff', fontSize: '1rem', fontWeight: 'bold' }}
         >
-          <FaDownload />
+          ⬇
         </button>
 
         {/* Approve Button - for DRAFT/REVISED papers */}

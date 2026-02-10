@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './Admin.css';
-import { FaUser, FaEdit, FaTrash, FaLock, FaCog, FaTimes, FaCheck, FaShieldAlt, FaUsers, FaChalkboardTeacher, FaUserGraduate, FaUserCheck } from 'react-icons/fa';
+import { FaUser, FaEdit, FaTrash, FaLock, FaCog, FaTimes, FaCheck, FaShieldAlt, FaUsers, FaChalkboardTeacher, FaUserGraduate, FaUserCheck, FaFlask } from 'react-icons/fa';
 import { listUsers, createUser, disableUser, enableUser } from '../services/api';
+import QualityTesting from '../components/QualityTesting';
 
 export default function Admin() {
   const [users, setUsers] = useState([]);
@@ -151,6 +152,12 @@ export default function Admin() {
           >
             <FaLock /> Security
           </button>
+          <button 
+            className={`tab-btn ${activeTab === 'quality' ? 'active' : ''}`}
+            onClick={() => setActiveTab('quality')}
+          >
+            <FaFlask /> Quality Testing
+          </button>
         </div>
 
         {activeTab === 'users' && (
@@ -276,6 +283,13 @@ export default function Admin() {
               </div>
             </div>
             <button className="save-settings-btn">💾 Save Security Settings</button>
+          </div>
+        )}
+
+        {activeTab === 'quality' && (
+          <div className="tab-content quality-tab">
+            <h2>🧪 Quality Testing (DeepEval Metrics)</h2>
+            <QualityTesting />
           </div>
         )}
       </div>
