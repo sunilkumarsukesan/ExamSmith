@@ -1,0 +1,19 @@
+{
+  "name": "examsmith",
+  "version": "1.0.0",
+  "description": "AI-powered question paper generation platform",
+  "private": true,
+  "scripts": {
+    "backend": "cd backend/retrival && python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload",
+    "frontend": "cd Frontend && npx vite --host",
+    "deepeval": "cd deepeval-modified && python deepeval_server.py",
+    "install:all": "cd Frontend && npm install",
+    "dev": "concurrently --names \"API,WEB,EVAL\" -c \"bgBlue.bold,bgMagenta.bold,bgGreen.bold\" --restart-tries 3 --restart-after 2000 \"npm run backend\" \"npm run frontend\" \"npm run deepeval\"",
+    "start": "concurrently --names \"API,WEB,EVAL\" -c \"bgBlue.bold,bgMagenta.bold,bgGreen.bold\" --restart-tries 3 --restart-after 2000 \"npm run backend\" \"npm run frontend\" \"npm run deepeval\"",
+    "stop": "npx kill-port 8000 8001 5173"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "kill-port": "^2.0.1"
+  }
+}

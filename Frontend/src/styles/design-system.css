@@ -1,0 +1,529 @@
+/* ============================================
+   ExamSmith Design System
+   Learning-First EdTech Platform
+   "Practice Smarter. Score Higher."
+   ============================================ */
+
+:root {
+  /* ===========================================
+     COLOR SYSTEM - Learning & Growth Focused
+     =========================================== */
+  
+  /* Primary Colors - Growth Green (Success & Progress) */
+  --color-growth: #059669;
+  --color-growth-light: #D1FAE5;
+  --color-growth-lighter: #ECFDF5;
+  --color-growth-dark: #047857;
+  --color-growth-darker: #065F46;
+  
+  /* Secondary Colors - Calm Blue (Focus & Trust) */
+  --color-focus: #0EA5E9;
+  --color-focus-light: #E0F2FE;
+  --color-focus-lighter: #F0F9FF;
+  --color-focus-dark: #0284C7;
+  --color-focus-darker: #0369A1;
+  
+  /* Accent Colors - Motivation Orange (Energy & Achievement) */
+  --color-motivation: #F59E0B;
+  --color-motivation-light: #FEF3C7;
+  --color-motivation-lighter: #FFFBEB;
+  --color-motivation-dark: #D97706;
+  
+  /* Accent Colors - Confidence Purple (Mastery & Excellence) */
+  --color-mastery: #8B5CF6;
+  --color-mastery-light: #EDE9FE;
+  --color-mastery-lighter: #F5F3FF;
+  --color-mastery-dark: #7C3AED;
+  
+  /* Learning States */
+  --color-beginner: #60A5FA;
+  --color-intermediate: #34D399;
+  --color-advanced: #A78BFA;
+  --color-expert: #FBBF24;
+  
+  /* Semantic Colors */
+  --color-success: #10B981;
+  --color-success-light: #D1FAE5;
+  --color-warning: #F59E0B;
+  --color-warning-light: #FEF3C7;
+  --color-error: #EF4444;
+  --color-error-light: #FEE2E2;
+  --color-info: #0EA5E9;
+  --color-info-light: #E0F2FE;
+  
+  /* Streak & Gamification */
+  --color-streak: #F97316;
+  --color-streak-light: #FFEDD5;
+  --color-badge-gold: #F59E0B;
+  --color-badge-silver: #94A3B8;
+  --color-badge-bronze: #EA580C;
+  
+  /* Background Colors - Warm & Inviting */
+  --color-bg-primary: #FEFEFE;
+  --color-bg-secondary: #F8FAFC;
+  --color-bg-tertiary: #F1F5F9;
+  --color-bg-warm: #FFFBF5;
+  --color-bg-card: #FFFFFF;
+  
+  /* Text Colors - High Readability */
+  --color-text-primary: #1E293B;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748B;
+  --color-text-light: #94A3B8;
+  --color-text-inverse: #FFFFFF;
+  
+  /* Border Colors */
+  --color-border: #E2E8F0;
+  --color-border-light: #F1F5F9;
+  --color-border-focus: #0EA5E9;
+  
+  /* Legacy Support (Mint & Teal mapping) */
+  --color-mint: #0EA5E9;
+  --color-mint-light: #E0F2FE;
+  --color-mint-dark: #0284C7;
+  --color-teal: #059669;
+  --color-teal-light: #D1FAE5;
+  --color-teal-dark: #047857;
+  --color-sage: #10B981;
+  --color-sage-light: #DCFCE7;
+  --color-sage-dark: #065F46;
+  --color-primary: #059669;
+  --color-secondary: #0EA5E9;
+  
+  /* Neutrals */
+  --color-white: #FFFFFF;
+  --color-off-white: #F8FAFC;
+  --color-cream: #FFFBF5;
+  --color-cream-light: #FFFDFB;
+  --color-cream-dark: #FEF7EC;
+  --color-charcoal: #1E293B;
+  --color-charcoal-light: #334155;
+  --color-charcoal-dark: #0F172A;
+  --color-gray-50: #F8FAFC;
+  --color-gray-100: #F1F5F9;
+  --color-gray-200: #E2E8F0;
+  --color-gray-300: #CBD5E1;
+  --color-gray-400: #94A3B8;
+  --color-gray-500: #64748B;
+  --color-gray-600: #475569;
+  --color-gray-700: #334155;
+  --color-gray-800: #1E293B;
+  --color-gray-900: #0F172A;
+  
+  /* ===========================================
+     TYPOGRAPHY - Friendly & Readable
+     =========================================== */
+  
+  --font-sans: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  
+  /* Font Sizes - Learning-Friendly Scale */
+  --text-xs: 0.75rem;      /* 12px - Labels */
+  --text-sm: 0.875rem;     /* 14px - Captions */
+  --text-base: 1rem;       /* 16px - Body */
+  --text-lg: 1.125rem;     /* 18px - Emphasis */
+  --text-xl: 1.25rem;      /* 20px - Subheadings */
+  --text-2xl: 1.5rem;      /* 24px - Section Headers */
+  --text-3xl: 1.875rem;    /* 30px - Page Titles */
+  --text-4xl: 2.25rem;     /* 36px - Hero Titles */
+  --text-5xl: 3rem;        /* 48px - Large Headlines */
+  --text-6xl: 3.75rem;     /* 60px - Display */
+  
+  /* Legacy font size support */
+  --font-size-xs: var(--text-xs);
+  --font-size-sm: var(--text-sm);
+  --font-size-base: var(--text-base);
+  --font-size-lg: var(--text-lg);
+  --font-size-xl: var(--text-xl);
+  --font-size-2xl: var(--text-2xl);
+  --font-size-3xl: var(--text-3xl);
+  --font-size-4xl: var(--text-4xl);
+  --font-size-5xl: var(--text-5xl);
+  
+  /* Font Weights */
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-extrabold: 800;
+  
+  /* Legacy weight support */
+  --font-weight-normal: var(--font-normal);
+  --font-weight-medium: var(--font-medium);
+  --font-weight-semibold: var(--font-semibold);
+  --font-weight-bold: var(--font-bold);
+  
+  /* Line Heights - Dyslexia-Friendly */
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.75;
+  --leading-loose: 2;
+  
+  /* Legacy line height support */
+  --line-height-tight: var(--leading-tight);
+  --line-height-normal: var(--leading-normal);
+  --line-height-relaxed: var(--leading-relaxed);
+  
+  /* Letter Spacing */
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.025em;
+  --tracking-wider: 0.05em;
+  
+  /* ===========================================
+     SPACING - Comfortable Reading
+     =========================================== */
+  
+  --space-0: 0;
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.25rem;   /* 20px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2rem;      /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
+  --space-20: 5rem;     /* 80px */
+  --space-24: 6rem;     /* 96px */
+  
+  /* Legacy spacing support */
+  --space-xs: var(--space-1);
+  --space-sm: var(--space-2);
+  --space-md: var(--space-4);
+  --space-lg: var(--space-6);
+  --space-xl: var(--space-8);
+  --space-2xl: var(--space-12);
+  --space-3xl: var(--space-16);
+  
+  /* ===========================================
+     BORDER RADIUS - Soft & Friendly
+     =========================================== */
+  
+  --radius-none: 0;
+  --radius-sm: 0.375rem;    /* 6px */
+  --radius-md: 0.5rem;      /* 8px */
+  --radius-lg: 0.75rem;     /* 12px */
+  --radius-xl: 1rem;        /* 16px */
+  --radius-2xl: 1.5rem;     /* 24px */
+  --radius-3xl: 2rem;       /* 32px */
+  --radius-full: 9999px;
+  
+  /* ===========================================
+     SHADOWS - Soft & Elevated
+     =========================================== */
+  
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  
+  /* Colored Shadows */
+  --shadow-growth: 0 4px 14px -2px rgba(5, 150, 105, 0.25);
+  --shadow-focus: 0 4px 14px -2px rgba(14, 165, 233, 0.25);
+  --shadow-motivation: 0 4px 14px -2px rgba(245, 158, 11, 0.25);
+  --shadow-mastery: 0 4px 14px -2px rgba(139, 92, 246, 0.25);
+  
+  /* ===========================================
+     TRANSITIONS - Smooth & Natural
+     =========================================== */
+  
+  --transition-fast: 150ms ease-out;
+  --transition-base: 200ms ease-out;
+  --transition-slow: 300ms ease-out;
+  --transition-slower: 400ms ease-out;
+  
+  /* ===========================================
+     Z-INDEX - Layering System
+     =========================================== */
+  
+  --z-base: 1;
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-notification: 1080;
+}
+
+/* ============================================
+   COMPONENT STYLES - Learning-Focused
+   ============================================ */
+
+/* Card Styles - Warm & Inviting */
+.card {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border-light);
+  overflow: hidden;
+  transition: all var(--transition-base);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  border-color: var(--color-border);
+}
+
+.card-learning {
+  background: linear-gradient(135deg, var(--color-bg-card) 0%, var(--color-growth-lighter) 100%);
+  border-left: 4px solid var(--color-growth);
+}
+
+.card-progress {
+  background: linear-gradient(135deg, var(--color-focus-lighter) 0%, var(--color-bg-card) 100%);
+  border-left: 4px solid var(--color-focus);
+}
+
+.card-achievement {
+  background: linear-gradient(135deg, var(--color-motivation-lighter) 0%, var(--color-bg-card) 100%);
+  border-left: 4px solid var(--color-motivation);
+}
+
+/* Button Styles - Action-Oriented */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  font-family: var(--font-sans);
+  line-height: var(--leading-tight);
+  border-radius: var(--radius-lg);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  text-decoration: none;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-growth) 0%, var(--color-growth-dark) 100%);
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-growth);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--color-growth-dark) 0%, var(--color-growth-darker) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px -4px rgba(5, 150, 105, 0.35);
+}
+
+.btn-secondary {
+  background: var(--color-bg-card);
+  color: var(--color-growth);
+  border: 2px solid var(--color-growth);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--color-growth-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-motivation {
+  background: linear-gradient(135deg, var(--color-motivation) 0%, var(--color-motivation-dark) 100%);
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-motivation);
+}
+
+.btn-motivation:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px -4px rgba(245, 158, 11, 0.35);
+}
+
+/* Learning Progress Indicators */
+.progress-ring {
+  border-radius: var(--radius-full);
+  background: conic-gradient(
+    var(--color-growth) var(--progress, 0%),
+    var(--color-gray-200) var(--progress, 0%)
+  );
+}
+
+.progress-bar {
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-gray-200);
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: linear-gradient(90deg, var(--color-growth) 0%, var(--color-focus) 100%);
+  transition: width var(--transition-slow);
+}
+
+/* Streak Badge */
+.streak-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: linear-gradient(135deg, var(--color-streak) 0%, var(--color-motivation) 100%);
+  color: var(--color-text-inverse);
+  border-radius: var(--radius-full);
+  font-weight: var(--font-bold);
+  font-size: var(--text-sm);
+  box-shadow: var(--shadow-motivation);
+}
+
+/* Mastery Level Badges */
+.mastery-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+}
+
+.mastery-beginner { background: var(--color-beginner); color: white; }
+.mastery-intermediate { background: var(--color-intermediate); color: white; }
+.mastery-advanced { background: var(--color-advanced); color: white; }
+.mastery-expert { background: var(--color-expert); color: var(--color-charcoal); }
+
+/* Encouragement Messages */
+.encouragement {
+  padding: var(--space-4) var(--space-6);
+  background: linear-gradient(135deg, var(--color-growth-lighter) 0%, var(--color-focus-lighter) 100%);
+  border-radius: var(--radius-xl);
+  border-left: 4px solid var(--color-growth);
+  font-size: var(--text-lg);
+  color: var(--color-text-primary);
+}
+
+.encouragement-icon {
+  font-size: var(--text-2xl);
+  margin-right: var(--space-3);
+}
+
+/* Topic Cards */
+.topic-card {
+  padding: var(--space-4);
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  transition: all var(--transition-base);
+}
+
+.topic-card:hover {
+  border-color: var(--color-growth);
+  box-shadow: var(--shadow-growth);
+}
+
+.topic-card.weak {
+  border-left: 4px solid var(--color-error);
+  background: linear-gradient(135deg, var(--color-bg-card) 0%, var(--color-error-light) 100%);
+}
+
+.topic-card.strong {
+  border-left: 4px solid var(--color-success);
+  background: linear-gradient(135deg, var(--color-bg-card) 0%, var(--color-success-light) 100%);
+}
+
+/* Stat Cards */
+.stat-card {
+  padding: var(--space-6);
+  background: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  text-align: center;
+  border: 1px solid var(--color-border-light);
+  transition: all var(--transition-base);
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.stat-value {
+  font-size: var(--text-4xl);
+  font-weight: var(--font-extrabold);
+  color: var(--color-growth);
+  line-height: 1;
+  margin-bottom: var(--space-2);
+}
+
+.stat-label {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+
+/* Badge Styles */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  border-radius: var(--radius-full);
+  line-height: 1;
+}
+
+.badge-success { background: var(--color-success-light); color: var(--color-growth-dark); }
+.badge-error { background: var(--color-error-light); color: var(--color-error); }
+.badge-warning { background: var(--color-warning-light); color: var(--color-motivation-dark); }
+.badge-info { background: var(--color-info-light); color: var(--color-focus-dark); }
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+/* Text Alignment */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+/* Font Weights */
+.font-medium { font-weight: var(--font-medium); }
+.font-semibold { font-weight: var(--font-semibold); }
+.font-bold { font-weight: var(--font-bold); }
+
+/* Spacing Utilities */
+.mt-0 { margin-top: 0; }
+.mt-1 { margin-top: var(--space-2); }
+.mt-2 { margin-top: var(--space-4); }
+.mt-3 { margin-top: var(--space-6); }
+.mt-4 { margin-top: var(--space-8); }
+
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: var(--space-2); }
+.mb-2 { margin-bottom: var(--space-4); }
+.mb-3 { margin-bottom: var(--space-6); }
+.mb-4 { margin-bottom: var(--space-8); }
+
+.p-0 { padding: 0; }
+.p-1 { padding: var(--space-2); }
+.p-2 { padding: var(--space-4); }
+.p-3 { padding: var(--space-6); }
+.p-4 { padding: var(--space-8); }
+
+/* Flex Utilities */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.gap-1 { gap: var(--space-2); }
+.gap-2 { gap: var(--space-4); }
+.gap-3 { gap: var(--space-6); }
+.gap-4 { gap: var(--space-8); }

@@ -1,0 +1,189 @@
+/* Formatted Content Styling - Learning-Friendly Design */
+
+.formatted-content {
+  width: 100%;
+  word-wrap: break-word;
+  line-height: 1.7;
+  color: var(--color-text-primary, #1a2e1a);
+  font-size: 0.95rem;
+}
+
+/* Headers */
+.formatted-header {
+  margin: 1.25rem 0 0.75rem 0;
+  line-height: 1.4;
+  font-weight: 600;
+  color: var(--color-text-primary, #1a2e1a);
+  word-wrap: break-word;
+}
+
+.formatted-header.h1 {
+  font-size: 1.3rem;
+  border-bottom: 2px solid var(--color-growth, #10b981);
+  padding-bottom: 0.5rem;
+  margin-top: 1.5rem;
+  background: linear-gradient(135deg, var(--color-growth, #10b981) 0%, var(--color-focus, #06b6d4) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.formatted-header.h2 {
+  font-size: 1.15rem;
+  color: var(--color-growth-dark, #047857);
+  margin-top: 1.25rem;
+}
+
+.formatted-header.h3 {
+  font-size: 1.05rem;
+  color: var(--color-focus-dark, #0891b2);
+  margin-top: 1rem;
+}
+
+.formatted-header.h4 {
+  font-size: 1rem;
+  color: var(--color-text-secondary, #64748b);
+  margin-top: 0.9rem;
+}
+
+/* Paragraphs */
+.formatted-paragraph {
+  margin: 0.875rem 0;
+  line-height: 1.7;
+  word-wrap: break-word;
+}
+
+/* Lists */
+.formatted-list,
+.formatted-numbered-list {
+  margin: 0.875rem 0 0.875rem 0.5rem;
+  padding: 0;
+}
+
+.formatted-list {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.formatted-list-item {
+  margin: 0.625rem 0;
+  padding-left: 1.75rem;
+  position: relative;
+  line-height: 1.7;
+}
+
+/* Remove default bullet for emoji-prefixed items */
+.formatted-list .formatted-list-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  color: var(--color-growth, #10b981);
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+/* Detect emoji-prefixed list items */
+.formatted-list .formatted-list-item:first-letter {
+  font-size: 1.1em;
+}
+
+.formatted-numbered-list {
+  margin-left: 1.25rem;
+  counter-reset: list-counter;
+}
+
+.formatted-numbered-list .formatted-list-item {
+  padding-left: 0.75rem;
+  counter-increment: list-counter;
+}
+
+/* Inline Elements */
+.formatted-strong {
+  font-weight: 700;
+  color: var(--color-text-primary, #1a2e1a);
+  background: linear-gradient(to bottom, transparent 60%, rgba(16, 185, 129, 0.2) 60%);
+}
+
+.formatted-em {
+  font-style: italic;
+  color: var(--color-text-secondary, #64748b);
+}
+
+.formatted-code {
+  background-color: var(--color-gray-100, #f3f4f6);
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.375rem;
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-size: 0.85em;
+  color: var(--color-mastery, #8b5cf6);
+  border: 1px solid var(--color-gray-200, #e5e7eb);
+}
+
+/* Key Point Styling */
+.formatted-content > p:first-child {
+  margin-top: 0;
+}
+
+.formatted-content > p:last-child {
+  margin-bottom: 0;
+}
+
+/* Better spacing */
+.formatted-content ul + p,
+.formatted-content ol + p,
+.formatted-content p + ul,
+.formatted-content p + ol,
+.formatted-content .formatted-header + ul,
+.formatted-content .formatted-header + ol,
+.formatted-content .formatted-header + p {
+  margin-top: 1rem;
+}
+
+/* Emoji-specific styling */
+.formatted-content p:first-letter,
+.formatted-list-item:first-letter {
+  /* Allow emoji to render at proper size */
+  font-size: 1.1em;
+}
+
+/* Special styling for key sections with emojis */
+.formatted-paragraph:has(⭐),
+.formatted-paragraph:has(💡),
+.formatted-paragraph:has(📝) {
+  padding: 0.75rem 1rem;
+  background: var(--color-growth-light, rgba(16, 185, 129, 0.08));
+  border-radius: 0.5rem;
+  border-left: 3px solid var(--color-growth, #10b981);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .formatted-content {
+    font-size: 0.9rem;
+  }
+
+  .formatted-header.h1 {
+    font-size: 1.15rem;
+  }
+
+  .formatted-header.h2 {
+    font-size: 1.05rem;
+  }
+
+  .formatted-header.h3 {
+    font-size: 1rem;
+  }
+
+  .formatted-paragraph {
+    margin: 0.625rem 0;
+  }
+
+  .formatted-list,
+  .formatted-numbered-list {
+    margin-left: 0.5rem;
+  }
+
+  .formatted-list-item {
+    padding-left: 1.5rem;
+  }
+}

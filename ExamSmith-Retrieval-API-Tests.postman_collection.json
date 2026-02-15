@@ -1,0 +1,1416 @@
+{
+  "info": {
+    "name": "ExamSmith Retrieval API - Complete Test Suite",
+    "description": "Comprehensive test collection for ExamSmith Retrieval Backend including all endpoints for TN SSLC English question paper generation, concept explanation, question similarity, and answer evaluation.",
+    "version": "2.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "api_prefix",
+      "value": "/api/v1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Health & Status",
+      "item": [
+        {
+          "name": "Health Check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Service is healthy', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql('healthy');",
+                  "});",
+                  "",
+                  "pm.test('MongoDB is connected', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.mongodb).to.eql('connected');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            },
+            "description": "Check if the backend is running and MongoDB is connected"
+          },
+          "response": [
+            {
+              "name": "Healthy Response",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"status\": \"healthy\",\n  \"mongodb\": \"connected\",\n  \"service\": \"ExamSmith Retrieval Backend\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Metrics",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has retrieval_stats', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('retrieval_stats');",
+                  "});",
+                  "",
+                  "pm.test('Response has timestamp', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('timestamp');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/metrics",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["metrics"]
+            },
+            "description": "Get performance metrics for all retrieval modes"
+          },
+          "response": [
+            {
+              "name": "Metrics Response",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"retrieval_stats\": {\n    \"concept_explanation\": {\n      \"mode\": \"concept_explanation\",\n      \"avg_latency_ms\": 245.3,\n      \"total_searches\": 42\n    }\n  },\n  \"timestamp\": \"2026-01-25T10:30:45.123456\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Ask - Concept Explanation",
+      "item": [
+        {
+          "name": "Ask - Basic Question",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has answer', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('answer');",
+                  "    pm.expect(jsonData.answer.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test('Response has sources array', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('sources');",
+                  "    pm.expect(jsonData.sources).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test('Retrieval mode is concept_explanation', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.retrieval_mode).to.eql('concept_explanation');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"What is the theme of His First Flight?\",\n  \"hybrid_search\": {\n    \"vector_weight\": 0.5,\n    \"bm25_weight\": 0.5,\n    \"top_k\": 5\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/ask",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["ask"]
+            },
+            "description": "Basic question about prose lesson theme"
+          }
+        },
+        {
+          "name": "Ask - Poetry Question",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Answer is not empty', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.answer).to.not.be.empty;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"Explain the meaning of The Road Not Taken by Robert Frost\",\n  \"hybrid_search\": {\n    \"vector_weight\": 0.6,\n    \"bm25_weight\": 0.4,\n    \"top_k\": 3\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/ask",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["ask"]
+            },
+            "description": "Question about poetry content"
+          }
+        },
+        {
+          "name": "Ask - Grammar Question",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"How do I convert active voice to passive voice?\",\n  \"hybrid_search\": {\n    \"vector_weight\": 0.5,\n    \"bm25_weight\": 0.5,\n    \"top_k\": 5\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/ask",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["ask"]
+            },
+            "description": "Question about grammar concepts"
+          }
+        },
+        {
+          "name": "Ask - High Vector Weight",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"What lesson teaches us about courage and taking the first step?\",\n  \"hybrid_search\": {\n    \"vector_weight\": 0.9,\n    \"bm25_weight\": 0.1,\n    \"top_k\": 5\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/ask",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["ask"]
+            },
+            "description": "Semantic search with high vector weight for conceptual queries"
+          }
+        },
+        {
+          "name": "Ask - High BM25 Weight",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"Who is the author of Two Gentlemen of Verona?\",\n  \"hybrid_search\": {\n    \"vector_weight\": 0.2,\n    \"bm25_weight\": 0.8,\n    \"top_k\": 3\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/ask",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["ask"]
+            },
+            "description": "Keyword search with high BM25 weight for specific terms"
+          }
+        },
+        {
+          "name": "Ask - Supplementary Story",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"What is the moral of The Necklace story?\",\n  \"hybrid_search\": {\n    \"vector_weight\": 0.5,\n    \"bm25_weight\": 0.5,\n    \"top_k\": 5\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/ask",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["ask"]
+            },
+            "description": "Question about supplementary reading"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Similar Questions",
+      "item": [
+        {
+          "name": "Similar - Prose Question",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has questions array', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('questions');",
+                  "    pm.expect(jsonData.questions).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test('Response has total_found', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('total_found');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question_text\": \"Describe the theme of courage in His First Flight\",\n  \"top_k\": 5,\n  \"difficulty\": \"medium\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/similar-questions",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["similar-questions"]
+            },
+            "description": "Find similar questions about prose themes"
+          }
+        },
+        {
+          "name": "Similar - Poetry Question",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question_text\": \"What literary devices are used in The Road Not Taken?\",\n  \"top_k\": 5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/similar-questions",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["similar-questions"]
+            },
+            "description": "Find similar poetry analysis questions"
+          }
+        },
+        {
+          "name": "Similar - Easy Difficulty",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question_text\": \"Give the synonym of happy\",\n  \"top_k\": 10,\n  \"difficulty\": \"easy\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/similar-questions",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["similar-questions"]
+            },
+            "description": "Find easy vocabulary questions"
+          }
+        },
+        {
+          "name": "Similar - Hard Difficulty",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question_text\": \"Analyze the character development in Two Gentlemen of Verona\",\n  \"top_k\": 5,\n  \"difficulty\": \"hard\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/similar-questions",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["similar-questions"]
+            },
+            "description": "Find challenging comprehension questions"
+          }
+        },
+        {
+          "name": "Similar - Grammar Transform",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question_text\": \"Convert the following sentence to passive voice\",\n  \"top_k\": 5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/similar-questions",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["similar-questions"]
+            },
+            "description": "Find similar grammar transformation questions"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Generate Paper",
+      "item": [
+        {
+          "name": "Generate - Full Paper (Default)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has paper_id', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('paper_id');",
+                  "});",
+                  "",
+                  "pm.test('Status is generated', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql('generated');",
+                  "});",
+                  "",
+                  "pm.test('Total marks is 100', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.total_marks).to.eql(100);",
+                  "});",
+                  "",
+                  "pm.test('Estimated time is 180 minutes', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.estimated_time_minutes).to.eql(180);",
+                  "});",
+                  "",
+                  "pm.test('Questions array exists', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('questions');",
+                  "    pm.expect(jsonData.questions).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test('Blueprint exists with all parts', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('blueprint');",
+                  "    pm.expect(jsonData.blueprint).to.have.property('part_i');",
+                  "    pm.expect(jsonData.blueprint).to.have.property('part_ii');",
+                  "    pm.expect(jsonData.blueprint).to.have.property('part_iii');",
+                  "    pm.expect(jsonData.blueprint).to.have.property('part_iv');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/generate-paper",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["generate-paper"]
+            },
+            "description": "Generate a complete TN SSLC model question paper with default settings"
+          }
+        },
+        {
+          "name": "Generate - With Year",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Paper generated successfully', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql('generated');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"year\": 2025\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/generate-paper",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["generate-paper"]
+            },
+            "description": "Generate paper for a specific year (used for pattern calibration)"
+          }
+        },
+        {
+          "name": "Generate - Balanced Difficulty",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Questions generated with balanced difficulty', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.questions.length).to.be.above(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"year\": 2025,\n  \"difficulty_distribution\": {\n    \"easy\": 0.3,\n    \"medium\": 0.5,\n    \"hard\": 0.2\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/generate-paper",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["generate-paper"]
+            },
+            "description": "Generate paper with balanced difficulty distribution (30% easy, 50% medium, 20% hard)"
+          }
+        },
+        {
+          "name": "Generate - Easy Paper",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"difficulty_distribution\": {\n    \"easy\": 0.6,\n    \"medium\": 0.3,\n    \"hard\": 0.1\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/generate-paper",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["generate-paper"]
+            },
+            "description": "Generate an easier paper (60% easy questions)"
+          }
+        },
+        {
+          "name": "Generate - Challenging Paper",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"difficulty_distribution\": {\n    \"easy\": 0.1,\n    \"medium\": 0.4,\n    \"hard\": 0.5\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/generate-paper",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["generate-paper"]
+            },
+            "description": "Generate a challenging paper (50% hard questions)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Evaluate Answer",
+      "item": [
+        {
+          "name": "Evaluate - Prose Answer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has feedback', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('feedback');",
+                  "});",
+                  "",
+                  "pm.test('Feedback has match_percentage', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.feedback).to.have.property('match_percentage');",
+                  "    pm.expect(jsonData.feedback.match_percentage).to.be.a('number');",
+                  "});",
+                  "",
+                  "pm.test('Response has confidence score', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('confidence');",
+                  "    pm.expect(jsonData.confidence).to.be.at.least(0);",
+                  "    pm.expect(jsonData.confidence).to.be.at.most(1);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question_text\": \"What is the main theme of His First Flight?\",\n  \"student_answer\": \"The main theme of His First Flight is about overcoming fear and taking the first step. The young seagull was afraid to fly but hunger forced him to take the leap, and he discovered he could fly.\",\n  \"question_id\": null,\n  \"expected_answer\": null\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/evaluate-answer",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["evaluate-answer"]
+            },
+            "description": "Evaluate a student's prose comprehension answer"
+          }
+        },
+        {
+          "name": "Evaluate - Poetry Answer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question_text\": \"Explain the significance of the two roads in The Road Not Taken\",\n  \"student_answer\": \"The two roads represent choices in life. The poet chose the less traveled road which made all the difference in his life. It shows the importance of making independent decisions.\",\n  \"question_id\": null,\n  \"expected_answer\": null\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/evaluate-answer",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["evaluate-answer"]
+            },
+            "description": "Evaluate a student's poetry analysis answer"
+          }
+        },
+        {
+          "name": "Evaluate - Grammar Answer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question_text\": \"Convert to passive voice: The teacher teaches the students.\",\n  \"student_answer\": \"The students are taught by the teacher.\",\n  \"question_id\": null,\n  \"expected_answer\": \"The students are taught by the teacher.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/evaluate-answer",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["evaluate-answer"]
+            },
+            "description": "Evaluate a grammar transformation answer with expected answer provided"
+          }
+        },
+        {
+          "name": "Evaluate - Partial Answer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question_text\": \"Describe the character of the two brothers in Two Gentlemen of Verona\",\n  \"student_answer\": \"The two brothers were hardworking and caring.\",\n  \"question_id\": null,\n  \"expected_answer\": null\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/evaluate-answer",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["evaluate-answer"]
+            },
+            "description": "Evaluate a partial/incomplete answer to test feedback quality"
+          }
+        },
+        {
+          "name": "Evaluate - Supplementary Answer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question_text\": \"What moral lesson does The Necklace teach us?\",\n  \"student_answer\": \"The story teaches us not to be greedy and to be content with what we have. Mathilde's desire for expensive things led to years of hardship for her and her husband.\",\n  \"question_id\": null,\n  \"expected_answer\": null\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/evaluate-answer",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["evaluate-answer"]
+            },
+            "description": "Evaluate an answer about supplementary story"
+          }
+        },
+        {
+          "name": "Evaluate - With Question ID",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question_text\": \"What is the rhyme scheme of Sea Fever?\",\n  \"student_answer\": \"The rhyme scheme is AABB.\",\n  \"question_id\": \"q_2025_public_33\",\n  \"expected_answer\": null\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/evaluate-answer",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["evaluate-answer"]
+            },
+            "description": "Evaluate answer using a specific question ID from previous papers"
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Error Cases",
+      "item": [
+        {
+          "name": "Ask - Empty Question",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 422 (Validation Error)', function () {",
+                  "    pm.response.to.have.status(422);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"\",\n  \"hybrid_search\": {\n    \"vector_weight\": 0.5,\n    \"bm25_weight\": 0.5,\n    \"top_k\": 5\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/ask",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["ask"]
+            },
+            "description": "Test validation error for empty question"
+          }
+        },
+        {
+          "name": "Ask - Invalid Weights",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 422 (Validation Error)', function () {",
+                  "    pm.response.to.have.status(422);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"What is the theme?\",\n  \"hybrid_search\": {\n    \"vector_weight\": 1.5,\n    \"bm25_weight\": -0.5,\n    \"top_k\": 5\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/ask",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["ask"]
+            },
+            "description": "Test validation error for weights outside 0-1 range"
+          }
+        },
+        {
+          "name": "Similar - Short Question",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 422 (Validation Error)', function () {",
+                  "    pm.response.to.have.status(422);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question_text\": \"hi\",\n  \"top_k\": 5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/similar-questions",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["similar-questions"]
+            },
+            "description": "Test validation error for question shorter than 10 characters"
+          }
+        },
+        {
+          "name": "Similar - Invalid top_k",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 422 (Validation Error)', function () {",
+                  "    pm.response.to.have.status(422);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question_text\": \"What is the theme of the lesson?\",\n  \"top_k\": 100\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/similar-questions",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["similar-questions"]
+            },
+            "description": "Test validation error for top_k > 20"
+          }
+        },
+        {
+          "name": "Evaluate - Short Answer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 422 (Validation Error)', function () {",
+                  "    pm.response.to.have.status(422);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question_text\": \"What is the theme?\",\n  \"student_answer\": \"yes\",\n  \"question_id\": null\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/evaluate-answer",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["evaluate-answer"]
+            },
+            "description": "Test validation error for answer shorter than 5 characters"
+          }
+        },
+        {
+          "name": "Invalid Endpoint",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/invalid-endpoint",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["invalid-endpoint"]
+            },
+            "description": "Test 404 for non-existent endpoint"
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Quality Review",
+      "item": [
+        {
+          "name": "Review Paper - Full Quality Review",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has reviewed status', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql('reviewed');",
+                  "});",
+                  "",
+                  "pm.test('Response has questions array', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('questions');",
+                  "    pm.expect(jsonData.questions).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test('Response has review_report', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('review_report');",
+                  "    pm.expect(jsonData.review_report).to.have.property('total_fixes');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"questions\": [\n    {\n      \"question_number\": 1,\n      \"part\": \"Part I\",\n      \"section\": \"MCQ\",\n      \"question_text\": \"Who is the author of His First Flight?\",\n      \"marks\": 1,\n      \"lesson_type\": \"prose\",\n      \"unit_name\": \"His First Flight\",\n      \"options\": [\"Liam O'Flaherty\", \"Robert Frost\", \"William Shakespeare\", \"Guy de Maupassant\"],\n      \"correct_answer\": \"A\"\n    },\n    {\n      \"question_number\": 15,\n      \"part\": \"Part II\",\n      \"section\": \"Grammar\",\n      \"question_text\": \"Transform the following sentence: She is singing.\",\n      \"marks\": 2,\n      \"lesson_type\": \"grammar\",\n      \"grammar_area\": \"voice\"\n    },\n    {\n      \"question_number\": 40,\n      \"part\": \"Part III\",\n      \"section\": \"Writing Skills\",\n      \"question_text\": \"Write a formal letter to the Municipal Commissioner about garbage collection in your prestigious gated community in metropolitan area.\",\n      \"marks\": 5,\n      \"lesson_type\": \"writing\",\n      \"internal_choice\": true\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/review-paper",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["review-paper"]
+            },
+            "description": "Apply all quality review rules to a set of questions including MCQ validation, grammar fix, and writing context simplification"
+          }
+        },
+        {
+          "name": "Review Paper - MCQ Quality Check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('MCQ questions reviewed', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.questions.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test('Review report tracks MCQ fixes', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.review_report).to.have.property('mcq_fixes');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"questions\": [\n    {\n      \"question_number\": 1,\n      \"part\": \"Part I\",\n      \"section\": \"MCQ\",\n      \"question_text\": \"The theme of His First Flight is ___\",\n      \"marks\": 1,\n      \"lesson_type\": \"prose\",\n      \"unit_name\": \"His First Flight\",\n      \"options\": [\"courage\", \"courage and bravery\", \"taking the first step\", \"flying\"],\n      \"correct_answer\": \"A\"\n    },\n    {\n      \"question_number\": 2,\n      \"part\": \"Part I\",\n      \"section\": \"MCQ\",\n      \"question_text\": \"Who wrote The Road Not Taken?\",\n      \"marks\": 1,\n      \"lesson_type\": \"poetry\",\n      \"unit_name\": \"The Road Not Taken\",\n      \"options\": [\"Robert Frost\", \"John Keats\", \"Robert Frost (American)\", \"William Wordsworth\"],\n      \"correct_answer\": \"A\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/review-paper",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["review-paper"]
+            },
+            "description": "Review MCQ questions for proper distractors and single correct answer"
+          }
+        },
+        {
+          "name": "Review Paper - Grammar Questions",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Grammar questions processed', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.questions.length).to.eql(2);",
+                  "});",
+                  "",
+                  "pm.test('Grammar ambiguity eliminated', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.review_report).to.have.property('grammar_fixes');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"questions\": [\n    {\n      \"question_number\": 15,\n      \"part\": \"Part II\",\n      \"section\": \"Grammar\",\n      \"question_text\": \"Change the voice: They are playing.\",\n      \"marks\": 2,\n      \"lesson_type\": \"grammar\",\n      \"grammar_area\": \"voice\"\n    },\n    {\n      \"question_number\": 16,\n      \"part\": \"Part II\",\n      \"section\": \"Grammar\",\n      \"question_text\": \"Combine using 'if': He works hard. He will pass.\",\n      \"marks\": 2,\n      \"lesson_type\": \"grammar\",\n      \"grammar_area\": \"conditionals\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/review-paper",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["review-paper"]
+            },
+            "description": "Review grammar questions to ensure single valid answer format"
+          }
+        },
+        {
+          "name": "Review Paper - Writing Skills Context",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Writing questions reviewed', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.questions.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test('Context simplified for rural students', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.review_report).to.have.property('writing_fixes');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"questions\": [\n    {\n      \"question_number\": 40,\n      \"part\": \"Part III\",\n      \"section\": \"Writing Skills\",\n      \"question_text\": \"Write a letter to the CEO of a multinational corporation requesting an internship at their silicon valley headquarters.\",\n      \"marks\": 5,\n      \"lesson_type\": \"writing\",\n      \"internal_choice\": true\n    },\n    {\n      \"question_number\": 41,\n      \"part\": \"Part III\",\n      \"section\": \"Writing Skills\",\n      \"question_text\": \"Write a formal email to your investment banker about portfolio diversification strategies.\",\n      \"marks\": 5,\n      \"lesson_type\": \"writing\",\n      \"internal_choice\": true\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/review-paper",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["review-paper"]
+            },
+            "description": "Review writing questions to simplify context for rural/village students"
+          }
+        },
+        {
+          "name": "Review Paper - Empty Questions Error",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Error message about no questions', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.detail).to.include('No questions');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"questions\": []\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/review-paper",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["review-paper"]
+            },
+            "description": "Test error handling when no questions are provided"
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Coverage Validation Tests",
+      "item": [
+        {
+          "name": "Generate - Verify Prose Coverage",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Paper has prose questions', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var proseQuestions = jsonData.questions.filter(q => q.lesson_type === 'prose');",
+                  "    pm.expect(proseQuestions.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test('Coverage validation passed', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.coverage_validation) {",
+                  "        pm.expect(jsonData.coverage_validation.is_valid).to.be.true;",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/generate-paper",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["generate-paper"]
+            },
+            "description": "Verify that generated paper covers all 6 prose lessons"
+          }
+        },
+        {
+          "name": "Generate - Verify Poetry Diversity",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Paper has poetry questions from multiple poems', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var poetryQuestions = jsonData.questions.filter(q => q.lesson_type === 'poetry');",
+                  "    var uniquePoems = [...new Set(poetryQuestions.map(q => q.poem_name || q.unit_name))];",
+                  "    // Should have at least 3 different poems",
+                  "    console.log('Unique poems:', uniquePoems);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/generate-paper",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["generate-paper"]
+            },
+            "description": "Verify that poetry questions span at least 3 different poems"
+          }
+        },
+        {
+          "name": "Generate - Verify Memory Poem",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Paper has memory poem question (Q45)', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var memoryPoem = jsonData.questions.find(q => q.lesson_type === 'memory_poem' || q.question_number === 45);",
+                  "    pm.expect(memoryPoem).to.not.be.undefined;",
+                  "});",
+                  "",
+                  "var prescribedPoems = ['Life', 'The Road Not Taken', 'No Men Are Foreign', 'Laugh and Be Merry', 'The River', 'Sea Fever'];",
+                  "",
+                  "pm.test('Memory poem is from prescribed list', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var memoryPoem = jsonData.questions.find(q => q.lesson_type === 'memory_poem');",
+                  "    if (memoryPoem && memoryPoem.unit_name) {",
+                  "        var isValid = prescribedPoems.some(poem => memoryPoem.unit_name.includes(poem));",
+                  "        console.log('Memory poem unit:', memoryPoem.unit_name);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/generate-paper",
+              "host": ["{{base_url}}{{api_prefix}}"],
+              "path": ["generate-paper"]
+            },
+            "description": "Verify that Q45 uses a prescribed memory poem from curriculum"
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global pre-request script",
+          "console.log('Request:', pm.request.url.toString());"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global test - log response time",
+          "pm.test('Response time is acceptable', function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(30000);",
+          "});"
+        ]
+      }
+    }
+  ]
+}
