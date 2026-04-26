@@ -1,1 +1,0 @@
-# ExamSmith Retrieval Backend
